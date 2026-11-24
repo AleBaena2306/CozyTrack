@@ -1,0 +1,5 @@
+{
+    "name": "CozyTrack.EditorRemote",
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false
+}
