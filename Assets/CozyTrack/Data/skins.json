@@ -1,0 +1,68 @@
+{
+  "skins": [
+    {
+      "id": "factory",
+      "name": "Fábrica",
+      "pattern": "",
+      "paint": "#FFFFFF",
+      "trim": "",
+      "factory": true
+    },
+    {
+      "id": "stripes",
+      "name": "Rayas",
+      "pattern": "Skin_Stripes_Coral",
+      "paint": "#FFFFFF",
+      "trim": "#F2F7FF",
+      "factory": false
+    },
+    {
+      "id": "dots",
+      "name": "Lunares",
+      "pattern": "Skin_Dots_Sky",
+      "paint": "#FFFFFF",
+      "trim": "#F2F7FF",
+      "factory": false
+    },
+    {
+      "id": "checker",
+      "name": "Cuadros",
+      "pattern": "Skin_Checker_Race",
+      "paint": "#FFFFFF",
+      "trim": "#FF7366",
+      "factory": false
+    },
+    {
+      "id": "stars",
+      "name": "Estrellas",
+      "pattern": "Skin_Stars_Night",
+      "paint": "#FFFFFF",
+      "trim": "#FFD64C",
+      "factory": false
+    },
+    {
+      "id": "bolts",
+      "name": "Rayos",
+      "pattern": "Skin_Bolt_Electric",
+      "paint": "#FFFFFF",
+      "trim": "#FFD64C",
+      "factory": false
+    },
+    {
+      "id": "midnight",
+      "name": "Medianoche",
+      "pattern": "",
+      "paint": "#1F1F40",
+      "trim": "#FFD64C",
+      "factory": false
+    },
+    {
+      "id": "bubblegum",
+      "name": "Chicle",
+      "pattern": "",
+      "paint": "#FF8CCC",
+      "trim": "#F2F7FF",
+      "factory": false
+    }
+  ]
+}

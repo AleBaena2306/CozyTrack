@@ -1,0 +1,423 @@
+[
+  {
+    "level": 1,
+    "world": "Sala de juegos",
+    "name": "Primera vuelta",
+    "lanes": 4,
+    "surfaceGrip": 1.0,
+    "halfLap": [
+      "S8",
+      "S8",
+      "C90L8",
+      "S4",
+      "C90L8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "C90L8",
+      "S4",
+      "C90L8",
+      "S8",
+      "S8",
+      "C90L8",
+      "S4",
+      "C90L8"
+    ],
+    "laps": 3,
+    "lapLength_m": 90.3,
+    "straightShare": 0.44,
+    "tightestRadius_m": 7.4,
+    "difficulty": 1.44,
+    "upgradeSensitivity": 0.013,
+    "rival": {
+      "car": "Rhino",
+      "upgrades": {
+        "speed": 0,
+        "acceleration": 0,
+        "weight": 0
+      },
+      "skill": 0.866,
+      "raceTime_s": 32.0
+    },
+    "targetUpgradeLevel": 0,
+    "recommendedPerCar": {
+      "Dart": 0,
+      "Hopper": 0,
+      "Gecko": 0,
+      "Rhino": 0
+    }
+  },
+  {
+    "level": 5,
+    "world": "Sala de juegos",
+    "name": "Zigzag",
+    "lanes": 4,
+    "surfaceGrip": 1.0,
+    "halfLap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C90L8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C90L8",
+      "S8",
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C90L8"
+    ],
+    "laps": 3,
+    "lapLength_m": 123.4,
+    "straightShare": 0.39,
+    "tightestRadius_m": 7.4,
+    "difficulty": 1.44,
+    "upgradeSensitivity": 0.019,
+    "rival": {
+      "car": "Gecko",
+      "upgrades": {
+        "speed": 1,
+        "acceleration": 1,
+        "weight": 1
+      },
+      "skill": 0.888,
+      "raceTime_s": 40.5
+    },
+    "targetUpgradeLevel": 1,
+    "recommendedPerCar": {
+      "Dart": 1,
+      "Hopper": 2,
+      "Gecko": 0,
+      "Rhino": null
+    }
+  },
+  {
+    "level": 10,
+    "world": "Sala de juegos",
+    "name": "La alfombra",
+    "lanes": 4,
+    "surfaceGrip": 1.0,
+    "halfLap": [
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C45L8",
+      "C45R8",
+      "C90L8",
+      "S8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C45L8",
+      "C45R8",
+      "C90L8",
+      "S8",
+      "S8",
+      "S8",
+      "C90L8",
+      "C45R8",
+      "C45L8",
+      "C45L8",
+      "C45R8",
+      "C90L8",
+      "S8"
+    ],
+    "laps": 3,
+    "lapLength_m": 148.5,
+    "straightShare": 0.32,
+    "tightestRadius_m": 7.4,
+    "difficulty": 1.44,
+    "upgradeSensitivity": 0.015,
+    "rival": {
+      "car": "Dart",
+      "upgrades": {
+        "speed": 2,
+        "acceleration": 2,
+        "weight": 2
+      },
+      "skill": 0.914,
+      "raceTime_s": 48.9
+    },
+    "targetUpgradeLevel": 2,
+    "recommendedPerCar": {
+      "Dart": 3,
+      "Hopper": 5,
+      "Gecko": 0,
+      "Rhino": null
+    }
+  },
+  {
+    "level": 15,
+    "world": "Jardín",
+    "name": "Entre macetas",
+    "lanes": 4,
+    "surfaceGrip": 1.0,
+    "halfLap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "S4",
+      "C90R8",
+      "C90L5",
+      "C90L5",
+      "S8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "S4",
+      "C90R8",
+      "C90L5",
+      "C90L5",
+      "S8",
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "S4",
+      "C90R8",
+      "C90L5",
+      "C90L5",
+      "S8"
+    ],
+    "laps": 3,
+    "lapLength_m": 144.3,
+    "straightShare": 0.5,
+    "tightestRadius_m": 4.4,
+    "difficulty": 1.87,
+    "upgradeSensitivity": 0.019,
+    "rival": {
+      "car": "Rhino",
+      "upgrades": {
+        "speed": 3,
+        "acceleration": 3,
+        "weight": 3
+      },
+      "skill": 0.925,
+      "raceTime_s": 52.0
+    },
+    "targetUpgradeLevel": 2,
+    "recommendedPerCar": {
+      "Dart": 3,
+      "Hopper": 3,
+      "Gecko": 0,
+      "Rhino": null
+    }
+  },
+  {
+    "level": 20,
+    "world": "Jardín",
+    "name": "El seto",
+    "lanes": 4,
+    "surfaceGrip": 1.0,
+    "halfLap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "C45R5",
+      "C45L5",
+      "C90L5",
+      "C90R8",
+      "C90L5",
+      "S8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "C45R5",
+      "C45L5",
+      "C90L5",
+      "C90R8",
+      "C90L5",
+      "S8",
+      "S8",
+      "S8",
+      "S8",
+      "C90L5",
+      "C45R5",
+      "C45L5",
+      "C90L5",
+      "C90R8",
+      "C90L5",
+      "S8"
+    ],
+    "laps": 3,
+    "lapLength_m": 152.0,
+    "straightShare": 0.42,
+    "tightestRadius_m": 4.4,
+    "difficulty": 1.87,
+    "upgradeSensitivity": 0.018,
+    "rival": {
+      "car": "Hopper",
+      "upgrades": {
+        "speed": 3,
+        "acceleration": 3,
+        "weight": 3
+      },
+      "skill": 0.915,
+      "raceTime_s": 56.2
+    },
+    "targetUpgradeLevel": 3,
+    "recommendedPerCar": {
+      "Dart": 4,
+      "Hopper": 3,
+      "Gecko": 0,
+      "Rhino": null
+    }
+  },
+  {
+    "level": 25,
+    "world": "Nieve",
+    "name": "Horquillas",
+    "lanes": 2,
+    "surfaceGrip": 0.85,
+    "halfLap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L3",
+      "C90L3",
+      "S8",
+      "S8",
+      "C45R5",
+      "C45L5"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "S8",
+      "C90L3",
+      "C90L3",
+      "S8",
+      "S8",
+      "C45R5",
+      "C45L5",
+      "S8",
+      "S8",
+      "S8",
+      "C90L3",
+      "C90L3",
+      "S8",
+      "S8",
+      "C45R5",
+      "C45L5"
+    ],
+    "laps": 3,
+    "lapLength_m": 114.6,
+    "straightShare": 0.7,
+    "tightestRadius_m": 2.4,
+    "difficulty": 2.75,
+    "upgradeSensitivity": 0.02,
+    "rival": {
+      "car": "Rhino",
+      "upgrades": {
+        "speed": 4,
+        "acceleration": 4,
+        "weight": 3
+      },
+      "skill": 0.887,
+      "raceTime_s": 47.9
+    },
+    "targetUpgradeLevel": 4,
+    "recommendedPerCar": {
+      "Dart": 5,
+      "Hopper": 2,
+      "Gecko": 0,
+      "Rhino": null
+    }
+  },
+  {
+    "level": 30,
+    "world": "Nieve",
+    "name": "La gran helada",
+    "lanes": 2,
+    "surfaceGrip": 0.85,
+    "halfLap": [
+      "S8",
+      "S8",
+      "S8",
+      "S4",
+      "C90L3",
+      "C90L3",
+      "C90R5",
+      "C90L5",
+      "C45L5",
+      "C45R5",
+      "S8",
+      "S8"
+    ],
+    "lap": [
+      "S8",
+      "S8",
+      "S8",
+      "S4",
+      "C90L3",
+      "C90L3",
+      "C90R5",
+      "C90L5",
+      "C45L5",
+      "C45R5",
+      "S8",
+      "S8",
+      "S8",
+      "S8",
+      "S8",
+      "S4",
+      "C90L3",
+      "C90L3",
+      "C90R5",
+      "C90L5",
+      "C45L5",
+      "C45R5",
+      "S8",
+      "S8"
+    ],
+    "laps": 3,
+    "lapLength_m": 154.0,
+    "straightShare": 0.57,
+    "tightestRadius_m": 2.4,
+    "difficulty": 2.75,
+    "upgradeSensitivity": 0.023,
+    "rival": {
+      "car": "Gecko",
+      "upgrades": {
+        "speed": 4,
+        "acceleration": 4,
+        "weight": 3
+      },
+      "skill": 0.89,
+      "raceTime_s": 60.0
+    },
+    "targetUpgradeLevel": 5,
+    "recommendedPerCar": {
+      "Dart": null,
+      "Hopper": 5,
+      "Gecko": 1,
+      "Rhino": null
+    }
+  }
+]

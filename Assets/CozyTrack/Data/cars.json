@@ -1,0 +1,46 @@
+{
+  "Car_Dart": {
+    "role": "Velocidad punta",
+    "stats_1to5": {
+      "speed": 5,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 2
+    },
+    "triangles": 3260,
+    "length_m": 1.46
+  },
+  "Car_Hopper": {
+    "role": "Aceleración",
+    "stats_1to5": {
+      "speed": 3,
+      "acceleration": 5,
+      "grip": 2,
+      "weight": 1
+    },
+    "triangles": 3720,
+    "length_m": 1.09
+  },
+  "Car_Gecko": {
+    "role": "Agarre y aceleración",
+    "stats_1to5": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 5,
+      "weight": 2
+    },
+    "triangles": 4040,
+    "length_m": 1.3
+  },
+  "Car_Rhino": {
+    "role": "Peso y agarre",
+    "stats_1to5": {
+      "speed": 3,
+      "acceleration": 1,
+      "grip": 4,
+      "weight": 5
+    },
+    "triangles": 5424,
+    "length_m": 1.39
+  }
+}

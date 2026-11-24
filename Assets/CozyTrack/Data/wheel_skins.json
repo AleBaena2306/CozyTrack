@@ -1,0 +1,68 @@
+{
+  "wheelSkins": [
+    {
+      "id": "classic",
+      "name": "Clásica",
+      "mesh": "Wheel_Classic",
+      "tyre": "#2B2B36",
+      "rim": "#EBEBF2",
+      "cap": "#2B2B36"
+    },
+    {
+      "id": "gold",
+      "name": "Radios oro",
+      "mesh": "Wheel_Spokes",
+      "tyre": "#2B2B36",
+      "rim": "#FFC733",
+      "cap": "#FFC733"
+    },
+    {
+      "id": "star",
+      "name": "Estrella",
+      "mesh": "Wheel_Star",
+      "tyre": "#2B2B36",
+      "rim": "#FFD64C",
+      "cap": "#FF7366"
+    },
+    {
+      "id": "turbine",
+      "name": "Turbina",
+      "mesh": "Wheel_Turbine",
+      "tyre": "#2B2B36",
+      "rim": "#73BFFF",
+      "cap": "#F2F7FF"
+    },
+    {
+      "id": "racing",
+      "name": "Deportiva",
+      "mesh": "Wheel_Racing",
+      "tyre": "#2B2B36",
+      "rim": "#FF7366",
+      "cap": "#F2F7FF"
+    },
+    {
+      "id": "offroad",
+      "name": "Todoterreno",
+      "mesh": "Wheel_Knobby",
+      "tyre": "#2B2B36",
+      "rim": "#1F1F40",
+      "cap": "#FFD64C"
+    },
+    {
+      "id": "whitewall",
+      "name": "Banda blanca",
+      "mesh": "Wheel_Whitewall",
+      "tyre": "#2B2B36",
+      "rim": "#F2F7FF",
+      "cap": "#9E9EAD"
+    },
+    {
+      "id": "candy",
+      "name": "Caramelo",
+      "mesh": "Wheel_Classic",
+      "tyre": "#FF8CCC",
+      "rim": "#F2F7FF",
+      "cap": "#FF7366"
+    }
+  ]
+}

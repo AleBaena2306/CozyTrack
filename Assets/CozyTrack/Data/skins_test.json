@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Fábrica",
+    "pattern": null,
+    "paint_color": null,
+    "trim_color": null
+  },
+  {
+    "name": "Rayas",
+    "pattern": "Stripes_Coral",
+    "paint_color": null,
+    "trim_color": "Snow"
+  },
+  {
+    "name": "Lunares",
+    "pattern": "Dots_Sky",
+    "paint_color": null,
+    "trim_color": "Snow"
+  },
+  {
+    "name": "Cuadros",
+    "pattern": "Checker_Race",
+    "paint_color": null,
+    "trim_color": "Coral"
+  },
+  {
+    "name": "Estrellas",
+    "pattern": "Stars_Night",
+    "paint_color": null,
+    "trim_color": "Sun"
+  },
+  {
+    "name": "Rayos",
+    "pattern": "Bolt_Electric",
+    "paint_color": null,
+    "trim_color": "Sun"
+  },
+  {
+    "name": "Medianoche",
+    "pattern": null,
+    "paint_color": "Night",
+    "trim_color": "Sun"
+  },
+  {
+    "name": "Chicle",
+    "pattern": null,
+    "paint_color": "Bubblegum",
+    "trim_color": "Snow"
+  }
+]

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cozy Track · equilibrio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: mesa de trabajo de diseñador, clara y práctica; los números mandan
+   IDEA: la hoja de reglajes de un equipo de Scalextric, con el circuito dibujado
+   PICTURE: el trazado del nivel elegido con su curva más cerrada marcada, arriba
+   COLOUR and TYPE: crema y tinta ciruela, acentos coral/menta del juego; Fredoka para títulos, sistema para tablas
+   LAYOUT: una columna en móvil (trazado, resultados, reglajes); dos columnas desde 900 px */
+:root{color-scheme:light dark;--bg:light-dark(#fbf6ec,#1f1d2b);--card:light-dark(#fff,#2a2839);--ink:light-dark(#2d2a3e,#f1ecf7);--mut:light-dark(#6d6880,#a9a3bd);--line:light-dark(#e7e0d3,#3a3750);--coral:#ff7366;--mint:#3fbf7f;--sun:#e8b72e;--sky:#4b9cf0}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:clip}
+h1,h2{font-family:"Fredoka",system-ui,sans-serif;margin:0;line-height:1.1}
+h1{font-size:30px}h2{font-size:19px;margin-bottom:8px}
+.wrap{max-width:1240px;margin:0 auto;padding:16px max(4vw,12px) 40px}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+.sub{color:var(--mut);margin:4px 0 0;font-size:14px}
+.grid{display:grid;gap:14px}
+@media(min-width:900px){.grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.fig{position:relative;height:280px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+select,input,textarea,button{font:inherit;color:inherit}
+select,input[type=number],input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:16px;min-height:44px;width:100%}
+textarea{width:100%;min-height:140px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px;font:12px ui-monospace,monospace}
+button{border:0;border-radius:12px;background:var(--coral);color:#fff;font-weight:600;padding:10px 16px;min-height:44px;cursor:pointer}
+button.alt{background:var(--line);color:var(--ink)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.kpi{background:var(--bg);border-radius:12px;padding:8px 10px}.kpi b{display:block;font-size:20px;font-family:"Fredoka",sans-serif}.kpi span{font-size:12px;color:var(--mut)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--mut);font-size:12px}
+tr.sel td{background:light-dark(#fff3e0,#3a3046)}
+.ok{color:var(--mint);font-weight:600}.bad{color:var(--coral);font-weight:600}.warn{color:var(--sun);font-weight:600}
+details{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}summary{cursor:pointer;font-weight:600;min-height:32px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:4px 10px;align-items:center;margin:8px 0}
+.sl label{font-size:13px}.sl output{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--coral);min-height:28px}
+.stats{display:grid;grid-template-columns:5em repeat(4,minmax(0,1fr));gap:6px;align-items:center;font-size:13px}
+.stats input{min-height:40px;padding:6px;text-align:center}
+.lv{display:grid;gap:6px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.note{font-size:12px;color:var(--mut)}
+.busy{opacity:.55;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Cozy Track · equilibrio</h1><p class="sub">Simulador de carreras y progresión. Funciona solo en el navegador: no usa Claude ni internet.</p></div>
+    <div class="row"><button id="runAll">Calcular todos los niveles</button></div>
+  </div>
+
+  <div class="grid">
+    <div class="grid" style="grid-template-columns:minmax(0,1fr)">
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h2 id="lvTitle">Nivel</h2><select id="lvSel" aria-label="Nivel" style="width:auto"></select></div>
+        <div class="fig" id="fig"><svg id="svg" role="img" aria-label="Trazado del nivel"></svg></div>
+        <div class="kpis" id="kpis"></div>
+        <div class="scroll"><table id="carTable"></table></div>
+        <p class="note">Piloto «bueno»: entra a las curvas al porcentaje del límite que fijes abajo y reacciona con su retraso. «Necesita»: nivel de mejora (velocidad, aceleración y frenos iguales) con el que gana al rival por 1 s o más. «Al máximo con 2 salidas»: segundos respecto al rival con todo mejorado pero saliéndose dos veces (positivo = pierde: mejorar no te hace inmortal).</p>
+      </div>
+      <div class="card">
+        <h2>Resultados de las pruebas masivas</h2>
+        <div class="scroll"><table id="mcTable"><tr><td>Lanza las pruebas desde «Pruebas masivas».</td></tr></table></div>
+        <p class="note">Victoria = acabar por delante del rival a batir. Objetivo de diseño: con la mejora prevista se gana el 55-75 % de las veces; con una menos, el 25-50 %; con dos más, no más del 90 % (mejorar no te hace invencible).</p>
+      </div>
+      <div class="card">
+        <h2>Todos los niveles</h2>
+        <div class="scroll"><table id="allTable"><tr><td>Pulsa «Calcular todos los niveles».</td></tr></table></div>
+      </div>
+    </div>
+
+    <div class="card" id="controls">
+      <h2>Reglajes</h2>
+      <div id="sliders"></div>
+      <details open><summary>Stats de los coches (1 a 5)</summary><div class="stats" id="stats"></div></details>
+      <details><summary>Niveles (media vuelta que gire 180°)</summary>
+        <p class="note">Piezas: S8 y S4 (rectas), C90L8 = curva de 90° a la izquierda de radio 8. Radios: 8, 5 y 3. La vuelta es la media vuelta repetida dos veces, así que siempre cierra.</p>
+        <div id="levels"></div><button class="alt" id="addLv">Añadir nivel</button>
+      </details>
+      <details open><summary>Pruebas masivas (Monte Carlo)</summary>
+        <p class="note">Miles de carreras por nivel con jugadores distintos: coche al azar, pericia y reacción variables, errores de frenada y mejoras entre 2 por debajo y 2 por encima de las previstas. El rival varía de vuelta a vuelta. No simula objetos ni choques.</p>
+        <div class="sl"><label for="mcN">Carreras por nivel</label><output id="mcNo">1000</output><input type="range" id="mcN" min="200" max="5000" step="200" value="1000"></div>
+        <div class="sl"><label for="mcSk">Pericia media de los jugadores</label><output id="mcSko">0.90</output><input type="range" id="mcSk" min="0.8" max="0.97" step="0.01" value="0.90"></div>
+        <div class="sl"><label for="mcSd">Variación de pericia entre jugadores</label><output id="mcSdo">0.03</output><input type="range" id="mcSd" min="0" max="0.08" step="0.005" value="0.03"></div>
+        <div class="sl"><label for="mcErr">Probabilidad de frenar tarde en cada curva</label><output id="mcErro">0.06</output><input type="range" id="mcErr" min="0" max="0.25" step="0.01" value="0.06"></div>
+        <div class="row"><button id="mcRun">Lanzar pruebas</button><span id="mcProg" class="note"></span></div>
+      </details>
+      <details><summary>Exportar a Unity</summary>
+        <p class="note">Calcula todos los niveles y copia el JSON (niveles, rivales, mejoras y física).</p>
+        <div class="row"><button id="copy">Copiar JSON</button><span id="copied" class="note"></span></div>
+        <textarea id="out" readonly></textarea>
+      </details>
+      <div class="row" style="margin-top:10px"><button class="alt" id="reset">Volver a los valores por defecto</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+{
+// ---------- valores por defecto (los mismos que el prototipo y tools/progression.py) ----------
+const DEF = {
+  v0:11, kv:1.0, a0:7, ka:1.0, mu0:0.85, kmu:0.015, magnet:2,
+  brake:12, slipGrow:30, slipScrub:1.5, slipRecover:3, cornerQ0:0.85, cornerQeq:0.97, crashTime:2,
+  upSpeed:20, upAccel:33, upBrake:40,         // % totales con las 5 mejoras (rendimiento decreciente)
+  humanSkill:0.92, humanReact:0.3, rivalReact:0.15, finalUpgrade:5, winMargin:1.0,
+  stats:{Dart:[5,2,3,2],Hopper:[3,5,2,1],Gecko:[2,4,5,2],Rhino:[3,1,4,5]},
+  levels:[
+    {n:1, world:"Sala de juegos", name:"Primera vuelta", half:"S8 S8 C90L8 S4 C90L8", lanes:4, grip:1},
+    {n:5, world:"Sala de juegos", name:"Zigzag", half:"S8 S8 S8 C90L8 C45R8 C45L8 C90L8", lanes:4, grip:1},
+    {n:10, world:"Sala de juegos", name:"La alfombra", half:"S8 S8 C90L8 C45R8 C45L8 C45L8 C45R8 C90L8 S8", lanes:4, grip:1},
+    {n:15, world:"Jardín", name:"Entre macetas", half:"S8 S8 S8 C90L5 S4 C90R8 C90L5 C90L5 S8", lanes:4, grip:1},
+    {n:20, world:"Jardín", name:"El seto", half:"S8 S8 S8 C90L5 C45R5 C45L5 C90L5 C90R8 C90L5 S8", lanes:4, grip:1},
+    {n:25, world:"Nieve", name:"Horquillas", half:"S8 S8 S8 C90L3 C90L3 S8 S8 C45R5 C45L5", lanes:2, grip:0.85},
+    {n:30, world:"Nieve", name:"La gran helada", half:"S8 S8 S8 S4 C90L3 C90L3 C90R5 C90L5 C45L5 C45R5 S8 S8", lanes:2, grip:0.85},
+  ],
+};
+const SHAPE = [0.30,0.25,0.20,0.15,0.10];   // reparto decreciente de cada mejora en sus 5 niveles
+const RIVALS = ["Rhino","Gecko","Hopper","Dart"];
+const CARS = Object.keys(DEF.stats);
+const COLORS = {Dart:"#ff7366",Hopper:"#e8b72e",Gecko:"#3fbf7f",Rhino:"#4b9cf0"};
+const LANE_W = 1.2, G = 9.8;
+let S = load();
+
+function load(){ try { const j = JSON.parse(localStorage.getItem("ctBalance")||"null"); if (j && j.levels) return j; } catch(e){} return JSON.parse(JSON.stringify(DEF)); }
+function save(){ try { localStorage.setItem("ctBalance", JSON.stringify(S)); } catch(e){} }
+
+// ---------- física ----------
+const upSum = (totalPct, n) => SHAPE.slice(0,n).reduce((a,b)=>a+b,0) * totalPct/100;
+function car(name, u=0){
+  const st = S.stats[name];
+  const m = 0.8 + 0.15*st[3];
+  const vtop = (S.v0 + S.kv*st[0]) * (1 + upSum(S.upSpeed,u));
+  const a0 = (S.a0 + S.ka*st[1]) * (1 + upSum(S.upAccel,u));
+  const F = m*a0, Cd = F/(vtop*vtop + 30*vtop), mu = S.mu0 + S.kmu*st[2];
+  return {m, F, Cd, Crr:30*Cd, vtop, alat: mu*(G + S.magnet/m), brake: S.brake*(1 + upSum(S.upBrake,u))};
+}
+function parse(k){
+  k = k.trim().toUpperCase();
+  if (/^S\d+(\.\d+)?$/.test(k)) return {t:"S", L:+k.slice(1)};
+  const m = /^C(\d+)([LR])(\d+(\.\d+)?)$/.exec(k);
+  if (!m) throw new Error("Pieza desconocida: "+k);
+  return {t:"A", A:+m[1]*Math.PI/180, s:m[2]==="L"?1:-1, R:+m[3]};
+}
+function halfOf(lv){ return lv.half.split(/\s+/).filter(Boolean).map(parse); }
+function turnOf(half){ return half.reduce((a,p)=>a + (p.t==="A" ? p.s*p.A*180/Math.PI : 0), 0); }
+function segs(half, o){
+  const lap = half.concat(half);
+  return lap.map(p => p.t==="S" ? {L:p.L, r:Infinity} : {L:p.A*(p.R + p.s*o), r:p.R + p.s*o});
+}
+const offsets = n => Array.from({length:n}, (_,i) => (i-(n-1)/2)*LANE_W);
+
+function run(c, sg, grip, policy, k, react, laps=3, fac=null){
+  const dt = 1/60, al = c.alat*grip, vs = r => r<Infinity ? Math.sqrt(al*r) : Infinity;
+  let v=0, t=0, slip=0, crashes=0; const n = sg.length;
+  for (let lap=0; lap<laps; lap++) for (let i=0;i<n;i++){
+    const {L, r} = sg[i]; let x = 0; const vsr = vs(r); let tIn = 0;
+    while (x < L){
+      let needBrake = false, d = L-x;
+      for (let j=1;j<=6;j++){
+        const q = sg[(i+j)%n];
+        if (q.r < Infinity){
+          const f = fac ? fac(lap,(i+j)%n) : (policy==="ai" ? k : S.humanSkill), vt = vs(q.r)*f;
+          if (v*v - vt*vt > 2*c.brake*Math.max(0, d - v*react)){ needBrake = true; break; }
+        }
+        d += q.L; if (d > 45) break;
+      }
+      let gas;
+      if (policy==="hold") gas = true;
+      else if (policy==="ai") gas = !needBrake && v < c.vtop*(k+0.02) && (r===Infinity || v < vsr*(fac?fac(lap,i):k));
+      // el piloto tarda `react` en darse cuenta, ya dentro de la curva, de que va pasado
+      else gas = !needBrake && !(r<Infinity && tIn > react && v > vsr*Math.sqrt(fac?fac(lap,i):S.humanSkill));
+      tIn += dt;
+      const q = r<Infinity ? (v*v/r)/al : 0;
+      const corner = r<Infinity ? Math.min(1, Math.max(0,(q-S.cornerQ0)/(S.cornerQeq-S.cornerQ0)))*c.F : 0;
+      let a = ((gas?c.F:0) - c.Cd*v*v - c.Crr*v - corner)/c.m;
+      if (!gas) a -= c.brake;
+      if (q > 1) slip += S.slipGrow*(q-1)*dt; else slip = Math.max(0, slip - S.slipRecover*dt);
+      a -= S.slipScrub*slip;
+      if (slip >= 1){ crashes++; slip = 0; v = 0; t += S.crashTime - 0.8; }
+      v = Math.max(0, v + a*dt); x += v*dt; t += dt;
+    }
+  }
+  return {t, crashes};
+}
+function raceTime(c, half, lv, policy, k, react){
+  const offs = offsets(lv.lanes), use = lv.lanes>2 ? offs.slice(1,-1) : offs;
+  const rs = use.map(o => run(c, segs(half,o), lv.grip, policy, k, react));
+  return {t: rs.reduce((a,b)=>a+b.t,0)/rs.length, crashes: rs.reduce((a,b)=>a+b.crashes,0)};
+}
+
+function rivalFor(n){
+  const name = RIVALS[Math.floor((n-1)/3) % 4];
+  return {name, u: Math.min(5, Math.floor((n-1)/6) + (n%6>=3?1:0))};
+}
+const targetUp = n => Math.min(5, Math.round((n-1)/29 * S.finalUpgrade));
+
+function evalLevel(lv){
+  const half = halfOf(lv), turn = turnOf(half);
+  if (Math.abs(turn-180) > 1e-6) return {error:`La media vuelta gira ${turn.toFixed(0)}°; debe girar 180°.`};
+  const sg0 = segs(half, 0), lapLen = sg0.reduce((a,b)=>a+b.L,0);
+  const straight = sg0.filter(s=>s.r===Infinity).reduce((a,b)=>a+b.L,0)/lapLen;
+  const offs = offsets(lv.lanes), oC = lv.lanes%2 ? 0 : LANE_W/2;
+  const rmin = Math.min(...segs(half,-oC).concat(segs(half,oC)).map(s=>s.r));
+  const d0 = car("Dart"), diff = d0.vtop/Math.sqrt(d0.alat*lv.grip*rmin);
+  const tUp = [0,1,2,3,4,5].map(u => CARS.reduce((a,p)=>a + raceTime(car(p,u),half,lv,"human",0,S.humanReact).t,0)/CARS.length);
+  const ut = targetUp(lv.n), hi = tUp[ut] + S.winMargin, lo = ut>0 ? tUp[ut-1] + S.winMargin : hi + 3, target = (hi+lo)/2;
+  const riv = rivalFor(lv.n), rc = car(riv.name, riv.u);
+  let a = 0.6, b = 0.99;
+  for (let it=0; it<22; it++){ const m = (a+b)/2; if (raceTime(rc,half,lv,"ai",m,S.rivalReact).t > target) a = m; else b = m; }
+  const k = (a+b)/2, rt = raceTime(rc,half,lv,"ai",k,S.rivalReact).t;
+  const per = {};
+  for (const p of CARS){
+    const base = raceTime(car(p,0),half,lv,"human",0,S.humanReact), max = raceTime(car(p,5),half,lv,"human",0,S.humanReact);
+    let need = null; for (let u=0;u<=5;u++){ if (raceTime(car(p,u),half,lv,"human",0,S.humanReact).t <= rt - S.winMargin){ need = u; break; } }
+    const hold = raceTime(car(p,5),half,lv,"hold",0,0);
+    per[p] = {base:base.t, max:max.t, need, bad: max.t + 2*S.crashTime - rt, holdCrashes: hold.crashes};
+  }
+  const sens = (tUp[0]-tUp[5])/tUp[0];
+  return {half, lapLen, straight, rmin, diff, sens, ut, riv, k, rt, per};
+}
+
+// ---------- dibujo del trazado ----------
+function draw(lv, res){
+  const svg = document.getElementById("svg"), W = svg.clientWidth || 300, H = svg.clientHeight || 260;
+  if (res.error){ svg.innerHTML = `<text x="16" y="30" fill="currentColor">${esc(res.error)}</text>`; return; }
+  const pts = []; let x=0, z=0, yaw=0; const half = res.half.concat(res.half); let tight = [];
+  for (const p of half){
+    const steps = p.t==="S" ? 2 : 12;
+    for (let s=1;s<=steps;s++){
+      let lx, lz;
+      if (p.t==="S"){ lx = 0; lz = p.L*s/steps; }
+      else { const a = p.A*s/steps; lx = p.s*(p.R - p.R*Math.cos(a)); lz = p.R*Math.sin(a); }
+      const wx = x + lx*Math.cos(yaw) + lz*Math.sin(yaw), wz = z - lx*Math.sin(yaw) + lz*Math.cos(yaw);
+      pts.push([wx,wz, p.t==="A" && p.R===Math.min(...half.filter(q=>q.t==="A").map(q=>q.R))]);
+      if (s===steps){ x = wx; z = wz; }
+    }
+    if (p.t==="A") yaw += p.s*p.A;
+  }
+  pts.unshift([0,0,false]);
+  const xs = pts.map(p=>p[0]), zs = pts.map(p=>p[1]), minx=Math.min(...xs), maxx=Math.max(...xs), minz=Math.min(...zs), maxz=Math.max(...zs);
+  const pad = 24, sc = Math.min((W-2*pad)/(maxx-minx||1), (H-2*pad)/(maxz-minz||1));
+  const X = px => pad + (px-minx)*sc + ((W-2*pad)-(maxx-minx)*sc)/2, Y = pz => H - pad - (pz-minz)*sc - ((H-2*pad)-(maxz-minz)*sc)/2;
+  const path = pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ");
+  const roadW = Math.max(6, lv.lanes*LANE_W*sc);
+  let tightSeg = "";
+  for (let i=1;i<pts.length;i++) if (pts[i][2]) tightSeg += `M${X(pts[i-1][0]).toFixed(1)} ${Y(pts[i-1][1]).toFixed(1)}L${X(pts[i][0]).toFixed(1)} ${Y(pts[i][1]).toFixed(1)}`;
+  svg.innerHTML = `<path d="${path}" fill="none" stroke="#3b3a4f" stroke-width="${roadW+6}" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${path}" fill="none" stroke="#575670" stroke-width="${roadW}" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${tightSeg}" fill="none" stroke="#ff7366" stroke-width="${Math.max(3,roadW*0.35)}" stroke-linecap="round"/>
+    <path d="${path}" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="4 6"/>
+    <circle cx="${X(0)}" cy="${Y(0)}" r="7" fill="#3fbf7f" stroke="#fff" stroke-width="2"/>
+    <text x="${X(0)+10}" y="${Y(0)+4}" font-size="12" fill="currentColor">salida</text>`;
+}
+
+// ---------- interfaz ----------
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (n,d=1) => Number(n).toFixed(d).replace(".",",");
+const SL = [
+  ["humanSkill","Piloto: entra a las curvas al (fracción del límite)",0.8,1,0.01],
+  ["humanReact","Piloto: reacción (s)",0.1,0.6,0.05],
+  ["winMargin","Margen para ganar al rival (s)",0.2,3,0.1],
+  ["finalUpgrade","Mejora prevista en el nivel 30",1,5,1],
+  ["upSpeed","Mejora de velocidad: total con 5 niveles (%)",0,40,1],
+  ["upAccel","Mejora de aceleración: total (%)",0,60,1],
+  ["upBrake","Mejora de frenos: total (%)",0,80,1],
+  ["v0","Velocidad punta base (m/s)",8,16,0.5],["kv","+ por punto de velocidad",0,2,0.1],
+  ["a0","Aceleración base (m/s²)",3,12,0.5],["ka","+ por punto de aceleración",0,3,0.1],
+  ["mu0","Agarre base μ",0.6,1.2,0.01],["kmu","+ μ por punto de agarre",0,0.1,0.005],
+  ["magnet","Imán (ayuda en curva, menos a los pesados)",0,8,0.5],
+  ["brake","Frenada base al soltar (m/s²)",6,20,0.5],
+  ["slipGrow","Rapidez del derrape",5,60,1],["slipScrub","Frenado al derrapar (m/s²)",0,6,0.5],
+  ["cornerQeq","Límite al que se estabiliza a fondo en curva",0.85,1,0.01],
+];
+function buildSliders(){
+  document.getElementById("sliders").innerHTML = SL.map(([k,l,mi,ma,st]) =>
+    `<div class="sl"><label for="s_${k}">${esc(l)}</label><output id="o_${k}">${esc(S[k])}</output><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="${st}" value="${S[k]}"></div>`).join("");
+  for (const [k] of SL){
+    const el = document.getElementById("s_"+k);
+    el.addEventListener("input", () => { S[k] = +el.value; document.getElementById("o_"+k).textContent = el.value; });
+    el.addEventListener("change", () => { save(); refresh(); });
+  }
+}
+function buildStats(){
+  const head = `<span></span>${["Vel.","Acel.","Agarre","Peso"].map(h=>`<b>${h}</b>`).join("")}`;
+  document.getElementById("stats").innerHTML = head + CARS.map(c => `<b style="color:${COLORS[c]}">${c}</b>` +
+    S.stats[c].map((v,i)=>`<input type="number" min="1" max="5" step="1" value="${v}" data-c="${c}" data-i="${i}" aria-label="${c} ${i}">`).join("")).join("");
+  document.getElementById("stats").querySelectorAll("input").forEach(el => el.addEventListener("change", () => {
+    S.stats[el.dataset.c][+el.dataset.i] = Math.max(1, Math.min(5, +el.value || 1)); save(); refresh(); }));
+}
+function buildLevels(){
+  document.getElementById("levels").innerHTML = S.levels.map((lv,i) => `<div class="lv">
+    <div class="row"><input type="number" value="${lv.n}" min="1" max="30" data-i="${i}" data-f="n" style="width:80px" aria-label="Número"><input type="text" value="${esc(lv.name)}" data-i="${i}" data-f="name" style="flex:1" aria-label="Nombre"></div>
+    <input type="text" value="${esc(lv.half)}" data-i="${i}" data-f="half" aria-label="Media vuelta">
+    <div class="row"><select data-i="${i}" data-f="lanes" style="width:auto" aria-label="Carriles"><option ${lv.lanes==4?"selected":""} value="4">4 carriles</option><option ${lv.lanes==2?"selected":""} value="2">2 carriles</option></select>
+    <select data-i="${i}" data-f="grip" style="width:auto" aria-label="Superficie"><option value="1" ${lv.grip==1?"selected":""}>Normal</option><option value="0.85" ${lv.grip==0.85?"selected":""}>Nieve (×0,85)</option><option value="0.7" ${lv.grip==0.7?"selected":""}>Hielo (×0,7)</option></select>
+    <input type="text" value="${esc(lv.world)}" data-i="${i}" data-f="world" style="flex:1" aria-label="Mundo"><button class="alt" data-del="${i}">Quitar</button></div></div>`).join("");
+  const box = document.getElementById("levels");
+  box.querySelectorAll("[data-f]").forEach(el => el.addEventListener("change", () => {
+    const lv = S.levels[+el.dataset.i], f = el.dataset.f;
+    lv[f] = (f==="n"||f==="lanes"||f==="grip") ? +el.value : el.value;
+    S.levels.sort((a,b)=>a.n-b.n); save(); buildLevels(); buildSelect(); refresh(); }));
+  box.querySelectorAll("[data-del]").forEach(el => el.addEventListener("click", () => { S.levels.splice(+el.dataset.del,1); save(); buildLevels(); buildSelect(); refresh(); }));
+}
+function buildSelect(){
+  const sel = document.getElementById("lvSel"), cur = sel.value;
+  sel.innerHTML = S.levels.map((lv,i)=>`<option value="${i}">${lv.n} · ${esc(lv.name)}</option>`).join("");
+  if (cur && +cur < S.levels.length) sel.value = cur;
+}
+function refresh(){
+  const i = +document.getElementById("lvSel").value || 0, lv = S.levels[i];
+  if (!lv) return;
+  const res = evalLevel(lv);
+  document.getElementById("lvTitle").textContent = `${lv.n} · ${lv.name} (${lv.world})`;
+  draw(lv, res);
+  if (res.error){ document.getElementById("kpis").innerHTML = ""; document.getElementById("carTable").innerHTML = `<tr><td class="bad">${esc(res.error)}</td></tr>`; return; }
+  const k = [
+    [fmt(res.lapLen,0)+" m","vuelta"],[Math.round(res.straight*100)+" %","rectas"],[fmt(res.rmin,1)+" m","curva más cerrada"],
+    [fmt(res.diff,2),"exigencia (punta/curva)"],[fmt(res.sens*100,1)+" %","lo que dan las mejoras"],
+    [`${res.riv.name} ${res.riv.u}`,"rival y sus mejoras"],[fmt(res.k,3),"pericia del rival"],[fmt(res.rt,1)+" s","tiempo del rival"],[res.ut,"mejora prevista"]];
+  document.getElementById("kpis").innerHTML = k.map(([b,s])=>`<div class="kpi"><b>${esc(b)}</b><span>${esc(s)}</span></div>`).join("");
+  document.getElementById("carTable").innerHTML = `<tr><th>Coche</th><th>De serie</th><th>Al máximo</th><th>Necesita</th><th>Al máximo con 2 salidas</th><th>Salidas sin soltar</th></tr>` +
+    CARS.map(c => { const p = res.per[c];
+      return `<tr><td style="color:${COLORS[c]};font-weight:600">${c}</td><td>${fmt(p.base)} s</td><td>${fmt(p.max)} s</td>
+      <td class="${p.need===null?"bad":p.need<=res.ut?"ok":"warn"}">${p.need===null?"no gana":p.need}</td>
+      <td class="${p.bad>0?"ok":"bad"}">${p.bad>0?"+":""}${fmt(p.bad)} s</td><td>${p.holdCrashes}</td></tr>`; }).join("");
+}
+function runAll(){
+  const btn = document.getElementById("runAll"); btn.classList.add("busy"); btn.textContent = "Calculando…";
+  setTimeout(() => {
+    const rows = [], json = [];
+    for (const lv of S.levels){
+      const r = evalLevel(lv);
+      if (r.error){ rows.push(`<tr><td>${lv.n} ${esc(lv.name)}</td><td colspan="7" class="bad">${esc(r.error)}</td></tr>`); continue; }
+      const needs = CARS.map(c => r.per[c].need), spread = needs.filter(x=>x!==null);
+      const warn = r.sens < 0.03 ? "mejoras poco útiles" : needs.includes(null) ? "algún coche no gana" : (Math.max(...spread)-Math.min(...spread) > 2 ? "coches desiguales" : "");
+      rows.push(`<tr><td>${lv.n} ${esc(lv.name)}</td><td>${fmt(r.diff,2)}</td><td>${fmt(r.sens*100,1)} %</td><td>${esc(r.riv.name)} ${r.riv.u} · ${fmt(r.k,2)}</td><td>${r.ut}</td>` +
+        CARS.map(c=>`<td>${r.per[c].need===null?"✗":r.per[c].need}</td>`).join("") + `<td class="${warn?"warn":"ok"}">${warn||"bien"}</td></tr>`);
+      json.push({level:lv.n, world:lv.world, name:lv.name, lanes:lv.lanes, surfaceGrip:lv.grip, halfLap:lv.half.split(/\s+/).filter(Boolean), laps:3,
+        lapLength:+r.lapLen.toFixed(1), tightestRadius:+r.rmin.toFixed(2), difficulty:+r.diff.toFixed(2),
+        rival:{car:r.riv.name, upgrades:r.riv.u, skill:+r.k.toFixed(3), raceTime:+r.rt.toFixed(1)}, targetUpgrade:r.ut,
+        requiredUpgradePerCar:Object.fromEntries(CARS.map(c=>[c, r.per[c].need]))});
+    }
+    document.getElementById("allTable").innerHTML = `<tr><th>Nivel</th><th>Exigencia</th><th>Mejoras dan</th><th>Rival · pericia</th><th>Prevista</th>${CARS.map(c=>`<th style="color:${COLORS[c]}">${c}</th>`).join("")}<th>Aviso</th></tr>` + rows.join("");
+    const physics = {v0:S.v0,kv:S.kv,a0:S.a0,ka:S.ka,mu0:S.mu0,kmu:S.kmu,magnet:S.magnet,brake:S.brake,slipGrow:S.slipGrow,slipScrub:S.slipScrub,slipRecover:S.slipRecover,cornerQ0:S.cornerQ0,cornerQeq:S.cornerQeq,laneWidth:LANE_W};
+    const upgrades = {shape:SHAPE, speedTotalPct:S.upSpeed, accelTotalPct:S.upAccel, brakeTotalPct:S.upBrake};
+    document.getElementById("out").value = JSON.stringify({physics, upgrades, cars:S.stats, levels:json}, null, 2);
+    btn.classList.remove("busy"); btn.textContent = "Calcular todos los niveles";
+  }, 30);
+}
+// ---------- pruebas masivas ----------
+function rng(seed){ let x = seed>>>0 || 1; return () => (x = (x*1664525 + 1013904223)>>>0) / 4294967296; }
+function gauss(r){ return Math.sqrt(-2*Math.log(r()+1e-9))*Math.cos(2*Math.PI*r()); }
+function mcLevel(lv, N, opt, seed){
+  const half = halfOf(lv); if (Math.abs(turnOf(half)-180) > 1e-6) return null;
+  const base = evalLevel(lv), r = rng(seed), offs = offsets(lv.lanes);
+  const riv = base.riv, rc = car(riv.name, riv.u), ut = base.ut;
+  const byDelta = {}, byCar = {}; let crashes = 0, close = 0, gapSum = 0, wins = 0;
+  for (let k=0;k<N;k++){
+    const pc = CARS[Math.floor(r()*CARS.length)], delta = Math.floor(r()*5)-2, u = Math.max(0, Math.min(5, ut+delta));
+    const skill = Math.max(0.78, Math.min(0.985, opt.sk + gauss(r)*opt.sd)), react = 0.2 + r()*0.25;
+    const o = offs[Math.floor(r()*offs.length)], sg = segs(half, o), n = sg.length;
+    const errs = Array.from({length:3*n}, () => r() < opt.err ? 0.15 + r()*0.2 : 0);
+    const pf = (lap,i) => skill + errs[lap*n+i];
+    const rk = Array.from({length:3}, () => base.k + gauss(r)*0.01);
+    const ro = offs[Math.floor(r()*offs.length)];
+    const p = run(car(pc,u), sg, lv.grip, "human", 0, react, 3, pf);
+    const q = run(rc, segs(half, ro), lv.grip, "ai", base.k, S.rivalReact, 3, (lap)=>rk[lap]);
+    const win = p.t < q.t, gap = p.t - q.t;
+    wins += win; crashes += p.crashes; gapSum += Math.abs(gap); if (Math.abs(gap) < 1) close++;
+    (byDelta[delta] ||= {w:0,n:0}); byDelta[delta].w += win; byDelta[delta].n++;
+    (byCar[pc] ||= {w:0,n:0}); byCar[pc].w += win; byCar[pc].n++;
+  }
+  return {lv, N, wins, crashes, close, gapSum, byDelta, byCar, ut, riv, k:base.k};
+}
+const pct = (o) => o && o.n ? Math.round(100*o.w/o.n) : null;
+function verdict(m){
+  const at = pct(m.byDelta[0]), minus = pct(m.byDelta[-1]), plus2 = pct(m.byDelta[2]);
+  const cars = CARS.map(c=>pct(m.byCar[c])).filter(x=>x!==null), carGap = Math.max(...cars)-Math.min(...cars);
+  const issues = [];
+  if (at !== null && at < 55) issues.push("difícil con la mejora prevista");
+  if (at !== null && at > 75) issues.push("fácil con la mejora prevista");
+  if (minus !== null && m.ut>0 && minus > 50) issues.push("mejorar no hace falta");
+  if (plus2 !== null && plus2 > 90) issues.push("mejorado de más es invencible");
+  if (carGap > 25) issues.push("coches desiguales");
+  return issues;
+}
+function mcRun(){
+  const N = +document.getElementById("mcN").value, opt = {sk:+document.getElementById("mcSk").value, sd:+document.getElementById("mcSd").value, err:+document.getElementById("mcErr").value};
+  const btn = document.getElementById("mcRun"), prog = document.getElementById("mcProg"); btn.classList.add("busy");
+  const res = []; let idx = 0; const t0 = performance.now();
+  const stepLv = () => {
+    if (idx >= S.levels.length){ btn.classList.remove("busy"); prog.textContent = `${S.levels.length*N} carreras en ${((performance.now()-t0)/1000).toFixed(1)} s`; renderMC(res); return; }
+    prog.textContent = `Nivel ${S.levels[idx].n}… (${idx+1}/${S.levels.length})`;
+    setTimeout(() => { const m = mcLevel(S.levels[idx], N, opt, 1234 + idx*97); if (m) res.push(m); idx++; renderMC(res); stepLv(); }, 10);
+  };
+  stepLv();
+}
+function renderMC(res){
+  const cell = v => v===null ? "—" : v+" %";
+  document.getElementById("mcTable").innerHTML = `<tr><th>Nivel</th><th>Gana con −2</th><th>−1</th><th>Prevista</th><th>+1</th><th>+2</th><th>Salidas/carrera</th><th>Reñidas (&lt;1 s)</th>${CARS.map(c=>`<th style="color:${COLORS[c]}">${c}</th>`).join("")}<th>Veredicto</th></tr>` +
+    res.map(m => { const v = verdict(m);
+      return `<tr><td>${m.lv.n} ${esc(m.lv.name)}</td>${[-2,-1,0,1,2].map(d=>`<td>${cell(pct(m.byDelta[d]))}</td>`).join("")}
+      <td>${fmt(m.crashes/m.N,2)}</td><td>${Math.round(100*m.close/m.N)} %</td>${CARS.map(c=>`<td>${cell(pct(m.byCar[c]))}</td>`).join("")}
+      <td class="${v.length?"warn":"ok"}">${v.length?esc(v.join("; ")):"funciona"}</td></tr>`; }).join("");
+}
+for (const id of ["mcN","mcSk","mcSd","mcErr"]){ const el = document.getElementById(id); el.addEventListener("input", () => { document.getElementById(id+"o").textContent = el.value; }); }
+document.getElementById("mcRun").addEventListener("click", mcRun);
+
+document.getElementById("lvSel").addEventListener("change", refresh);
+document.getElementById("runAll").addEventListener("click", runAll);
+document.getElementById("addLv").addEventListener("click", () => { S.levels.push({n:Math.min(30,(S.levels.at(-1)?.n||0)+1), world:"Nuevo", name:"Nuevo nivel", half:"S8 S8 C90L8 S4 C90L8", lanes:4, grip:1}); save(); buildLevels(); buildSelect(); });
+document.getElementById("copy").addEventListener("click", async () => {
+  const t = document.getElementById("out"); if (!t.value) runAll();
+  try { await navigator.clipboard.writeText(t.value); document.getElementById("copied").textContent = "Copiado"; }
+  catch(e){ t.select(); document.getElementById("copied").textContent = "Selecciónalo y cópialo a mano"; }
+});
+document.getElementById("reset").addEventListener("click", () => { S = JSON.parse(JSON.stringify(DEF)); save(); init(); });
+const ro = new ResizeObserver(() => refresh()); ro.observe(document.getElementById("fig"));
+function init(){ buildSliders(); buildStats(); buildLevels(); buildSelect(); refresh(); }
+init();
+}
+</script>
+</body>
+</html>

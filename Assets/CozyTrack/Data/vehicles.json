@@ -1,0 +1,662 @@
+{
+  "Cart": {
+    "name_es": "Carrito de la compra",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 3,
+      "weight": 2
+    },
+    "paint": "Sky",
+    "trim": "Coral",
+    "wheels": 4,
+    "triangles": 2504,
+    "size_m": [
+      0.64,
+      1.02,
+      0.82
+    ]
+  },
+  "EScooter": {
+    "name_es": "Patinete eléctrico",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 3,
+      "acceleration": 5,
+      "grip": 2,
+      "weight": 1
+    },
+    "paint": "Mint",
+    "trim": "Night",
+    "wheels": 2,
+    "triangles": 1344,
+    "size_m": [
+      0.62,
+      1.05,
+      0.88
+    ]
+  },
+  "Skate": {
+    "name_es": "Patín de cuatro ruedas gigante",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 3,
+      "acceleration": 4,
+      "grip": 4,
+      "weight": 1
+    },
+    "paint": "Bubblegum",
+    "trim": "Sun",
+    "wheels": 4,
+    "triangles": 2836,
+    "size_m": [
+      0.46,
+      1.01,
+      0.6
+    ]
+  },
+  "Skateboard": {
+    "name_es": "Monopatín",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 4,
+      "acceleration": 4,
+      "grip": 3,
+      "weight": 1
+    },
+    "paint": "Tangerine",
+    "trim": "Night",
+    "wheels": 4,
+    "triangles": 2600,
+    "size_m": [
+      0.36,
+      1.29,
+      0.15
+    ]
+  },
+  "Bike": {
+    "name_es": "Bicicleta",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 4,
+      "acceleration": 3,
+      "grip": 2,
+      "weight": 1
+    },
+    "paint": "Coral",
+    "trim": "Snow",
+    "wheels": 2,
+    "triangles": 1388,
+    "size_m": [
+      0.44,
+      0.94,
+      0.48
+    ]
+  },
+  "Trike": {
+    "name_es": "Triciclo",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 4,
+      "weight": 1
+    },
+    "paint": "Sun",
+    "trim": "Coral",
+    "wheels": 3,
+    "triangles": 1520,
+    "size_m": [
+      0.56,
+      0.69,
+      0.45
+    ]
+  },
+  "Stroller": {
+    "name_es": "Carrito de bebé",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 2,
+      "acceleration": 3,
+      "grip": 4,
+      "weight": 2
+    },
+    "paint": "Lilac",
+    "trim": "Snow",
+    "wheels": 4,
+    "triangles": 2592,
+    "size_m": [
+      0.61,
+      1.02,
+      0.82
+    ]
+  },
+  "Wheelbarrow": {
+    "name_es": "Carretilla",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 1,
+      "acceleration": 3,
+      "grip": 4,
+      "weight": 3
+    },
+    "paint": "Leaf",
+    "trim": "Wood",
+    "wheels": 1,
+    "triangles": 580,
+    "size_m": [
+      0.68,
+      1.22,
+      0.56
+    ]
+  },
+  "Bathtub": {
+    "name_es": "Bañera con ruedas",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 3,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 4
+    },
+    "paint": "Snow",
+    "trim": "Gold",
+    "wheels": 4,
+    "triangles": 3008,
+    "size_m": [
+      0.78,
+      1.32,
+      0.87
+    ]
+  },
+  "Taxi": {
+    "name_es": "Taxi",
+    "category": "Calle",
+    "stats": {
+      "speed": 3,
+      "acceleration": 3,
+      "grip": 3,
+      "weight": 3
+    },
+    "paint": "Sun",
+    "trim": "Night",
+    "wheels": 4,
+    "triangles": 3104,
+    "size_m": [
+      0.71,
+      1.34,
+      0.62
+    ]
+  },
+  "Bus": {
+    "name_es": "Autobús",
+    "category": "Calle",
+    "stats": {
+      "speed": 2,
+      "acceleration": 1,
+      "grip": 3,
+      "weight": 5
+    },
+    "paint": "Coral",
+    "trim": "Cream",
+    "wheels": 4,
+    "triangles": 4448,
+    "size_m": [
+      0.8,
+      1.83,
+      0.86
+    ]
+  },
+  "IceCream": {
+    "name_es": "Furgoneta de helados",
+    "category": "Calle",
+    "stats": {
+      "speed": 2,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 4
+    },
+    "paint": "Bubblegum",
+    "trim": "Cream",
+    "wheels": 4,
+    "triangles": 3716,
+    "size_m": [
+      0.78,
+      1.56,
+      1.18
+    ]
+  },
+  "FireTruck": {
+    "name_es": "Camión de bomberos",
+    "category": "Calle",
+    "stats": {
+      "speed": 3,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 5
+    },
+    "paint": "Coral",
+    "trim": "Chrome",
+    "wheels": 4,
+    "triangles": 4148,
+    "size_m": [
+      0.78,
+      1.79,
+      0.78
+    ]
+  },
+  "Ambulance": {
+    "name_es": "Ambulancia",
+    "category": "Calle",
+    "stats": {
+      "speed": 3,
+      "acceleration": 3,
+      "grip": 3,
+      "weight": 4
+    },
+    "paint": "Snow",
+    "trim": "Coral",
+    "wheels": 4,
+    "triangles": 2660,
+    "size_m": [
+      0.78,
+      1.54,
+      0.84
+    ]
+  },
+  "Camper": {
+    "name_es": "Furgoneta camper",
+    "category": "Calle",
+    "stats": {
+      "speed": 2,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 4
+    },
+    "paint": "Mint",
+    "trim": "Cream",
+    "wheels": 4,
+    "triangles": 3616,
+    "size_m": [
+      0.78,
+      1.43,
+      0.81
+    ]
+  },
+  "GolfCart": {
+    "name_es": "Carrito de golf",
+    "category": "Calle",
+    "stats": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 4,
+      "weight": 2
+    },
+    "paint": "Snow",
+    "trim": "Leaf",
+    "wheels": 4,
+    "triangles": 2704,
+    "size_m": [
+      0.76,
+      1.06,
+      0.82
+    ]
+  },
+  "Tractor": {
+    "name_es": "Tractor",
+    "category": "Trabajo",
+    "stats": {
+      "speed": 1,
+      "acceleration": 2,
+      "grip": 5,
+      "weight": 5
+    },
+    "paint": "Leaf",
+    "trim": "Sun",
+    "wheels": 4,
+    "triangles": 2804,
+    "size_m": [
+      0.66,
+      1.21,
+      0.88
+    ]
+  },
+  "Digger": {
+    "name_es": "Excavadora",
+    "category": "Trabajo",
+    "stats": {
+      "speed": 1,
+      "acceleration": 2,
+      "grip": 4,
+      "weight": 5
+    },
+    "paint": "Sun",
+    "trim": "Night",
+    "wheels": 0,
+    "triangles": 1224,
+    "size_m": [
+      0.8,
+      1.68,
+      1.05
+    ]
+  },
+  "Forklift": {
+    "name_es": "Carretilla elevadora",
+    "category": "Trabajo",
+    "stats": {
+      "speed": 1,
+      "acceleration": 4,
+      "grip": 4,
+      "weight": 4
+    },
+    "paint": "Tangerine",
+    "trim": "Night",
+    "wheels": 4,
+    "triangles": 3012,
+    "size_m": [
+      0.64,
+      1.38,
+      0.99
+    ]
+  },
+  "Mower": {
+    "name_es": "Cortacésped con asiento",
+    "category": "Trabajo",
+    "stats": {
+      "speed": 2,
+      "acceleration": 3,
+      "grip": 4,
+      "weight": 3
+    },
+    "paint": "Coral",
+    "trim": "Night",
+    "wheels": 4,
+    "triangles": 2636,
+    "size_m": [
+      0.86,
+      0.95,
+      0.69
+    ]
+  },
+  "Moto": {
+    "name_es": "Moto de carreras",
+    "category": "Motor",
+    "stats": {
+      "speed": 5,
+      "acceleration": 4,
+      "grip": 2,
+      "weight": 2
+    },
+    "paint": "Grape",
+    "trim": "Chrome",
+    "wheels": 2,
+    "triangles": 1276,
+    "size_m": [
+      0.36,
+      1.05,
+      0.43
+    ]
+  },
+  "Vespino": {
+    "name_es": "Moto scooter clásica",
+    "category": "Motor",
+    "stats": {
+      "speed": 3,
+      "acceleration": 4,
+      "grip": 3,
+      "weight": 2
+    },
+    "paint": "Sky",
+    "trim": "Cream",
+    "wheels": 2,
+    "triangles": 1684,
+    "size_m": [
+      0.44,
+      0.98,
+      0.71
+    ]
+  },
+  "Quad": {
+    "name_es": "Quad",
+    "category": "Motor",
+    "stats": {
+      "speed": 3,
+      "acceleration": 4,
+      "grip": 4,
+      "weight": 2
+    },
+    "paint": "Tangerine",
+    "trim": "Night",
+    "wheels": 4,
+    "triangles": 14040,
+    "size_m": [
+      0.62,
+      1.02,
+      0.44
+    ]
+  },
+  "Monster": {
+    "name_es": "Monstruo de ruedas gigantes",
+    "category": "Motor",
+    "stats": {
+      "speed": 3,
+      "acceleration": 3,
+      "grip": 3,
+      "weight": 5
+    },
+    "paint": "Lilac",
+    "trim": "Sun",
+    "wheels": 4,
+    "triangles": 14120,
+    "size_m": [
+      0.8,
+      1.15,
+      0.7
+    ]
+  },
+  "Rocket": {
+    "name_es": "Coche cohete",
+    "category": "Motor",
+    "stats": {
+      "speed": 5,
+      "acceleration": 3,
+      "grip": 2,
+      "weight": 3
+    },
+    "paint": "Night",
+    "trim": "Flame",
+    "wheels": 4,
+    "triangles": 2036,
+    "size_m": [
+      0.63,
+      1.57,
+      0.78
+    ]
+  },
+  "Bumper": {
+    "name_es": "Coche de choque",
+    "category": "Motor",
+    "stats": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 3,
+      "weight": 4
+    },
+    "paint": "Sky",
+    "trim": "Sun",
+    "wheels": 4,
+    "triangles": 2072,
+    "size_m": [
+      1.1,
+      1.1,
+      1.22
+    ]
+  },
+  "Sled": {
+    "name_es": "Trineo",
+    "category": "Nieve",
+    "stats": {
+      "speed": 4,
+      "acceleration": 3,
+      "grip": 1,
+      "weight": 2
+    },
+    "paint": "Coral",
+    "trim": "Wood",
+    "wheels": 0,
+    "triangles": 1328,
+    "size_m": [
+      0.62,
+      1.08,
+      0.27
+    ]
+  },
+  "Snowmobile": {
+    "name_es": "Moto de nieve",
+    "category": "Nieve",
+    "stats": {
+      "speed": 4,
+      "acceleration": 4,
+      "grip": 3,
+      "weight": 3
+    },
+    "paint": "Sky",
+    "trim": "Night",
+    "wheels": 0,
+    "triangles": 920,
+    "size_m": [
+      0.64,
+      1.3,
+      0.73
+    ]
+  },
+  "Hover": {
+    "name_es": "Aerodeslizador",
+    "category": "Agua",
+    "stats": {
+      "speed": 4,
+      "acceleration": 3,
+      "grip": 1,
+      "weight": 2
+    },
+    "paint": "Tangerine",
+    "trim": "Night",
+    "wheels": 0,
+    "triangles": 600,
+    "size_m": [
+      1.0,
+      1.0,
+      0.83
+    ]
+  },
+  "Train": {
+    "name_es": "Locomotora de juguete",
+    "category": "Raíles",
+    "stats": {
+      "speed": 3,
+      "acceleration": 2,
+      "grip": 4,
+      "weight": 5
+    },
+    "paint": "Ocean",
+    "trim": "Gold",
+    "wheels": 4,
+    "triangles": 2784,
+    "size_m": [
+      0.74,
+      1.49,
+      0.81
+    ]
+  },
+  "Tram": {
+    "name_es": "Tranvía",
+    "category": "Raíles",
+    "stats": {
+      "speed": 3,
+      "acceleration": 2,
+      "grip": 4,
+      "weight": 5
+    },
+    "paint": "Sun",
+    "trim": "Snow",
+    "wheels": 4,
+    "triangles": 4700,
+    "size_m": [
+      0.78,
+      1.82,
+      1.09
+    ]
+  },
+  "HotDog": {
+    "name_es": "Coche salchicha",
+    "category": "Cotidiano",
+    "stats": {
+      "speed": 3,
+      "acceleration": 3,
+      "grip": 3,
+      "weight": 3
+    },
+    "paint": "Sun",
+    "trim": "Coral",
+    "wheels": 4,
+    "triangles": 3588,
+    "size_m": [
+      0.7,
+      1.82,
+      0.47
+    ]
+  },
+  "Dart": {
+    "name_es": "Coche de fórmula",
+    "category": "Motor",
+    "stats": {
+      "speed": 5,
+      "acceleration": 2,
+      "grip": 3,
+      "weight": 2
+    },
+    "paint": "Coral",
+    "trim": "Snow",
+    "file": "FBX/Cars/Car_Dart.fbx"
+  },
+  "Hopper": {
+    "name_es": "Utilitario pequeño",
+    "category": "Calle",
+    "stats": {
+      "speed": 3,
+      "acceleration": 5,
+      "grip": 2,
+      "weight": 1
+    },
+    "paint": "Sun",
+    "trim": "Snow",
+    "file": "FBX/Cars/Car_Hopper.fbx"
+  },
+  "Gecko": {
+    "name_es": "Buggy",
+    "category": "Motor",
+    "stats": {
+      "speed": 2,
+      "acceleration": 4,
+      "grip": 5,
+      "weight": 2
+    },
+    "paint": "Mint",
+    "trim": "Snow",
+    "file": "FBX/Cars/Car_Gecko.fbx"
+  },
+  "Rhino": {
+    "name_es": "Todoterreno",
+    "category": "Trabajo",
+    "stats": {
+      "speed": 3,
+      "acceleration": 1,
+      "grip": 4,
+      "weight": 5
+    },
+    "paint": "Ocean",
+    "trim": "Snow",
+    "file": "FBX/Cars/Car_Rhino.fbx"
+  }
+}

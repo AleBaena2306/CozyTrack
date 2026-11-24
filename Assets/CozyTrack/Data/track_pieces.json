@@ -1,0 +1,256 @@
+{
+  "Track_2L_Straight8": {
+    "length_centerline_m": 8,
+    "lanes_start": 2,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 124
+  },
+  "Track_2L_Straight4": {
+    "length_centerline_m": 4,
+    "lanes_start": 2,
+    "end_position_blender": [
+      0.0,
+      -4.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 68
+  },
+  "Track_2L_Curve45_L": {
+    "length_centerline_m": 6.283,
+    "lanes_start": 2,
+    "end_position_blender": [
+      2.3431,
+      -5.6569,
+      0.0
+    ],
+    "end_yaw_deg": 45.0,
+    "kerbs": true,
+    "triangles": 740
+  },
+  "Track_2L_Curve45_R": {
+    "length_centerline_m": 6.283,
+    "lanes_start": 2,
+    "end_position_blender": [
+      -2.3431,
+      -5.6569,
+      0.0
+    ],
+    "end_yaw_deg": -45.0,
+    "kerbs": true,
+    "triangles": 740
+  },
+  "Track_2L_Curve90_L": {
+    "length_centerline_m": 12.566,
+    "lanes_start": 2,
+    "end_position_blender": [
+      8.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 90.0,
+    "kerbs": true,
+    "triangles": 1440
+  },
+  "Track_2L_Curve90_R": {
+    "length_centerline_m": 12.566,
+    "lanes_start": 2,
+    "end_position_blender": [
+      -8.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": -90.0,
+    "kerbs": true,
+    "triangles": 1440
+  },
+  "Track_2L_Curve90Tight_L": {
+    "length_centerline_m": 7.854,
+    "lanes_start": 2,
+    "end_position_blender": [
+      5.0,
+      -5.0,
+      0.0
+    ],
+    "end_yaw_deg": 90.0,
+    "kerbs": true,
+    "triangles": 908
+  },
+  "Track_2L_Curve90Tight_R": {
+    "length_centerline_m": 7.854,
+    "lanes_start": 2,
+    "end_position_blender": [
+      -5.0,
+      -5.0,
+      0.0
+    ],
+    "end_yaw_deg": -90.0,
+    "kerbs": true,
+    "triangles": 908
+  },
+  "Track_2L_RampUp": {
+    "length_centerline_m": 8,
+    "lanes_start": 2,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      1.5
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 908
+  },
+  "Track_2L_StartFinish": {
+    "length_centerline_m": 8,
+    "lanes_start": 2,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 608
+  },
+  "Track_4L_Straight8": {
+    "length_centerline_m": 8,
+    "lanes_start": 4,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 172
+  },
+  "Track_4L_Straight4": {
+    "length_centerline_m": 4,
+    "lanes_start": 4,
+    "end_position_blender": [
+      0.0,
+      -4.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 92
+  },
+  "Track_4L_Curve45_L": {
+    "length_centerline_m": 6.283,
+    "lanes_start": 4,
+    "end_position_blender": [
+      2.3431,
+      -5.6569,
+      0.0
+    ],
+    "end_yaw_deg": 45.0,
+    "kerbs": true,
+    "triangles": 1052
+  },
+  "Track_4L_Curve45_R": {
+    "length_centerline_m": 6.283,
+    "lanes_start": 4,
+    "end_position_blender": [
+      -2.3431,
+      -5.6569,
+      0.0
+    ],
+    "end_yaw_deg": -45.0,
+    "kerbs": true,
+    "triangles": 1052
+  },
+  "Track_4L_Curve90_L": {
+    "length_centerline_m": 12.566,
+    "lanes_start": 4,
+    "end_position_blender": [
+      8.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 90.0,
+    "kerbs": true,
+    "triangles": 2052
+  },
+  "Track_4L_Curve90_R": {
+    "length_centerline_m": 12.566,
+    "lanes_start": 4,
+    "end_position_blender": [
+      -8.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": -90.0,
+    "kerbs": true,
+    "triangles": 2052
+  },
+  "Track_4L_Curve90Tight_L": {
+    "length_centerline_m": 7.854,
+    "lanes_start": 4,
+    "end_position_blender": [
+      5.0,
+      -5.0,
+      0.0
+    ],
+    "end_yaw_deg": 90.0,
+    "kerbs": true,
+    "triangles": 1292
+  },
+  "Track_4L_Curve90Tight_R": {
+    "length_centerline_m": 7.854,
+    "lanes_start": 4,
+    "end_position_blender": [
+      -5.0,
+      -5.0,
+      0.0
+    ],
+    "end_yaw_deg": -90.0,
+    "kerbs": true,
+    "triangles": 1292
+  },
+  "Track_4L_RampUp": {
+    "length_centerline_m": 8,
+    "lanes_start": 4,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      1.5
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 1292
+  },
+  "Track_4L_StartFinish": {
+    "length_centerline_m": 8,
+    "lanes_start": 4,
+    "end_position_blender": [
+      0.0,
+      -8.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "triangles": 912
+  },
+  "Track_Split_2to4": {
+    "length_centerline_m": 10,
+    "lanes_start": 4,
+    "end_position_blender": [
+      0.0,
+      -10.0,
+      0.0
+    ],
+    "end_yaw_deg": 0.0,
+    "kerbs": false,
+    "lanes_end": 4,
+    "note": "Carriles 1 y 2 siguen rectos; 0 y 3 se abren. Girada 180 grados sirve de 4 a 2.",
+    "triangles": 1612
+  }
+}

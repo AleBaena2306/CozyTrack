@@ -1,0 +1,97 @@
+{
+  "cars": {},
+  "items": {
+    "Item_Box": {
+      "triangles": 2092
+    },
+    "Item_Coin": {
+      "triangles": 196
+    },
+    "Item_Shield": {
+      "triangles": 320
+    },
+    "Item_Projectile": {
+      "triangles": 420
+    },
+    "Item_Magnet": {
+      "triangles": 236
+    },
+    "Item_BoostPad": {
+      "triangles": 72
+    }
+  },
+  "scenery": {
+    "Prop_Playroom_ToyBlock": {
+      "theme": "Playroom",
+      "triangles": 332
+    },
+    "Prop_Playroom_Pencil": {
+      "theme": "Playroom",
+      "triangles": 134
+    },
+    "Prop_Playroom_Dice": {
+      "theme": "Playroom",
+      "triangles": 2188
+    },
+    "Prop_Playroom_BookStack": {
+      "theme": "Playroom",
+      "triangles": 600
+    },
+    "Prop_Garden_Tree": {
+      "theme": "Garden",
+      "triangles": 268
+    },
+    "Prop_Garden_Bush": {
+      "theme": "Garden",
+      "triangles": 240
+    },
+    "Prop_Garden_Flower": {
+      "theme": "Garden",
+      "triangles": 960
+    },
+    "Prop_Garden_Rock": {
+      "theme": "Garden",
+      "triangles": 20
+    },
+    "Prop_Snow_Pine": {
+      "theme": "Snow",
+      "triangles": 136
+    },
+    "Prop_Snow_Snowman": {
+      "theme": "Snow",
+      "triangles": 1346
+    },
+    "Prop_Snow_Pile": {
+      "theme": "Snow",
+      "triangles": 672
+    },
+    "Prop_Snow_IceCrystal": {
+      "theme": "Snow",
+      "triangles": 32
+    },
+    "Prop_Space_Planet": {
+      "theme": "Space",
+      "triangles": 884
+    },
+    "Prop_Space_Rocket": {
+      "theme": "Space",
+      "triangles": 216
+    },
+    "Prop_Space_Star": {
+      "theme": "Space",
+      "triangles": 36
+    },
+    "Prop_Space_Asteroid": {
+      "theme": "Space",
+      "triangles": 180
+    },
+    "Prop_Common_TrafficCone": {
+      "theme": "Common",
+      "triangles": 308
+    },
+    "Prop_Common_Flag": {
+      "theme": "Common",
+      "triangles": 218
+    }
+  }
+}
