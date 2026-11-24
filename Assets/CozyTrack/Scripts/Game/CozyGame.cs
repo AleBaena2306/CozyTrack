@@ -26,14 +26,16 @@ namespace CozyTrack
         void Awake()
         {
             I = this;
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = 60; Application.runInBackground = true;
             lib = CozyLibrary.I;
             if (lib == null || lib.toon == null) { Debug.LogError("[CozyTrack] Falta Resources/CozyLibrary: usa COZY TRACK > Configurar proyecto."); enabled = false; return; }
             LoadProfile();
+            choice = PlayerPrefs.GetString("ctCar", "Dart");
             SetupScene();
             BuildUI();
             todId = PlayerPrefs.GetString("ctTod", "atardecer");
             look = PlayerPrefs.GetString("ctLook", "normal");
+            if (!Usable(choice)) choice = CozyData.StartCars[0];
             BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin")));
             SetLook(look);
             ShowMenu();
@@ -241,7 +243,8 @@ namespace CozyTrack
             {
                 // escaparate del menú: el coche elegido gira en su plataforma
                 menuT += dt;
-                camPos = ShowroomPos + new Vector3(0, 2.4f, -10.5f); camLook = ShowroomPos + new Vector3(0, -0.9f, 0);
+                bool picking = screens.TryGetValue("car", out var cs) && cs.activeSelf;
+                camPos = ShowroomPos + new Vector3(0, 2.4f, -10.5f); camLook = ShowroomPos + new Vector3(0, picking ? -1.7f : -0.6f, 0);
                 cam.fieldOfView = 34;
                 if (showCar) showCar.transform.rotation = Quaternion.Euler(0, 200 + menuT * 25, 0);
                 sun.transform.rotation = Quaternion.Euler(42, 25, 0);

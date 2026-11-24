@@ -26,7 +26,7 @@ namespace CozyTrack
             BuildSurfaces();
             BuildLamps();
             BuildObstacles(def);
-            ApplyTod(todId);
+            ApplyTod(def.id.StartsWith("nivel") ? (def.room == "jardin" ? "atardecer" : "manana") : TodFor(def.id));
             if (state == "menu") MenuGrid();
             RefreshMenuSelections();
         }

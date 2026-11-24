@@ -41,11 +41,26 @@ namespace CozyTrack
             var i = Img(p, c, s, "Icono"); i.type = Image.Type.Simple; i.preserveAspect = true; i.raycastTarget = false; Place(i.rectTransform, anchor, pos, size); return i;
         }
 
+        // ---------- inicio: barra superior, cofres, el último coche usado y tres botones ----------
         void BuildHome()
         {
             var s = MakeScreen("menu", false);
             var T0 = s.transform;
-            // ---- barra superior ----
+            BuildTopBar(T0);
+            var race = CardButton(T0, SunC, "Race", () => OpenPick("race"), out var rf, 16);
+            var rr = (RectTransform)race.transform; rr.anchorMin = new Vector2(0, 0); rr.anchorMax = new Vector2(1, 0); rr.pivot = new Vector2(0.5f, 0); rr.offsetMin = new Vector2(60, 470); rr.offsetMax = new Vector2(-60, 690);
+            var rt = Outlined(T(rf.transform, "RACE", 96, Color.white), 6); Fill(rt.rectTransform, 10, 0, 10, 0); rt.font = fontBlack;
+            var surv = CardButton(T0, Coral, "Survival", () => OpenPick("elim"), out var sf, 14);
+            var sr = (RectTransform)surv.transform; sr.anchorMin = new Vector2(0, 0); sr.anchorMax = new Vector2(1, 0); sr.pivot = new Vector2(0.5f, 0); sr.offsetMin = new Vector2(60, 270); sr.offsetMax = new Vector2(-60, 440);
+            var st = Outlined(T(sf.transform, "SURVIVAL", 76, Color.white), 5); Fill(st.rectTransform, 10, 0, 10, 0); st.font = fontBlack;
+            var onl = CardButton(T0, CozyData.Hex("#4a4860"), "Online", () => Toast("El online llega con el servidor del estudio"), out var of, 12);
+            var orr = (RectTransform)onl.transform; orr.anchorMin = new Vector2(0, 0); orr.anchorMax = new Vector2(1, 0); orr.pivot = new Vector2(0.5f, 0); orr.offsetMin = new Vector2(60, 90); orr.offsetMax = new Vector2(-60, 240);
+            var ot = T(of.transform, "ONLINE  <size=34>· próximamente</size>", 64, Cream); Fill(ot.rectTransform, 10, 0, 10, 0); ot.font = fontBlack;
+            BuildPick(); BuildCarPick();
+        }
+
+        void BuildTopBar(Transform T0)
+        {
             var lvl = Card(T0, Cream, "Nivel", out var lvlFace, 8); Place(lvl, new Vector2(0, 1), new Vector2(28, -28), new Vector2(470, 108));
             var star = Img(lvlFace.transform, SunC, CozyTex.CircleSprite(), "Medalla"); Place(star.rectTransform, new Vector2(0, 0.5f), new Vector2(-6, 0), new Vector2(112, 112));
             IconImg(star.transform, Icon("star"), Ink, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(62, 62));
@@ -55,8 +70,6 @@ namespace CozyTrack
             var coins = Card(T0, Cream, "Monedas", out var coinFace, 8); Place(coins, new Vector2(1, 1), new Vector2(-28, -28), new Vector2(330, 108));
             var coinIcon = Img(coinFace.transform, Color.white, TexSprite("ic_coin"), "Moneda"); coinIcon.type = Image.Type.Simple; Place(coinIcon.rectTransform, new Vector2(0, 0.5f), new Vector2(10, 0), new Vector2(84, 84));
             coinPill = T(coinFace.transform, "0", 46, Ink, TextAnchor.MiddleRight); Fill(coinPill.rectTransform, 100, 4, 24, 4); coinPill.font = fontBlack;
-
-            // ---- cofres ----
             var chestRow = R("Cofres", T0); chestRow.anchorMin = new Vector2(0, 1); chestRow.anchorMax = new Vector2(1, 1); chestRow.pivot = new Vector2(0.5f, 1); chestRow.offsetMin = new Vector2(28, -460); chestRow.offsetMax = new Vector2(-28, -164);
             var hl = chestRow.gameObject.AddComponent<HorizontalLayoutGroup>(); hl.spacing = 18; hl.childControlWidth = hl.childControlHeight = true; hl.childForceExpandWidth = hl.childForceExpandHeight = true;
             for (int k = 0; k < 4; k++)
@@ -73,21 +86,75 @@ namespace CozyTrack
                 var br = (RectTransform)btn.transform; br.anchorMin = Vector2.zero; br.anchorMax = new Vector2(1, 0.25f); br.offsetMin = br.offsetMax = Vector2.zero;
                 chestBtnText[k] = Outlined(T(chestBtn[k].transform, "", 28, Color.white), 3); Fill(chestBtnText[k].rectTransform, 6, 2, 6, 2); chestBtnText[k].font = fontBlack;
             }
+        }
 
-            // ---- columna izquierda: ajustes y 1 vs 1 ----
-            SideButton(T0, "Ajustes", TexSprite("ic_gear"), new Vector2(28, -490), () => settingsPop.SetActive(true));
-            SideButton(T0, "1 vs 1\npronto", Icon("multiplayer"), new Vector2(28, -700), () => Toast("El online llega con el servidor del estudio"));
+        // ---------- elegir a qué correr (Race o Survival) ----------
+        string pickMode = "race"; bool pickTime; int pickLevel; string pickCirc = "jardin"; bool pickDaily;
+        Text pickTitle, timeChip; Transform pickList;
+        void BuildPick()
+        {
+            var s = MakeScreen("pick");
+            var (_, c) = Scroll(s.transform, 40);
+            var head = Row(c, 120); Btn(head, "‹ Volver", Cream, Ink, ShowMenu, 110, 38).GetComponent<LayoutElement>().preferredWidth = 260;
+            pickTitle = T(head, "", 72, Ink); pickTitle.font = fontBlack; pickTitle.gameObject.AddComponent<LayoutElement>().flexibleWidth = 3;
+            pickList = VList(c, 22);
+        }
+        void OpenPick(string m)
+        {
+            pickMode = m; pickTime = false;
+            ShowScreen("pick"); RefreshPick();
+        }
+        void RefreshPick()
+        {
+            foreach (Transform t in pickList) Destroy(t.gameObject);
+            pickTitle.text = pickMode == "race" ? "RACE" : "SURVIVAL";
+            if (pickMode == "race")
+            {
+                int next = Mathf.Min(CozyData.LevelCount, prof.level + 1);
+                WideCard(pickList, CozyData.Hex("#73e0a6"), $"Niveles · nivel {next}", $"{prof.level}/{CozyData.LevelCount} superados. Gana al rival para abrir el siguiente.", () => { pickLevel = next; pickDaily = false; OpenCarPick(); });
+                var d = DailyDef(); bool done = prof.dailyLast == d.key;
+                WideCard(pickList, SunC, "Desafío diario" + (done ? " · superado" : ""), $"{CozyData.DailyGoals[d.goal]} con {CozyData.Car(d.car).name} en {CozyData.Circuit(d.circ).n}. Racha: {StreakNow()}.", () => { pickDaily = true; StartDaily(); });
+                var tb = Btn(pickList, "", Cream, Ink, () => { pickTime = !pickTime; timeChip.text = (pickTime ? "✓ " : "") + "Contrarreloj contra tu fantasma"; }, 100, 36); timeChip = tb.GetComponentInChildren<Text>();
+                timeChip.text = "Contrarreloj contra tu fantasma";
+            }
+            else LayoutText(pickList, "Al cerrar cada vuelta el líder, el último queda fuera.", 34, Muted, 70, FontStyle.Normal);
+            var grid = R("Circuitos", pickList); var g = grid.gameObject.AddComponent<GridLayoutGroup>(); g.cellSize = new Vector2(482, 330); g.spacing = new Vector2(16, 16); g.constraint = GridLayoutGroup.Constraint.FixedColumnCount; g.constraintCount = 2;
+            grid.gameObject.AddComponent<LayoutElement>().preferredHeight = 2 * 346;
+            string[] cols = { "#a8d8b9", "#f2d6c4", "#9fd8c0", "#8fc8f0" };
+            for (int k = 0; k < CozyData.Circuits.Length; k++)
+            {
+                var cd = CozyData.Circuits[k];
+                var b = CardButton(grid, CozyData.Hex(cols[k % cols.Length]), cd.n, () => { pickCirc = cd.id; pickLevel = 0; pickDaily = false; OpenCarPick(); }, out var f, 12);
+                var n = T(f.transform, cd.n, 54, Ink); Place(n.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -20), new Vector2(440, 70)); n.font = fontBlack;
+                var tod = T(f.transform, CozyData.Tod(TodFor(cd.id)).n, 28, Ink, TextAnchor.MiddleCenter, FontStyle.Normal); Place(tod.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -92), new Vector2(440, 40));
+                var de = T(f.transform, cd.desc, 26, Ink, TextAnchor.UpperCenter, FontStyle.Normal); Place(de.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 24), new Vector2(430, 170));
+            }
+        }
+        void WideCard(Transform p, Color c, string title, string sub, System.Action on)
+        {
+            var b = CardButton(p, c, title, on, out var f, 12); b.gameObject.AddComponent<LayoutElement>().preferredHeight = 190;
+            var t = T(f.transform, title, 50, Ink); Place(t.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -16), new Vector2(900, 64)); t.font = fontBlack;
+            var s = T(f.transform, sub, 30, Ink, TextAnchor.MiddleCenter, FontStyle.Normal); Place(s.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 18), new Vector2(900, 90));
+        }
+        // la hora del día la pone el circuito
+        public static string TodFor(string circuitId)
+        {
+            switch (circuitId) { case "jardin": return "atardecer"; case "salon": return "manana"; case "cocina": return "manana"; case "bano": return "noche"; }
+            return "atardecer";
+        }
 
-            // ---- desafío diario (como la oferta limitada de la referencia) ----
-            var dcard = CardButton(T0, SunC, "Diario", StartDaily, out var dface, 12); Place((RectTransform)dcard.transform, new Vector2(1, 1), new Vector2(-28, -490), new Vector2(340, 300));
-            var tag = Card(dface.transform, Coral, "Etiqueta", out var tagFace, 6); Place(tag, new Vector2(0.5f, 1), new Vector2(0, 26), new Vector2(240, 62));
-            var tagT = Outlined(T(tagFace.transform, "Desafío diario", 28, Color.white), 3); Fill(tagT.rectTransform, 6, 2, 6, 2); tagT.font = fontBlack;
-            IconImg(dface.transform, TexSprite("ic_chest_gold"), Color.white, new Vector2(0.5f, 1), new Vector2(0, -44), new Vector2(110, 96));
-            dailyGoal = T(dface.transform, "", 28, Ink); Place(dailyGoal.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 64), new Vector2(310, 100));
-            dailyStreak = T(dface.transform, "", 26, Ink); Place(dailyStreak.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 16), new Vector2(310, 44)); dailyStreak.font = fontBlack;
-
-            // ---- coche elegido ----
-            var name = Card(T0, Cream, "Coche", out var nameFace, 8); Place(name, new Vector2(0.5f, 0), new Vector2(0, 640), new Vector2(600, 150));
+        // ---------- elegir vehículo y personalizarlo (como la selección antes de correr en Crash Team Racing) ----------
+        Text carPickTitle, carCoins; Transform carStickers, carUps;
+        void BuildCarPick()
+        {
+            var s = MakeScreen("car", false); var T0 = s.transform;
+            var back = CardButton(T0, Cream, "Volver", () => { ShowScreen("pick"); RefreshPick(); }, out var bf, 8); Place((RectTransform)back.transform, new Vector2(0, 1), new Vector2(28, -28), new Vector2(220, 100));
+            var bt = T(bf.transform, "‹ Volver", 36, Ink); Fill(bt.rectTransform); bt.font = fontBlack;
+            var coins = Card(T0, Cream, "Monedas", out var cf, 8); Place(coins, new Vector2(1, 1), new Vector2(-28, -28), new Vector2(300, 100));
+            carCoins = T(cf.transform, "", 40, Ink); Fill(carCoins.rectTransform, 10, 4, 10, 4); carCoins.font = fontBlack;
+            carPickTitle = T(T0, "", 40, Ink); Place(carPickTitle.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(1000, 60)); carPickTitle.font = fontBlack;
+            // nombre, rol y stats
+            var name = Card(T0, Cream, "Coche", out var nameFace, 8); Place(name, new Vector2(0.5f, 0), new Vector2(0, 880), new Vector2(600, 150));
             carName = T(nameFace.transform, "", 50, Ink); Place(carName.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -6), new Vector2(560, 60)); carName.font = fontBlack;
             carRole = T(nameFace.transform, "", 28, Muted, TextAnchor.MiddleCenter, FontStyle.Normal); Place(carRole.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -62), new Vector2(560, 36));
             for (int k = 0; k < 4; k++)
@@ -95,29 +162,63 @@ namespace CozyTrack
                 var sb = Img(nameFace.transform, new Color(0.9f, 0.88f, 0.83f), null, CozyData.StatNames[k]); Place(sb.rectTransform, new Vector2(0, 0), new Vector2(40 + k * 132, 16), new Vector2(116, 16)); sb.raycastTarget = false;
                 statFills[k] = Img(sb.transform, Coral, null, "Relleno"); var sr = statFills[k].rectTransform; sr.anchorMin = Vector2.zero; sr.anchorMax = new Vector2(0, 1); sr.offsetMin = sr.offsetMax = Vector2.zero;
             }
-            ArrowButton(T0, new Vector2(0.5f, 0), new Vector2(-380, 660), false, () => CycleCar(-1));
-            ArrowButton(T0, new Vector2(0.5f, 0), new Vector2(380, 660), true, () => CycleCar(1));
-
-            // ---- selectores de circuito y modo ----
-            Selector(T0, new Vector2(0, 0), new Vector2(28, 470), out circPill, d => CycleCircuit(d));
-            Selector(T0, new Vector2(1, 0), new Vector2(-28, 470), out modePill, d => { int i = System.Array.IndexOf(ModeIds, mode); if (i < 0) i = 0; mode = ModeIds[(i + d + ModeIds.Length) % ModeIds.Length]; RefreshMenuSelections(); });
-
-            // ---- ¡A correr! + Taller ----
-            var play = CardButton(T0, SunC, "A correr", () => { levelNum = 0; if (mode == "level" || mode == "daily") mode = "race"; StartRace(); }, out var playFace, 16);
-            var pr = (RectTransform)play.transform; pr.anchorMin = new Vector2(0, 0); pr.anchorMax = new Vector2(1, 0); pr.pivot = new Vector2(0.5f, 0); pr.offsetMin = new Vector2(28, 200); pr.offsetMax = new Vector2(-330, 380);
-            var pt = Outlined(T(playFace.transform, "¡A CORRER!", 84, Color.white), 6); Fill(pt.rectTransform, 10, 0, 10, 0); pt.font = fontBlack;
-            var taller = CardButton(T0, CozyData.Hex("#4a4860"), "Taller", () => ShowScreen("taller"), out var tf, 16); Place((RectTransform)taller.transform, new Vector2(1, 0), new Vector2(-28, 200), new Vector2(280, 180));
-            IconImg(tf.transform, TexSprite("ic_wrench"), Cream, new Vector2(0.5f, 1), new Vector2(0, -14), new Vector2(92, 92));
-            var tt = T(tf.transform, "Taller", 36, Cream); Place(tt.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 12), new Vector2(240, 46)); tt.font = fontBlack;
-
-            // ---- barra de pestañas ----
-            var tabs = Img(T0, Cream, null, "Pestanas"); var tr = tabs.rectTransform; tr.anchorMin = new Vector2(0, 0); tr.anchorMax = new Vector2(1, 0); tr.pivot = new Vector2(0.5f, 0); tr.offsetMin = new Vector2(0, -30); tr.offsetMax = new Vector2(0, 170);
-            var sh = tabs.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(0.18f, 0.16f, 0.24f, 0.25f); sh.effectDistance = new Vector2(0, 8);
-            var th = R("Fila", tabs.transform); Fill(th, 10, 34, 10, 10); var thl = th.gameObject.AddComponent<HorizontalLayoutGroup>(); thl.spacing = 10; thl.childControlWidth = thl.childControlHeight = true; thl.childForceExpandWidth = thl.childForceExpandHeight = true;
-            Tab(th, "Garaje", TexSprite("ic_car"), false, OpenGarage);
-            Tab(th, "Inicio", Icon("home"), true, ShowMenu);
-            Tab(th, "Niveles", Icon("trophy"), false, () => ShowScreen("levels"));
-            Tab(th, "Álbum", TexSprite("ic_book"), false, () => ShowScreen("album"));
+            ArrowButton(T0, new Vector2(0.5f, 0), new Vector2(-380, 900), false, () => { CycleCar(-1); RefreshCarPick(); });
+            ArrowButton(T0, new Vector2(0.5f, 0), new Vector2(380, 900), true, () => { CycleCar(1); RefreshCarPick(); });
+            // personalización: pegatina y mejoras
+            var panel = Card(T0, Cream, "Personalizacion", out var pf, 10); var pr = panel; pr.anchorMin = new Vector2(0, 0); pr.anchorMax = new Vector2(1, 0); pr.pivot = new Vector2(0.5f, 0); pr.offsetMin = new Vector2(28, 300); pr.offsetMax = new Vector2(-28, 850);
+            var v = VList(pf.transform, 10, new RectOffset(24, 24, 18, 18)); Fill(v);
+            LayoutText(v, "Pegatina", 32, Ink, 44);
+            var sg = R("Pegatinas", v); var g = sg.gameObject.AddComponent<GridLayoutGroup>(); g.cellSize = new Vector2(84, 84); g.spacing = new Vector2(8, 8); g.childAlignment = TextAnchor.MiddleCenter;
+            sg.gameObject.AddComponent<LayoutElement>().preferredHeight = 180; carStickers = sg;
+            LayoutText(v, "Mejoras", 32, Ink, 44);
+            carUps = VList(v, 6);
+            var go = CardButton(T0, SunC, "Correr", GoRace, out var gf, 16); var gr = (RectTransform)go.transform; gr.anchorMin = new Vector2(0, 0); gr.anchorMax = new Vector2(1, 0); gr.pivot = new Vector2(0.5f, 0); gr.offsetMin = new Vector2(60, 80); gr.offsetMax = new Vector2(-60, 260);
+            var gt = Outlined(T(gf.transform, "¡A CORRER!", 84, Color.white), 6); Fill(gt.rectTransform, 10, 0, 10, 0); gt.font = fontBlack;
+        }
+        void OpenCarPick()
+        {
+            if (!Usable(choice)) choice = CozyData.StartCars[0];
+            ShowScreen("car"); UpdateShowroom(); RefreshCarPick();
+        }
+        void RefreshCarPick()
+        {
+            if (!carPickTitle) return;
+            carPickTitle.text = pickLevel > 0 ? $"Nivel {pickLevel}" : (pickMode == "elim" ? "Survival · " : pickTime ? "Contrarreloj · " : "Race · ") + CozyData.Circuit(pickCirc).n;
+            carCoins.text = $"{prof.coins} monedas";
+            foreach (Transform t in carStickers) Destroy(t.gameObject);
+            foreach (Transform t in carUps) Destroy(t.gameObject);
+            string cur = StickerOf(choice);
+            void AddSticker(string id)
+            {
+                bool owned = id == null || prof.stickers.Contains(id);
+                var img = Img(carStickers, cur == id ? Ink : Color.white, null, "Pegatina");
+                if (owned) img.gameObject.AddComponent<Button>().onClick.AddListener(() => { SetSticker(choice, id); UpdateShowroom(); RefreshCarPick(); });
+                else img.color = new Color(0.9f, 0.88f, 0.83f);
+                if (id != null && owned) { var ri = R("Img", img.transform).gameObject.AddComponent<RawImage>(); ri.texture = CozyTex.Get("sticker_" + id); Fill(ri.rectTransform, 6, 6, 6, 6); ri.raycastTarget = false; }
+                else { var t = T(img.transform, owned ? "—" : "?", 36, owned ? (cur == id ? Cream : Ink) : Muted); Fill(t.rectTransform); }
+            }
+            AddSticker(null); foreach (var id in CozyData.StickerIds) AddSticker(id);
+            var up = Upgrades(choice);
+            for (int k = 0; k < 3; k++)
+            {
+                int kk = k; var row = Row(carUps, 70, 10);
+                Label(row, CozyData.UpgradeNames[k], 230).fontSize = 30;
+                var pips = R("Niveles", row); pips.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+                for (int p = 0; p < 5; p++) { var pip = Img(pips, p < up[k] ? Coral : new Color(0.9f, 0.88f, 0.83f)); var ppr = pip.rectTransform; ppr.anchorMin = ppr.anchorMax = new Vector2(0, 0.5f); ppr.pivot = new Vector2(0, 0.5f); ppr.anchoredPosition = new Vector2(p * 52, 0); ppr.sizeDelta = new Vector2(44, 20); }
+                string label = up[k] >= 5 ? "Máximo" : $"+ {CozyData.UpgradeCost[up[k]]}";
+                var b = Btn(row, label, up[k] >= 5 ? new Color(0.9f, 0.88f, 0.83f) : SunC, Ink, () => { if (BuyUpgrade(choice, kk)) { Toast("¡Mejorado!"); RefreshCarPick(); } else Toast("Te faltan monedas"); }, 64, 30);
+                b.GetComponent<LayoutElement>().preferredWidth = 220; b.GetComponent<LayoutElement>().flexibleWidth = 0;
+            }
+            RefreshHome();
+        }
+        void GoRace()
+        {
+            PlayerPrefs.SetString("ctCar", choice);
+            if (pickLevel > 0) { StartLevel(pickLevel); return; }
+            mode = pickMode == "elim" ? "elim" : pickTime ? "time" : "race";
+            levelNum = 0;
+            BuildCircuit(CozyData.Circuit(pickCirc));
+            StartRace();
         }
 
         void SideButton(Transform p, string label, Sprite icon, Vector2 pos, System.Action on)
@@ -210,19 +311,15 @@ namespace CozyTrack
             lvlText.text = $"Nivel {prof.level}/{CozyData.LevelCount}";
             lvlFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(prof.level / (float)CozyData.LevelCount), 1);
             coinPill.text = prof.coins.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("es-ES"));
-            var d = CozyData.Car(choice); carName.text = d.name; carRole.text = d.role;
+            var d = CozyData.Car(choice);
+            if (carName) { carName.text = d.name; carRole.text = d.role; }
             var up = Upgrades(choice);
-            for (int k = 0; k < 4; k++) { statFills[k].color = d.color; statFills[k].rectTransform.anchorMax = new Vector2(d.st[k] / 5f, 1); }
-            circPill.text = circ != null && !circ.id.StartsWith("nivel") ? circ.n : "Jardín";
-            int mi = System.Array.IndexOf(ModeIds, mode); modePill.text = mi >= 0 ? ModeNames[mi] : "Carrera";
-            var dd = DailyDef(); bool done = prof.dailyLast == dd.key;
-            dailyGoal.text = done ? "¡Superado hoy!\nVuelve mañana" : $"{CozyData.DailyGoals[dd.goal]}\n<size=22>{CozyData.Car(dd.car).name} · {CozyData.Circuit(dd.circ).n}</size>";
-            dailyStreak.text = $"Racha: {StreakNow()} {(StreakNow() == 1 ? "día" : "días")}";
+            for (int k = 0; k < 4; k++) if (statFills[k]) { statFills[k].color = d.color; statFills[k].rectTransform.anchorMax = new Vector2(d.st[k] / 5f, 1); }
         }
 
         void UpdateChestsUI()
         {
-            if (state != "menu" || !screens["menu"].activeSelf) return;
+            if (state != "menu" || !screens["menu"].activeSelf || chestState[0] == null) return;
             for (int k = 0; k < 4; k++)
             {
                 var s = prof.chests[k]; long total = s.kind == "oro" ? 30 * 60 : 5 * 60;

@@ -67,7 +67,7 @@ static class CozyEditorRemote
         switch (parts[0])
         {
             case "refresh": AssetDatabase.Refresh(); break;
-            case "menu": EditorApplication.ExecuteMenuItem(parts[1]); break;
+            case "menuitem": EditorApplication.ExecuteMenuItem(parts[1]); break;
             case "play": if (!EditorApplication.isPlaying) EditorApplication.isPlaying = true; break;
             case "stop": EditorApplication.isPlaying = false; break;
             case "shot": ScreenCapture.CaptureScreenshot(F(parts.Length > 1 ? parts[1] : "cozy_shot.png")); break;
