@@ -112,7 +112,7 @@ namespace CozyTrack
             }
             bubbles.SetActive(false);
 
-            BuildHome(); BuildHud(); BuildResults(); BuildGarageUI(); BuildAlbum(); BuildLevels(); BuildTaller(); BuildSettings();
+            BuildHome(); BuildOnline(); BuildHud(); BuildResults(); BuildGarageUI(); BuildAlbum(); BuildLevels(); BuildTaller(); BuildSettings();
 
             flashImg = Img(col, new Color(1, 1, 1, 0), null, "Destello"); Fill(flashImg.rectTransform); flashImg.sprite = null; flashImg.raycastTarget = false;
             toastText = T(col, "", 64, Cream); var tr = toastText.rectTransform; tr.anchorMin = new Vector2(0, 0.66f); tr.anchorMax = new Vector2(1, 0.74f); tr.offsetMin = tr.offsetMax = Vector2.zero;
@@ -179,8 +179,8 @@ namespace CozyTrack
             photoLine1 = T(pb.transform, "", 40, Ink); var l1 = photoLine1.rectTransform; l1.anchorMin = new Vector2(0, 0); l1.anchorMax = new Vector2(1, 0); l1.pivot = new Vector2(0.5f, 0); l1.anchoredPosition = new Vector2(0, 60); l1.sizeDelta = new Vector2(-40, 56);
             photoLine2 = T(pb.transform, "", 28, Muted, TextAnchor.MiddleCenter, FontStyle.Normal); var l2 = photoLine2.rectTransform; l2.anchorMin = new Vector2(0, 0); l2.anchorMax = new Vector2(1, 0); l2.pivot = new Vector2(0.5f, 0); l2.anchoredPosition = new Vector2(0, 18); l2.sizeDelta = new Vector2(-40, 40);
             var row = Row(c, 140);
-            Btn(row, "Otra vez", Coral, Color.white, () => { if (mode == "daily") StartDaily(); else if (mode == "level") StartLevel(levelNum); else StartRace(); }, 140, 50);
-            Btn(row, "Menú", Cream, Ink, () => { if (mode == "daily" || mode == "level") { mode = "race"; if (circId.StartsWith("nivel")) BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin"))); } MenuGrid(); ShowMenu(); }, 140, 50);
+            Btn(row, "Otra vez", Coral, Color.white, () => { if (mode == "daily") StartDaily(); else if (mode == "level") StartLevel(levelNum); else if (mode == "online") { mode = "race"; FindRace(); } else StartRace(); }, 140, 50);
+            Btn(row, "Menú", Cream, Ink, () => { if (mode == "online") { CloseNet(); mode = "race"; MenuGrid(); OpenOnline(); return; } if (mode == "daily" || mode == "level") { mode = "race"; if (circId.StartsWith("nivel")) BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin"))); } MenuGrid(); ShowMenu(); }, 140, 50);
             if (mode == "level") { }
         }
 

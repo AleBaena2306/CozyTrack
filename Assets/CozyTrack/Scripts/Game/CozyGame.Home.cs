@@ -53,9 +53,9 @@ namespace CozyTrack
             var surv = CardButton(T0, Coral, "Survival", () => OpenPick("elim"), out var sf, 14);
             var sr = (RectTransform)surv.transform; sr.anchorMin = new Vector2(0, 0); sr.anchorMax = new Vector2(1, 0); sr.pivot = new Vector2(0.5f, 0); sr.offsetMin = new Vector2(60, 270); sr.offsetMax = new Vector2(-60, 440);
             var st = Outlined(T(sf.transform, "SURVIVAL", 76, Color.white), 5); Fill(st.rectTransform, 10, 0, 10, 0); st.font = fontBlack;
-            var onl = CardButton(T0, CozyData.Hex("#4a4860"), "Online", () => Toast("El online llega con el servidor del estudio"), out var of, 12);
+            var onl = CardButton(T0, CozyData.Hex("#2F7DD1"), "Online", OpenOnline, out var of, 12);
             var orr = (RectTransform)onl.transform; orr.anchorMin = new Vector2(0, 0); orr.anchorMax = new Vector2(1, 0); orr.pivot = new Vector2(0.5f, 0); orr.offsetMin = new Vector2(60, 90); orr.offsetMax = new Vector2(-60, 240);
-            var ot = T(of.transform, "ONLINE  <size=34>· próximamente</size>", 64, Cream); Fill(ot.rectTransform, 10, 0, 10, 0); ot.font = fontBlack;
+            var ot = Outlined(T(of.transform, "ONLINE", 72, Color.white), 5); Fill(ot.rectTransform, 10, 0, 10, 0); ot.font = fontBlack;
             BuildPick(); BuildCarPick();
         }
 

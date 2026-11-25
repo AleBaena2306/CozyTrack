@@ -191,6 +191,7 @@ namespace CozyTrack
             float dt = Mathf.Min(0.05f, Time.deltaTime);
             ReadInput(dt);
             DevCommands(dt);
+            OnlineTick(dt);
             if (state == "count")
             {
                 countT -= dt;
@@ -314,6 +315,10 @@ namespace CozyTrack
                         case "taller": ShowScreen("taller"); break;
                         case "daily": StartDaily(); break;
                         case "menu": ShowMenu(); break;
+                        case "online": OpenOnline(); break;
+                        case "find": FindRace(); break;
+                        case "board": OpenBoard(); break;
+                        case "account": OpenAccount(); break;
                         case "scroll": menuScroll.verticalNormalizedPosition = float.Parse(p[1], System.Globalization.CultureInfo.InvariantCulture); break;
                     }
                 }

@@ -107,7 +107,9 @@ namespace CozyTrack
             laps = mode == "time" ? 2 : 3;
             player = MakeCar(choice, 1, true); cars.Add(player);
             string chip;
-            if (mode != "time")
+            oppCar = null;
+            if (mode == "online") chip = OnlineCars();
+            else if (mode != "time")
             {
                 var others = mode == "level" ? new List<string> { levelRival }.Concat(PickRivals().Where(n => n != levelRival).Take(2)).ToList() : PickRivals();
                 int[] lanes = { 0, 2, 3 };
@@ -121,7 +123,7 @@ namespace CozyTrack
             rec.Clear(); recT = 0; elimOut = 0; elimLaps = 0;
             SetRivalChip(chip);
             foreach (var co in coins) { co.taken = false; co.m.SetActive(true); }
-            foreach (var b in boxes) { b.t = 0; b.m.SetActive(true); }
+            foreach (var b in boxes) { b.t = 0; b.m.SetActive(mode != "online"); }   // online: sin objetos
             raceT = 0; countT = 3.2f; state = "count";
             camPos = Track.World(0, 0, 0).pos + new Vector3(0, 10, -7);
             ShowScreen("hud");
@@ -169,7 +171,7 @@ namespace CozyTrack
                     if (Vector2.Distance(new Vector2(tp.x, tp.z), new Vector2(pc.x, pc.z)) < 0.75f) { HitCar(c, tr.owner, tr.type == "oil" ? "slip" : "spin"); Destroy(tr.m); traps.RemoveAt(t); }
                 }
             }
-            foreach (var b in boxes) if (!b.m.activeSelf) { b.t -= dt; if (b.t <= 0) b.m.SetActive(true); }
+            if (mode != "online") foreach (var b in boxes) if (!b.m.activeSelf) { b.t -= dt; if (b.t <= 0) b.m.SetActive(true); }
             for (int k = shots.Count - 1; k >= 0; k--)
             {
                 var s = shots[k]; s.life -= dt;
@@ -261,6 +263,7 @@ namespace CozyTrack
         {
             c.cool = Mathf.Max(0, c.cool - dt); c.shield = Mathf.Max(0, c.shield - dt); c.turbo = Mathf.Max(0, c.turbo - dt);
             c.superT = Mathf.Max(0, c.superT - dt); c.autoT = Mathf.Max(0, c.autoT - dt); c.blackT = Mathf.Max(0, c.blackT - dt); c.bubbleT = Mathf.Max(0, c.bubbleT - dt); c.magnetT = Mathf.Max(0, c.magnetT - dt);
+            if (c.remote) { StepRemote(c, dt); return; }
             if (c.isOut || (c.done >= 0 && !c.isPlayer && c.v < 0.1f)) return;
             if (c.crash > 0)
             {
@@ -369,7 +372,7 @@ namespace CozyTrack
             for (int x = 0; x < cars.Count; x++) for (int y = x + 1; y < cars.Count; y++)
             {
                 var A = cars[x]; var B = cars[y];
-                if (A.isOut || B.isOut || A.crash > 0 || B.crash > 0 || A.cool > 0 || B.cool > 0) continue;
+                if (A.remote || B.remote || A.isOut || B.isOut || A.crash > 0 || B.crash > 0 || A.cool > 0 || B.cool > 0) continue;
                 var pa = Track.World(A.i, A.u, A.o).pos; var pb = Track.World(B.i, B.u, B.o).pos;
                 float mA = A.m * (A.shield > 0 ? 4 : 1), mB = B.m * (B.shield > 0 ? 4 : 1);
                 // cruce a nivel del ocho: los dos pasos se cortan en ángulo recto; el más ligero sale girando

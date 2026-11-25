@@ -19,6 +19,7 @@ namespace CozyTrack
         public Vector3 flyPos, flyVel; public float flyRot;
         public GameObject shieldFx, mark; public bool fxOn;
         public Renderer[] renderers; public Material[][] origMats;
+        public bool remote; public float netP, netO, netV, netAt, shownP;   // rival online: lo mueve el servidor
 
         public void SetPhysics(int[] st, int upSpeed, int upAccel, int upBrake)
         {

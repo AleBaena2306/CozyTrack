@@ -183,6 +183,7 @@ namespace CozyTrack
         // ---------- final de carrera ----------
         void Finish()
         {
+            if (mode == "online") { OnlineFinish(); return; }
             state = "end";
             var act = cars.Where(c => !c.isOut).OrderBy(c => c.done >= 0 ? c.done : 1e9f).ThenByDescending(Prog).ToList();
             var order = act.Concat(cars.Where(c => c.isOut).OrderByDescending(c => c.outAt)).ToList();
