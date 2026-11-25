@@ -1,6 +1,6 @@
 # Cozy Track · informe de los bots de prueba
 
-3215 carreras simuladas en 2.2 min reales · 12 jugadores por perfil · semilla 1234 · versión 0.0.23
+3215 carreras simuladas en 3.1 min reales · 12 jugadores por perfil · semilla 1234 · versión 0.0.24
 
 Los bots juegan el juego real (misma física, IA, niveles, monedas, cofres y mejoras). Solo cambia quién pulsa: cada perfil tiene su precisión en las curvas, su tiempo de reacción, sus despistes y su forma de gastar.
 
