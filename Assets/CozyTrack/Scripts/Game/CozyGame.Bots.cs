@@ -15,7 +15,7 @@ namespace CozyTrack
     //   CozyTrack -batchmode -nographics -cozybots -botPlayers 12 -botHours 10 -botOut informe
     // Cientos de jugadores simulados de tres perfiles (novato, casual, experto) juegan con las mismas
     // reglas, física, IA, niveles, cofres, monedas y mejoras que una persona; solo cambia quién pulsa.
-    // Al terminar se escribe report.md (en español), races.csv y summary.json, y el juego se cierra.
+    // Al terminar se escribe report.md (en español), races.csv y alerts.txt, y el juego se cierra.
     // ============================================================================================
     public partial class CozyGame
     {
