@@ -30,11 +30,11 @@ namespace CozyTrack
         }
         static readonly BotPersona[] BotPersonas =
         {
-            new BotPersona { id = "novato", name = "Novato (6-8 años)", k = 0.80f, kNoise = 0.06f, react = 0.38f, mistake = 0.12f, mistakeOver = 0.16f,
+            new BotPersona { id = "novato", name = "Novato (6-8 años)", k = 0.83f, kNoise = 0.06f, react = 0.38f, mistake = 0.09f, mistakeOver = 0.05f,
                 startMean = 0.2f, startSd = 0.9f, laneRate = 0.25f, adRate = 0.35f, buyRate = 0.4f, grind = 0.1f, menuSec = 40, switchCar = 0.4f, drafts = false, smartItems = false, avoid = false },
-            new BotPersona { id = "casual", name = "Casual", k = 0.87f, kNoise = 0.04f, react = 0.27f, mistake = 0.05f, mistakeOver = 0.13f,
+            new BotPersona { id = "casual", name = "Casual", k = 0.88f, kNoise = 0.04f, react = 0.27f, mistake = 0.04f, mistakeOver = 0.04f,
                 startMean = 0.7f, startSd = 0.5f, laneRate = 0.6f, adRate = 0.5f, buyRate = 0.8f, grind = 0.25f, menuSec = 30, switchCar = 0.15f, drafts = false, smartItems = false, avoid = true },
-            new BotPersona { id = "experto", name = "Experto", k = 0.95f, kNoise = 0.02f, react = 0.16f, mistake = 0.012f, mistakeOver = 0.1f,
+            new BotPersona { id = "experto", name = "Experto", k = 0.95f, kNoise = 0.02f, react = 0.16f, mistake = 0.01f, mistakeOver = 0.03f,
                 startMean = 0.35f, startSd = 0.2f, laneRate = 1f, adRate = 0.7f, buyRate = 1f, grind = 0.35f, menuSec = 20, switchCar = 0f, drafts = true, smartItems = true, avoid = true },
         };
 
@@ -59,7 +59,7 @@ namespace CozyTrack
         readonly Queue<Action> botJobs = new Queue<Action>();
         readonly Dictionary<string, int> botLogs = new Dictionary<string, int>();
         BotPlayer botCur; BotPersona botP; string botOut = "bot-report"; int botPerPersona = 12; float botHours = 10; int botSeed = 1234;
-        float botCurveK, botItemT, botLaneT; bool botMist; int botCurveI = -1; readonly long botStartT = System.Diagnostics.Stopwatch.GetTimestamp();
+        float botCurveK, botItemT, botLaneT, botLate; bool botMist; int botCurveI = -1; readonly long botStartT = System.Diagnostics.Stopwatch.GetTimestamp();
         const float BotDt = 1f / 60f;
 
         static string Arg(string name, string def)
@@ -313,6 +313,8 @@ namespace CozyTrack
             if (ci != botCurveI && ci >= 0)
             {
                 botCurveI = ci; botMist = UnityEngine.Random.value < botP.mistake;
+                // el despiste típico de una persona: suelta tarde (entre 0,3 y 0,9 s) y llega pasada a la curva
+                botLate = botMist ? 0.3f + UnityEngine.Random.value * 0.6f : 0;
                 botCurveK = Mathf.Clamp(botP.k + Gauss() * botP.kNoise + (botMist ? botP.mistakeOver : 0), 0.6f, 1.2f);
             }
             float kk = botCurveK * (c.bubbleT > 0 ? 0.85f : 1);
@@ -320,7 +322,7 @@ namespace CozyTrack
             float r = Track.Radius(c.i, c.o);
             if (r < float.PositiveInfinity) target = Mathf.Min(target, VSafe(c, c.i, c.o) * kk);
             var bt = BrakeTarget(c, kk);
-            if (bt != null && bt.Value.brakeAt <= c.v * (botP.react + (botMist ? 0.25f : 0))) target = Mathf.Min(target, bt.Value.vt);
+            if (bt != null && bt.Value.brakeAt <= c.v * (botP.react - botLate)) target = Mathf.Min(target, bt.Value.vt);
             return c.v < target;
         }
 
@@ -535,7 +537,7 @@ namespace CozyTrack
             sb.AppendLine();
             sb.Append(sec);
             sb.AppendLine("---");
-            sb.AppendLine("Perfiles: **Novato** (curvas al 80 % del límite, reacciona en 0,38 s, se le va la mano en el 12 % de las curvas, apenas cambia de carril, usa los objetos al azar), **Casual** (87 %, 0,27 s, 5 %), **Experto** (95 %, 0,16 s, 1 %, busca el rebufo y usa los objetos en buen momento). Entre carreras abren cofres, ven anuncios para abrirlos antes (máx. 8 al día), compran mejoras y a veces juegan carreras libres cuando se atascan.");
+            sb.AppendLine("Perfiles: **Novato** (curvas al 83 % del límite, reacciona en 0,38 s, suelta tarde en el 9 % de las curvas, apenas cambia de carril, usa los objetos al azar), **Casual** (88 %, 0,27 s, 4 %), **Experto** (95 %, 0,16 s, 1 %, busca el rebufo y usa los objetos en buen momento). Entre carreras abren cofres, ven anuncios para abrirlos antes (máx. 8 al día), compran mejoras y a veces juegan carreras libres cuando se atascan.");
             File.WriteAllText(Path.Combine(botOut, "report.md"), sb.ToString());
 
             var csv = new StringBuilder("persona,bot,phase,mode,level,world,car,upgrades,place,cars,beat,dnf,time,gap,crashes,perfects,saves,hits,items,overtakes,passedBy,leadChanges,drift,leadShare,coins,perfectStart,falseStart,simMin\n");
