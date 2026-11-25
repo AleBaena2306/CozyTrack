@@ -50,8 +50,9 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Caché de Library
-        uses: actions/cache@v4
+      - name: Restaurar la caché de Library
+        id: libcache
+        uses: actions/cache/restore@v4
         with:
           path: Library
           key: Library-Linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**/*.meta') }}
@@ -70,16 +71,38 @@ jobs:
           buildName: CozyBots
           buildsPath: build
 
+      - name: Permisos de Library y build
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" Library build 2>/dev/null || true
+
+      - name: Guardar la caché de Library
+        if: always() && steps.libcache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Library
+          key: Library-Linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**/*.meta') }}
+
       - name: Jugar con los bots
         run: |
-          sudo chown -R "$USER" build || true
-          chmod +x build/StandaloneLinux64/CozyBots
-          timeout 170m build/StandaloneLinux64/CozyBots -batchmode -nographics -cozybots \
+          sudo chown -R "$(id -u):$(id -g)" build || true
+          EXE="$(find build -maxdepth 3 -type f \( -name 'CozyBots' -o -name 'CozyBots.x86_64' \) | head -1)"
+          if [ -z "$EXE" ]; then echo "::error::No encuentro el ejecutable. Contenido de build: $(find build -maxdepth 3 | head -20 | tr '\n' ' ')"; exit 1; fi
+          chmod +x "$EXE"
+          mkdir -p bot-report
+          set +e
+          timeout 170m "$EXE" -batchmode -nographics -cozybots \
             -botPlayers "${{ github.event.inputs.players || '12' }}" \
             -botHours "${{ github.event.inputs.hours || '10' }}" \
             -botSeed "${{ github.event.inputs.seed || '1234' }}" \
-            -botOut "$GITHUB_WORKSPACE/bot-report" -logFile - | grep --line-buffered -E "CozyBots|Exception|Error" || true
-          test -f bot-report/report.md
+            -botOut "$GITHUB_WORKSPACE/bot-report" -logFile "$GITHUB_WORKSPACE/bot-report/player.log"
+          CODE=$?
+          set -e
+          grep -E "CozyBots" bot-report/player.log | tail -40 || true
+          if [ ! -f bot-report/report.md ]; then
+            echo "::error::El juego terminó con código $CODE sin informe. Últimas líneas: $(grep -v '^\s*$' bot-report/player.log | tail -25 | tr '\n' ' ' | cut -c1-3000)"
+            exit 1
+          fi
+          head -c 2000 bot-report/alerts.txt | tr '\n' ' ' | sed 's/^/::notice title=Alertas de los bots::/'; echo
 
       - name: Publicar el informe
         if: always()
@@ -106,7 +129,7 @@ jobs:
           fi
           cd rep
           mkdir -p "reports/$STAMP"
-          cp "$GITHUB_WORKSPACE"/bot-report/* "reports/$STAMP/"
+          cp "$GITHUB_WORKSPACE"/bot-report/report.md "$GITHUB_WORKSPACE"/bot-report/races.csv "$GITHUB_WORKSPACE"/bot-report/alerts.txt "reports/$STAMP/"
           cp "$GITHUB_WORKSPACE/bot-report/report.md" README.md
           git add -A
           git -c user.name="cozy-bots" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Informe de bots $STAMP"
