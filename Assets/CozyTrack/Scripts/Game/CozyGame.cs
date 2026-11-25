@@ -270,21 +270,55 @@ namespace CozyTrack
         }
 
         // ---------- entrada: mantener = acelerar, deslizar = carril; teclado ↑/espacio, ←/→, E ----------
-        float swipeX = -1; bool wasDown;
+        // Multitáctil: un dedo mantiene el acelerador (y desliza para cambiar de carril) mientras otro toca el objeto.
+        // Cada dedo se sigue por su id: el que empieza sobre el botón de objeto o el de pausa nunca cuenta como acelerador.
+        float swipeX = -1; bool wasDown; int gasTouch = -1;
+        readonly HashSet<int> buttonTouches = new HashSet<int>();
         bool Gas() => holding || (Keyboard.current != null && (Keyboard.current.upArrowKey.isPressed || Keyboard.current.wKey.isPressed || Keyboard.current.spaceKey.isPressed));
         void ReadInput(float dt)
         {
-            bool down = false; Vector2 pos = Vector2.zero;
-            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed) { down = true; pos = Touchscreen.current.primaryTouch.position.ReadValue(); }
-            else if (Mouse.current != null && Mouse.current.leftButton.isPressed) { down = true; pos = Mouse.current.position.ReadValue(); }
-            bool started = down && !wasDown; wasDown = down;
-            if (state == "garage" && started && !OverUI(pos)) PickGarage(pos);
-            if (state == "race" || state == "count")
+            bool racing = state == "race" || state == "count";
+            bool anyTouch = false, gasDown = false;
+            var ts = Touchscreen.current;
+            if (ts != null)
             {
-                if (started) { if (OverItemButton(pos)) { if (state == "race") UseItem(player); swipeX = -1; } else swipeX = pos.x; }
-                holding = (down && swipeX >= 0) || autoTest;
-                if (down && swipeX >= 0 && Mathf.Abs(pos.x - swipeX) > Screen.width * 0.06f) { Steer(pos.x > swipeX ? 1 : -1); swipeX = pos.x; }
-                if (!down) swipeX = -1;
+                foreach (var t in ts.touches)
+                {
+                    int id = t.touchId.ReadValue();
+                    if (!t.press.isPressed) { buttonTouches.Remove(id); if (id == gasTouch) { gasTouch = -1; swipeX = -1; } continue; }
+                    anyTouch = true;
+                    var pos = t.position.ReadValue();
+                    if (t.press.wasPressedThisFrame)
+                    {
+                        if (state == "garage" && !OverUI(pos)) PickGarage(pos);
+                        if (racing && OverItemButton(pos)) { if (state == "race") UseItem(player); buttonTouches.Add(id); continue; }
+                        if (gasTouch < 0) { gasTouch = id; swipeX = pos.x; }
+                    }
+                    if (buttonTouches.Contains(id)) continue;
+                    if (gasTouch < 0) { gasTouch = id; swipeX = pos.x; }
+                    gasDown = true;
+                    if (racing && id == gasTouch && Mathf.Abs(pos.x - swipeX) > Screen.width * 0.06f) { Steer(pos.x > swipeX ? 1 : -1); swipeX = pos.x; }
+                }
+            }
+            if (!anyTouch)
+            {
+                // ratón (ordenador): un solo puntero, como antes
+                bool down = Mouse.current != null && Mouse.current.leftButton.isPressed; Vector2 pos = down ? Mouse.current.position.ReadValue() : Vector2.zero;
+                bool started = down && !wasDown; wasDown = down;
+                if (state == "garage" && started && !OverUI(pos)) PickGarage(pos);
+                if (racing)
+                {
+                    if (started) { if (OverItemButton(pos)) { if (state == "race") UseItem(player); swipeX = -1; } else swipeX = pos.x; }
+                    gasDown = down && swipeX >= 0;
+                    if (gasDown && Mathf.Abs(pos.x - swipeX) > Screen.width * 0.06f) { Steer(pos.x > swipeX ? 1 : -1); swipeX = pos.x; }
+                    if (!down) swipeX = -1;
+                }
+                gasTouch = -1; buttonTouches.Clear();
+            }
+            else wasDown = false;
+            if (racing)
+            {
+                holding = gasDown || autoTest;
                 var kb = Keyboard.current;
                 if (kb != null && state == "race")
                 {
