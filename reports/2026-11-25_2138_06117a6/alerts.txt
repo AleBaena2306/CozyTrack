@@ -1,0 +1,13 @@
+**Muro:** 1 bot(s) «Novato (6-8 años)» se atascan en el nivel 8 (25 intentos sin superarlo).
+**Muro:** 1 bot(s) «Novato (6-8 años)» se atascan en el nivel 12 (25 intentos sin superarlo).
+**Muro:** 1 bot(s) «Novato (6-8 años)» se atascan en el nivel 7 (25 intentos sin superarlo).
+**Muro:** 3 bot(s) «Novato (6-8 años)» se atascan en el nivel 9 (25 intentos sin superarlo).
+**Muro:** 1 bot(s) «Novato (6-8 años)» se atascan en el nivel 5 (25 intentos sin superarlo).
+**Muro:** 1 bot(s) «Novato (6-8 años)» se atascan en el nivel 6 (25 intentos sin superarlo).
+**Muro:** 4 bot(s) «Novato (6-8 años)» se atascan en el nivel 10 (25 intentos sin superarlo).
+**Muro:** 1 bot(s) «Casual» se atascan en el nivel 12 (25 intentos sin superarlo).
+**Pico de dificultad:** el nivel 7 pide 5.0 intentos (mediana) a un jugador casual.
+**Pico de dificultad:** el nivel 30 pide 4.0 intentos (mediana) a un jugador casual.
+**Poca emoción:** solo el 7 % de las carreras de «Experto» en Garden acaban ajustadas (<1 s).
+**Cofres desperdiciados:** «Casual» pierde el 42 % de los cofres por tener las 4 ranuras llenas.
+**Cofres desperdiciados:** «Experto» pierde el 54 % de los cofres por tener las 4 ranuras llenas.
