@@ -300,7 +300,7 @@ namespace CozyTrack
         {
 #if UNITY_EDITOR
             if (autoTest && state == "race") { autoItem -= dt; if (autoItem <= 0) { autoItem = 2.5f; player.item = "autopilot"; UseItem(player); } }
-            cmdPoll -= dt; if (cmdPoll > 0) return; cmdPoll = 0.5f;
+            cmdPoll -= Time.unscaledDeltaTime; if (cmdPoll > 0) return; cmdPoll = 0.5f;
             string path = System.IO.Path.Combine(Application.dataPath, "..", "Logs", "cozy_game_cmd.txt");
             if (!System.IO.File.Exists(path)) return;
             string[] lines; try { lines = System.IO.File.ReadAllLines(path); System.IO.File.Delete(path); } catch { return; }

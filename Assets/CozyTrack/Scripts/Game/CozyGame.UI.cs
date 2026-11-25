@@ -148,7 +148,7 @@ namespace CozyTrack
             var s = MakeScreen("hud", false).transform;
             // puesto
             var pr = Sticker(s, Cream, out var pf, 16, 3, 4, -3, "Puesto"); TopAt(pr, 12, 14, 124, 66);
-            posText = TB(pf.transform, "", 54, Ink, true, TextAnchor.MiddleLeft); Inset(posText.rectTransform, 12, 0, 6, 0); posText.resizeTextForBestFit = false;
+            posText = TB(pf.transform, "", 54, Ink, true, TextAnchor.MiddleLeft); Inset(posText.rectTransform, 12, 0, 6, 0); posText.resizeTextForBestFit = false; posText.verticalOverflow = VerticalWrapMode.Overflow; posText.horizontalOverflow = HorizontalWrapMode.Overflow;
             // pausa
             var pb = StickerButton(s, Cream, OpenPause, out var pbf, 12, 3, 3, 0, "Pausa"); TopCenter((RectTransform)pb.transform, 18, 44, 44); pauseBtn = pb.gameObject;
             IcnFill(pbf.transform, B("pause"), 7);
@@ -189,7 +189,7 @@ namespace CozyTrack
             fillImg = Bar(barRoot, SunC, 0, 10, 3); fillRect = fillImg.rectTransform; Fill((RectTransform)fillImg.transform.parent.parent);
             var safe = Img(barRoot, Ink, null, "Limite"); safe.sprite = null; safeRect = safe.rectTransform; safe.raycastTarget = false;
             safeRect.anchorMin = new Vector2(0.7f, -0.45f); safeRect.anchorMax = new Vector2(0.7f, 1.45f); safeRect.sizeDelta = new Vector2(6 * K, 0); safeRect.anchoredPosition = Vector2.zero;
-            var sl = Cap(safe.transform, "SAFE", 9); var slr = sl.rectTransform; slr.anchorMin = slr.anchorMax = new Vector2(0.5f, 1); slr.sizeDelta = new Vector2(40 * K, 12 * K); slr.anchoredPosition = new Vector2(0, 6 * K);
+            var sl = Cap(safe.transform, "SAFE", 8); var slr = sl.rectTransform; slr.anchorMin = slr.anchorMax = new Vector2(0.5f, 0); slr.sizeDelta = new Vector2(40 * K, 10 * K); slr.anchoredPosition = new Vector2(0, -2 * K);
         }
 
         // cuenta atrás: disco amarillo con el número, el circuito y cómo se juega
@@ -242,7 +242,6 @@ namespace CozyTrack
             var q = StickerButton(f.transform, Cream, () => { ClosePause(); QuitRace(); }, out var qf, 10, 0, 0, 0, "Salir"); TopBox((RectTransform)q.transform, 60, 60, 336, 40);
             qf.color = new Color(0, 0, 0, 0); q.transform.Find("Borde").GetComponent<Image>().color = new Color(0, 0, 0, 0);
             TB(qf.transform, "<b>QUIT TO HOME</b>", 13, Ink, false);
-            var note = TB(pausePop.transform, "Online races can't be paused: leaving counts as a loss.", 12, Cream, false); BotBox(note.rectTransform, 30, 30, 40, 30);
             pausePop.SetActive(false);
         }
         Text pauseSub, pauseAssistTxt; Image pauseAssist;
@@ -254,7 +253,7 @@ namespace CozyTrack
         void RefreshPause()
         {
             int lp = player == null ? 1 : Prog(player) < 0.5f ? 1 : Mathf.Min(laps, Mathf.FloorToInt((Prog(player) - 0.5f) / Track.N) + 1);
-            pauseSub.text = $"{(mode == "level" ? "LEVEL " + levelNum.ToString("00") : mode == "elim" ? "SURVIVAL" : mode == "time" ? "TIME TRIAL" : "RACE")} · {(circ != null ? circ.n.ToUpper() : "")} · LAP {lp}/{laps}";
+            pauseSub.text = $"{(mode == "level" ? "LEVEL " + levelNum.ToString("00") : mode == "elim" ? "SURVIVAL" : mode == "time" ? "TIME TRIAL" : "RACE")} · {(circ != null ? circ.n.Split('·').Last().Trim().ToUpper() : "")} · LAP {lp}/{laps}";
             pauseAssist.color = assistOn ? MintB : Cream; pauseAssistTxt.text = assistOn ? "ON" : "OFF";
         }
         void ClosePause() { Time.timeScale = 1; if (pausePop) pausePop.SetActive(false); }
