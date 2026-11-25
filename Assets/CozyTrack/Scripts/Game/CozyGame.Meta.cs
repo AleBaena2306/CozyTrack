@@ -201,12 +201,12 @@ namespace CozyTrack
                 else msg = $"Récord: {Fmt(best)}. Te has quedado a {t - best:0.00} s.";
             }
             else if (player.isOut) msg = $"Te han eliminado en la vuelta {player.outLap}.";
-            else msg = beat ? "¡Has ganado al rival " + rival.name + "!" : "El rival " + rival.name + " te ha ganado esta vez";
+            else msg = place == 1 ? "¡Has ganado!" : $"Has quedado {place}º. ¡A por la victoria!";
             prof.coins += player.coins;
             if (mode == "daily")
             {
                 var d = DailyDef();
-                bool ok = d.goal == 0 ? beat : d.goal == 1 ? crashes == 0 : d.goal == 2 ? player.coins >= 10 : d.goal == 3 ? perfects >= 3 : place <= 2;
+                bool ok = d.goal == 0 ? place == 1 : d.goal == 1 ? crashes == 0 : d.goal == 2 ? player.coins >= 10 : d.goal == 3 ? perfects >= 3 : place <= 2;
                 if (ok && prof.dailyLast != d.key)
                 {
                     int streak = StreakNow() + 1; prof.dailyLast = d.key; prof.dailyStreak = streak;
@@ -219,13 +219,13 @@ namespace CozyTrack
             else if (mode == "level")
             {
                 if (beat) { if (levelNum > prof.level) prof.level = levelNum; chestKind = "normal"; msg = $"¡Nivel {levelNum} superado!" + (levelNum < CozyData.LevelCount ? " Se desbloquea el siguiente." : ""); }
-                else msg = $"El rival {rival.name} te ha ganado. Mejora el coche en el taller o prueba otra trazada.";
+                else msg = "¡Casi! Mejora el coche o prueba otra trazada.";
             }
             else if (mode != "time" && (place == 1 || (mode == "race" && beat))) chestKind = "normal";
             if (chestKind != null) chest = new List<string> { AddChest(chestKind) ? $"Cofre {(chestKind == "oro" ? "de oro" : "normal")} a la ranura: ábrelo en el menú." : "Ranuras llenas: +25 monedas." };
             SaveProfile();
             var rows = new List<string>();
-            for (int k = 0; k < order.Count; k++) { var c = order[k]; rows.Add($"{k + 1}º {c.name}{(c == rival ? " · rival" : "")}\t{(c.isOut ? "fuera (vuelta " + c.outLap + ")" : c.done >= 0 ? Fmt(c.done) : "—")}"); }
+            for (int k = 0; k < order.Count; k++) { var c = order[k]; rows.Add($"{k + 1}º {c.name}\t{(c.isOut ? "fuera (vuelta " + c.outLap + ")" : c.done >= 0 ? Fmt(c.done) : "—")}"); }
             rows.Add($"Monedas\t{player.coins}"); rows.Add($"Curvas perfectas\t{perfects}"); rows.Add($"Salidas de pista\t{crashes}");
             ShowResults(big, msg, rows, chest);
             if (mode != "time") StartCoroutine(PodiumPhoto(order));

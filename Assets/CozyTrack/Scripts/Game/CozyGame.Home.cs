@@ -111,7 +111,7 @@ namespace CozyTrack
             if (pickMode == "race")
             {
                 int next = Mathf.Min(CozyData.LevelCount, prof.level + 1);
-                WideCard(pickList, CozyData.Hex("#73e0a6"), $"Niveles · nivel {next}", $"{prof.level}/{CozyData.LevelCount} superados. Gana al rival para abrir el siguiente.", () => { pickLevel = next; pickDaily = false; OpenCarPick(); });
+                WideCard(pickList, CozyData.Hex("#73e0a6"), $"Niveles · nivel {next}", $"{prof.level}/{CozyData.LevelCount} superados. Gana para abrir el siguiente.", () => { pickLevel = next; pickDaily = false; OpenCarPick(); });
                 var d = DailyDef(); bool done = prof.dailyLast == d.key;
                 WideCard(pickList, SunC, "Desafío diario" + (done ? " · superado" : ""), $"{CozyData.DailyGoals[d.goal]} con {CozyData.Car(d.car).name} en {CozyData.Circuit(d.circ).n}. Racha: {StreakNow()}.", () => { pickDaily = true; StartDaily(); });
                 var tb = Btn(pickList, "", Cream, Ink, () => { pickTime = !pickTime; timeChip.text = (pickTime ? "✓ " : "") + "Contrarreloj contra tu fantasma"; }, 100, 36); timeChip = tb.GetComponentInChildren<Text>();

@@ -257,7 +257,7 @@ namespace CozyTrack
             var s = MakeScreen("levels");
             var (_, c) = Scroll(s.transform);
             LayoutText(c, "Niveles", 96, Ink, 120);
-            LayoutText(c, "Gana al rival de cada nivel para abrir el siguiente. Las curvas se cierran y los rivales mejoran: el taller ayuda, pero no te hace inmortal.", 32, Muted, 110, FontStyle.Normal);
+            LayoutText(c, "Gana cada nivel para abrir el siguiente. Las curvas se cierran y los rivales mejoran: el taller ayuda, pero no te hace inmortal.", 32, Muted, 110, FontStyle.Normal);
             var gr = R("Rejilla", c); var grid = gr.gameObject.AddComponent<GridLayoutGroup>(); grid.cellSize = new Vector2(180, 150); grid.spacing = new Vector2(14, 14); grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 5;
             gr.gameObject.AddComponent<LayoutElement>().preferredHeight = 6 * 164; levelsGrid = gr;
             Btn(c, "Volver", Cream, Ink, ShowMenu, 120, 44);
@@ -369,7 +369,7 @@ namespace CozyTrack
             itemTxt.text = player.item != null ? CozyData.Items[player.item][1] : "Sin objeto";
             if (flashImg.color.a > 0) { var c = flashImg.color; c.a = Mathf.Max(0, c.a - Time.deltaTime * 1.7f); flashImg.color = c; }
         }
-        void SetRivalChip(string t) => rivalText.text = t;
+        void SetRivalChip(string t) { rivalText.text = t; rivalText.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(t)); }
         void SetCount(string t) { if (countText) countText.text = t; }
         float toastHide;
         void Toast(string t)

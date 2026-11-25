@@ -185,7 +185,7 @@ namespace CozyTrack
         public static readonly string[] StickerIds = { "estrella", "corazon", "rayo", "flor", "sonrisa", "huella", "arcoiris", "planeta", "llama", "siete" };
         public static readonly string[] StickerNames = { "Estrella", "Corazón", "Rayo", "Flor", "Sonrisa", "Huella", "Arcoíris", "Planeta", "Llama", "Siete" };
 
-        public static readonly string[] DailyGoals = { "Gana al rival", "Termina sin salirte de la pista", "Recoge 10 monedas", "Haz 3 curvas perfectas", "Queda entre los 2 primeros" };
+        public static readonly string[] DailyGoals = { "Gana la carrera", "Termina sin salirte de la pista", "Recoge 10 monedas", "Haz 3 curvas perfectas", "Queda entre los 2 primeros" };
 
         static Color H(string h) { ColorUtility.TryParseHtmlString(h, out var c); return c; }
         public static readonly TodDef[] Tods =

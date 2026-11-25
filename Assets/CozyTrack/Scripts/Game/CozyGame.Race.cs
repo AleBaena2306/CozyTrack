@@ -95,10 +95,6 @@ namespace CozyTrack
                 }
                 c.fxOn = on;
             }
-            if (!c.mark && c == rival && !c.isPlayer)
-            {
-                c.mark = Prim(PrimitiveType.Cylinder, Color.white, new Vector3(0, 0.03f, 0), new Vector3(1.6f, 0.01f, 1.6f), c.g.transform, 0, Mat(new Color(1, 0.45f, 0.4f, 0.55f), null, true));
-            }
         }
 
         // ---------- carrera ----------
@@ -118,7 +114,7 @@ namespace CozyTrack
                 for (int k = 0; k < others.Count; k++) { var c = MakeCar(others[k], lanes[k], false); c.k = 0.8f + k * 0.03f; c.kStraight = 0.88f + k * 0.02f; c.react = 0.25f; cars.Add(c); }
                 rival = mode == "level" ? cars[1] : cars[1 + Random.Range(0, 3)];
                 rival.k = mode == "level" ? levelSkill : 0.9f; rival.kStraight = rival.k + 0.02f; rival.react = 0.15f;
-                chip = mode == "elim" ? "Eliminación · rival: " + rival.name : "Rival: " + rival.name;
+                chip = mode == "elim" ? "Eliminación: el último de cada vuelta, fuera" : "";   // el rival a batir es interno: el jugador no lo ve
             }
             else chip = LoadGhost() ? "Fantasma: " + Fmt(ghostTime) : "Sin récord: márcalo tú";
             perfects = 0; crashes = 0; countGas = false; pressedAt = 99;
