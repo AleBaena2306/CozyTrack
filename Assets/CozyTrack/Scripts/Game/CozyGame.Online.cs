@@ -14,8 +14,8 @@ namespace CozyTrack
     // (worker/cozytrack/lobby.js), trofeos y ligas, ranking total y de temporada, recompensas por puesto
     // (en cada carrera y al acabar la temporada), fantasmas y bots según tus trofeos, y cuenta de Google.
     //
-    // Juego para niños: nombre siempre generado («Teal Fox 42»), sin chat ni texto libre, y el inicio de sesión
-    // con Google va detrás de una puerta parental. El rival online no choca ni usa objetos: solo cuenta quién llega antes.
+    // Nombre siempre generado («Teal Fox 42»), sin chat ni texto libre. El rival online no choca ni usa objetos:
+    // solo cuenta quién llega antes.
     public partial class CozyGame
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -122,7 +122,7 @@ namespace CozyTrack
             var meBar = Sticker(b, SunC, out var mbf, 16, 3.5f, 5, -1, "Tu puesto"); BotBox(meBar, 14, 14, 20, 62);
             boardMe = TB(mbf.transform, "", 18, Ink, true, TextAnchor.MiddleLeft); Inset(boardMe.rectTransform, 14, 0, 14, 0);
 
-            // cuenta de Google (con puerta parental)
+            // cuenta de Google
             var a = MakeScreen("account").transform;
             BackButton(a, () => { linkCode = null; OpenOnline(); });
             TB(a, "SAVE", 38, Ink, true, TextAnchor.MiddleRight).rectTransform.Let(r => TopBox(r, 120, 16, 12, 40));
@@ -373,7 +373,7 @@ namespace CozyTrack
                 LayoutText(accountList, $"Signed in as\n<size=60>{NetName}</size>", 40, Ink, 200);
                 LayoutText(accountList, "Your racer name and trophies are saved to your Google account, so you keep them on any device. We only store an anonymous account ID, never your email.", 30, Muted, 170, FontStyle.Normal);
                 Btn(accountList, "Sign out", Cream, Ink, () => { BecomeGuest(); RefreshAccount("Signed out. Sign in again to get your trophies back."); }, 120, 40);
-                Btn(accountList, "Delete account", Coral, Color.white, () => ParentalGate(DeleteAccount), 120, 40);
+                Btn(accountList, "Delete account", Coral, Color.white, ConfirmDelete, 120, 40);
             }
             else if (linkCode != null)
             {
@@ -385,23 +385,20 @@ namespace CozyTrack
             else
             {
                 LayoutText(accountList, "Keep your racer name and trophies on any device", 44, Ink, 160);
-                LayoutText(accountList, "Signing in uses a Google account, so a grown-up needs to help. We only store an anonymous account ID, never your email or name.", 30, Muted, 170, FontStyle.Normal);
-                Btn(accountList, "Ask a grown-up to sign in", SunC, Ink, () => ParentalGate(StartGoogleSignIn), 140, 42);
+                LayoutText(accountList, "Sign in with Google to save your progress. We only store an anonymous account ID, never your email or name.", 30, Muted, 170, FontStyle.Normal);
+                Btn(accountList, "Sign in with Google", SunC, Ink, StartGoogleSignIn, 140, 42);
             }
             if (note != null) LayoutText(accountList, note, 30, Coral, 90);
         }
 
-        // Puerta parental: una multiplicación que un niño pequeño no suele saber
-        void ParentalGate(System.Action ok)
+        // Confirmación sencilla antes de borrar la cuenta (no se puede deshacer)
+        void ConfirmDelete()
         {
             foreach (Transform t in accountList) Destroy(t.gameObject);
-            int a = Random.Range(6, 10), b = Random.Range(6, 10), right = a * b;
-            LayoutText(accountList, "For grown-ups", 56, Ink, 90).font = fontBlack;
-            LayoutText(accountList, $"What is {a} × {b}?", 48, Ink, 120);
-            var opts = new List<int> { right, right + Random.Range(2, 6), right - Random.Range(2, 6) }.OrderBy(_ => Random.value).ToList();
-            var row = Row(accountList, 140);
-            foreach (var v in opts) { int vv = v; Btn(row, v.ToString(), Cream, Ink, () => { if (vv == right) ok(); else RefreshAccount("That's not right."); }, 140, 48); }
-            Btn(accountList, "Back", Cream, Muted, () => RefreshAccount(), 110, 36);
+            LayoutText(accountList, "Delete your account?", 48, Ink, 110);
+            LayoutText(accountList, "Your racer name and trophies will be lost for good.", 30, Muted, 120, FontStyle.Normal);
+            Btn(accountList, "Delete", Coral, Color.white, DeleteAccount, 120, 40);
+            Btn(accountList, "Cancel", Cream, Ink, () => RefreshAccount(), 110, 36);
         }
 
         void StartGoogleSignIn()
