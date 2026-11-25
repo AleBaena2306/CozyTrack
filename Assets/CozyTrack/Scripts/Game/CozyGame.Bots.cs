@@ -86,6 +86,9 @@ namespace CozyTrack
                 botLogs[key] = botLogs.TryGetValue(key, out var n) ? n + 1 : 1;
             };
             PlayerPrefs.DeleteAll();
+            // no hace falta ver nada: sin cámaras activas el render cuesta casi cero
+            if (cam) cam.enabled = false;
+            if (showCam) showCam.enabled = false;
             botClock = 1_800_000_000;
             Debug.Log($"[CozyBots] inicio: {botPerPersona} jugadores por perfil, máximo {botHours} h simuladas cada uno");
 
@@ -121,6 +124,7 @@ namespace CozyTrack
         {
             if (botCur != null && !botCur.done) { try { BotProgressStep(botCur); } catch (Exception e) { BotLogEx(e); botCur.done = true; } return; }
             if (botJobs.Count == 0) { BotWriteReport(); Application.Quit(0); enabled = false; return; }
+            if (botRaces.Count < 2) Debug.Log($"[CozyBots] tarea {botRaces.Count + 1}");
             try { botJobs.Dequeue()(); } catch (Exception e) { BotLogEx(e); }
             if (botRaces.Count % 100 == 0 && botRaces.Count > 0) Debug.Log($"[CozyBots] {botRaces.Count} carreras, quedan {botJobs.Count} tareas");
         }
@@ -234,8 +238,11 @@ namespace CozyTrack
         {
             CozyData.Level(level, out var key, out _);
             var r = new BotRace { persona = botP.id, phase = phase, mode = mode, car = choice, level = level, world = key.world, upgrades = Upgrades(choice).Sum() };
+            bool trace = botRaces.Count < 2;
+            if (trace) Debug.Log($"[CozyBots] carrera {mode} nivel {level} con {choice}: preparando");
             StartRace();
             r.cars = cars.Count;
+            if (trace) Debug.Log("[CozyBots] coches en pista: " + cars.Count);
             botCurveI = -1; botItemT = 1; botLaneT = 1;
             // cuenta atrás: el bot pulsa cuando le parece (salida perfecta si pulsa en los últimos 0,6 s)
             float press = botP.startMean + Gauss() * botP.startSd; bool pressed = false;
@@ -276,6 +283,7 @@ namespace CozyTrack
                 if (lastItem != null && player.item == null) r.items++;
                 lastSlip = player.slip; lastSpin = player.spin; lastItem = player.item;
             }
+            if (trace) Debug.Log($"[CozyBots] carrera terminada en {raceT:0.0} s, estado {state}");
             r.time = raceT; r.crashes = crashes; r.perfects = perfects; r.coins = player.coins; r.leadShare = raceT > 0 ? leadT / raceT : 0;
             // puesto y diferencias (si el jugador acaba antes que otros, se estima su tiempo por el progreso)
             var order = cars.Where(c => !c.isOut).OrderBy(c => c.done >= 0 ? c.done : 1e9f).ThenByDescending(Prog).Concat(cars.Where(c => c.isOut).OrderByDescending(c => c.outAt)).ToList();

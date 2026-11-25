@@ -91,7 +91,9 @@ jobs:
           chmod +x "$EXE"
           mkdir -p bot-report
           set +e
-          timeout 170m "$EXE" -batchmode -nographics -cozybots \
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglu1-mesa > /dev/null
+          export LIBGL_ALWAYS_SOFTWARE=1
+          timeout 170m xvfb-run -a -s "-screen 0 640x960x24" "$EXE" -force-glcore -screen-fullscreen 0 -screen-width 360 -screen-height 640 -cozybots \
             -botPlayers "${{ github.event.inputs.players || '12' }}" \
             -botHours "${{ github.event.inputs.hours || '10' }}" \
             -botSeed "${{ github.event.inputs.seed || '1234' }}" \
