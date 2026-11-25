@@ -59,12 +59,13 @@ namespace CozyTrack
 
         // ---------- cofres: 4 ranuras y 4 niveles (common 5 min, rare 10, epic 20, legendary 30); un anuncio los abre ya ----------
         //   common: 2 piezas · rare: 3 piezas y quizá una pegatina · epic: 4 piezas, pegatina y quizá una skin · legendary: un vehículo entero, pegatina y skin
-        static long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        static long Now => botClock > 0 ? botClock : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         static string TierOf(string kind) => kind == "oro" ? "legendary" : kind == "normal" ? "common" : kind;
         bool AddChest(string kind)
         {
             kind = TierOf(kind);
-            foreach (var s in prof.chests) if (s.kind == "") { s.kind = kind; s.opening = false; s.readyAt = 0; SaveProfile(); return true; }
+            foreach (var s in prof.chests) if (s.kind == "") { s.kind = kind; s.opening = false; s.readyAt = 0; SaveProfile(); if (botCur != null) botCur.chestsEarned++; return true; }
+            if (botCur != null) botCur.chestsLost++;
             prof.coins += 25; SaveProfile(); return false;   // ranuras llenas: monedas
         }
         void TapChest(int k)
@@ -278,7 +279,7 @@ namespace CozyTrack
             v.photo = true; photoReady = false;
             SaveProfile();
             ShowResultView(v);
-            StartCoroutine(PodiumPhoto(order));
+            if (!botRun) StartCoroutine(PodiumPhoto(order));
         }
         void BackToPick() { mode = "race"; QuitToPick(); }
         void QuitToPick() { if (circId.StartsWith("nivel")) BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin"))); MenuGrid(); ShowMenu(); OpenPick(pickMode == "elim" ? "elim" : "race"); }

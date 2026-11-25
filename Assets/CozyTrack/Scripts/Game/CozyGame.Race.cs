@@ -271,7 +271,7 @@ namespace CozyTrack
                 if (c.crash <= 0) { c.v = 0; c.spin = 0; }
                 return;
             }
-            bool gas = c.isPlayer ? (c.done < 0 && Gas()) : AiThrottle(c, dt);
+            bool gas = c.isPlayer ? (c.done < 0 && (botRun ? BotThrottle(c, dt) : Gas())) : AiThrottle(c, dt);
             if (state != "race") gas = false;
             if (c.spin > 0) { c.spin -= dt; gas = false; }
             c.gas = gas;

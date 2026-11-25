@@ -1,0 +1,113 @@
+# Bots de prueba de Cozy Track: compila el juego real para Linux en GitHub (no en el PC) y cientos de
+# jugadores simulados prueban progresión, sensación de carrera, economía y equilibrio de vehículos.
+# El informe sale en la pestaña Summary de cada ejecución, como artefacto y en la rama «bot-reports».
+#
+# Requiere tres Secrets del repositorio (Settings > Secrets and variables > Actions):
+#   UNITY_LICENSE  (contenido completo de C:\ProgramData\Unity\Unity_lic.ulf)
+#   UNITY_EMAIL    (correo de la cuenta de Unity)
+#   UNITY_PASSWORD (contraseña de la cuenta de Unity)
+name: Bots de prueba
+
+on:
+  workflow_dispatch:
+    inputs:
+      players:
+        description: "Jugadores simulados por perfil (novato, casual, experto)"
+        default: "12"
+      hours:
+        description: "Horas de juego máximas por jugador simulado"
+        default: "10"
+      seed:
+        description: "Semilla (cámbiala para otra tanda distinta)"
+        default: "1234"
+  push:
+    branches: [main]
+    paths:
+      - "Assets/CozyTrack/Scripts/**"
+      - "Assets/CozyTrack/Data/**"
+
+concurrency:
+  group: bots
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  bots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Liberar espacio en disco
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - uses: actions/checkout@v4
+
+      - name: Caché de Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ hashFiles('Assets/**/*.meta') }}
+          restore-keys: |
+            Library-Linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-Linux-
+
+      - name: Compilar el juego para Linux
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneLinux64
+          buildName: CozyBots
+          buildsPath: build
+
+      - name: Jugar con los bots
+        run: |
+          sudo chown -R "$USER" build || true
+          chmod +x build/StandaloneLinux64/CozyBots
+          timeout 170m build/StandaloneLinux64/CozyBots -batchmode -nographics -cozybots \
+            -botPlayers "${{ github.event.inputs.players || '12' }}" \
+            -botHours "${{ github.event.inputs.hours || '10' }}" \
+            -botSeed "${{ github.event.inputs.seed || '1234' }}" \
+            -botOut "$GITHUB_WORKSPACE/bot-report" -logFile - | grep --line-buffered -E "CozyBots|Exception|Error" || true
+          test -f bot-report/report.md
+
+      - name: Publicar el informe
+        if: always()
+        run: |
+          if [ -f bot-report/report.md ]; then cat bot-report/report.md >> "$GITHUB_STEP_SUMMARY"; else echo "No se generó el informe: revisa el paso «Jugar con los bots»." >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: informe-bots
+          path: bot-report
+          if-no-files-found: ignore
+
+      - name: Guardar el informe en la rama bot-reports
+        if: success()
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          STAMP="$(date -u +%Y-%m-%d_%H%M)_${GITHUB_SHA::7}"
+          URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          cd /tmp
+          if ! git clone -q --depth 1 -b bot-reports "$URL" rep; then
+            mkdir rep && cd rep && git init -q -b bot-reports && git remote add origin "$URL" && cd ..
+          fi
+          cd rep
+          mkdir -p "reports/$STAMP"
+          cp "$GITHUB_WORKSPACE"/bot-report/* "reports/$STAMP/"
+          cp "$GITHUB_WORKSPACE/bot-report/report.md" README.md
+          git add -A
+          git -c user.name="cozy-bots" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Informe de bots $STAMP"
+          git push -q origin bot-reports

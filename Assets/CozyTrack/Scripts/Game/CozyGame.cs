@@ -26,6 +26,7 @@ namespace CozyTrack
         void Awake()
         {
             I = this;
+            botRun = Array.IndexOf(Environment.GetCommandLineArgs(), "-cozybots") >= 0;
             Application.targetFrameRate = 60; Application.runInBackground = true;
             lib = CozyLibrary.I;
             if (lib == null || lib.toon == null) { Debug.LogError("[CozyTrack] Falta Resources/CozyLibrary: usa COZY TRACK > Configurar proyecto."); enabled = false; return; }
@@ -39,6 +40,7 @@ namespace CozyTrack
             BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin")));
             SetLook(look);
             ShowMenu();
+            if (botRun) BotInit();
         }
 
         void OnDestroy() { if (lib != null) foreach (var f in lib.edgeFeatures) if (f) f.SetActive(false); }
@@ -190,6 +192,7 @@ namespace CozyTrack
         // ---------- bucle ----------
         void Update()
         {
+            if (botRun) { BotFrame(); return; }
             float dt = Mathf.Min(0.05f, Time.deltaTime);
             ReadInput(dt);
             DevCommands(dt);
