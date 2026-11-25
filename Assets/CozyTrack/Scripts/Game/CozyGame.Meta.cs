@@ -32,6 +32,7 @@ namespace CozyTrack
             try { prof = JsonUtility.FromJson<Profile>(PlayerPrefs.GetString("ctProfile", "")); } catch { prof = null; }
             if (prof == null) prof = new Profile();
             while (prof.chests.Count < 4) prof.chests.Add(new ChestSlot());
+            foreach (var c in prof.chests) c.kind = TierOf(c.kind ?? "");
             allUnlocked = PlayerPrefs.GetInt("ctAllUnlocked", 1) == 1;
         }
         void SaveProfile() { PlayerPrefs.SetString("ctProfile", JsonUtility.ToJson(prof)); PlayerPrefs.Save(); }
@@ -56,21 +57,24 @@ namespace CozyTrack
             prof.coins -= cost; prof.upVals[k * 3 + stat] = lvl + 1; SaveProfile(); return true;
         }
 
-        // ---------- cofres: 4 ranuras, se abren con tiempo (5 min normal, 30 min de oro) o con un anuncio ----------
+        // ---------- cofres: 4 ranuras y 4 niveles (common 5 min, rare 10, epic 20, legendary 30); un anuncio los abre ya ----------
+        //   common: 2 piezas · rare: 3 piezas y quizá una pegatina · epic: 4 piezas, pegatina y quizá una skin · legendary: un vehículo entero, pegatina y skin
         static long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        static string TierOf(string kind) => kind == "oro" ? "legendary" : kind == "normal" ? "common" : kind;
         bool AddChest(string kind)
         {
+            kind = TierOf(kind);
             foreach (var s in prof.chests) if (s.kind == "") { s.kind = kind; s.opening = false; s.readyAt = 0; SaveProfile(); return true; }
             prof.coins += 25; SaveProfile(); return false;   // ranuras llenas: monedas
         }
         void TapChest(int k)
         {
             var s = prof.chests[k]; if (s.kind == "") return;
-            if (s.opening && Now >= s.readyAt) { ShowChestReward(OpenChest(s.kind)); s.kind = ""; s.opening = false; SaveProfile(); return; }
+            if (s.opening && Now >= s.readyAt) { var tier = TierOf(s.kind); var loot = OpenChest(tier); s.kind = ""; s.opening = false; SaveProfile(); ShowChestReward(tier, loot); return; }
             if (!s.opening)
             {
-                if (prof.chests.Any(o => o.opening && Now < o.readyAt)) { Toast("Ya se está abriendo otro cofre"); return; }
-                s.opening = true; s.readyAt = Now + (s.kind == "oro" ? 30 * 60 : 5 * 60); SaveProfile();
+                if (prof.chests.Any(o => o.opening && Now < o.readyAt)) { Toast("Another chest is already opening"); return; }
+                s.opening = true; s.readyAt = Now + ChestSeconds(TierOf(s.kind)); SaveProfile();
             }
         }
         void ChestAd(int k)
@@ -83,26 +87,37 @@ namespace CozyTrack
             // anuncio de prueba: en la build de publisher lo sustituye su SDK (Assets/KovusPride/Publishing)
             ShowAdOverlay(true); yield return new WaitForSecondsRealtime(2f); ShowAdOverlay(false); done();
         }
-        List<string> OpenChest(string kind)
+        // Botín de un cofre: cada línea «título|subtítulo|color de fondo»
+        List<string> OpenChest(string tier)
         {
-            var outL = new List<string>(); int n = kind == "oro" ? 3 : 2;
-            for (int k = 0; k < n; k++)
+            var outL = new List<string>();
+            int parts = tier == "legendary" ? 0 : tier == "epic" ? 4 : tier == "rare" ? 3 : 2;
+            if (tier == "legendary")
+            {
+                // un vehículo entero que aún no tienes (el que más piezas tenga)
+                var pool = CozyData.Cars.Select(c => c.name).Where(v => !prof.owned.Contains(v)).OrderByDescending(Pieces).ToList();
+                if (pool.Count > 0) { var v = pool[0]; while (Pieces(v) < 3) AddPiece(v); prof.owned.Add(v); outL.Add($"{v}!|NEW VEHICLE|#FFE07A"); }
+                else { prof.coins += 150; outL.Add("+150 coins|ALBUM COMPLETE|#FFE07A"); }
+            }
+            for (int k = 0; k < parts; k++)
             {
                 var pool = CozyData.Cars.Select(c => c.name).Where(v => !prof.owned.Contains(v)).ToList();
-                if (pool.Count == 0) { prof.coins += 40; outL.Add("40 monedas (álbum completo)"); continue; }
+                if (pool.Count == 0) { prof.coins += 40; outL.Add("+40 coins|ALBUM COMPLETE|#FFE07A"); continue; }
                 var v2 = pool[UnityEngine.Random.Range(0, pool.Count)];
                 AddPiece(v2);
-                if (Pieces(v2) >= 3) { prof.owned.Add(v2); outL.Add("¡Vehículo nuevo: " + CozyData.Car(v2).role + "!"); }
-                else outL.Add($"Pieza de {CozyData.Car(v2).role} ({Pieces(v2)}/3)");
+                if (Pieces(v2) >= 3) { prof.owned.Add(v2); outL.Add($"{v2}!|NEW VEHICLE|#A8E6C4"); }
+                else outL.Add($"{v2} piece|{Pieces(v2)} / 3 PIECES|#FFF4E0");
             }
-            if (UnityEngine.Random.value < (kind == "oro" ? 0.75f : 0.4f))
+            float stickerOdds = tier == "common" ? 0.25f : tier == "rare" ? 0.6f : 1f;
+            if (UnityEngine.Random.value < stickerOdds)
             {
                 var sp = CozyData.StickerIds.Where(s => !prof.stickers.Contains(s)).ToList();
-                if (sp.Count > 0) { var s = sp[UnityEngine.Random.Range(0, sp.Count)]; prof.stickers.Add(s); outL.Add("Pegatina: " + CozyData.StickerNames[Array.IndexOf(CozyData.StickerIds, s)]); }
-                else { prof.coins += 15; outL.Add("15 monedas (pegatina repetida)"); }
+                if (sp.Count > 0) { var s = sp[UnityEngine.Random.Range(0, sp.Count)]; prof.stickers.Add(s); outL.Add($"{CozyData.StickerNames[Array.IndexOf(CozyData.StickerIds, s)]} sticker|FOR YOUR ROOF|#C9B8F2"); }
+                else { prof.coins += 15; outL.Add("+15 coins|REPEATED STICKER|#FFE07A"); }
             }
-            if (kind == "oro" && UnityEngine.Random.value < 0.5f) { var sk = ChestSkin(); if (sk != null) outL.Add("New: " + sk + "!"); }
-            int coinsWon = UnityEngine.Random.Range(20, 41) + (kind == "oro" ? 40 : 0); prof.coins += coinsWon; outL.Add(coinsWon + " monedas");
+            float skinOdds = tier == "legendary" ? 1f : tier == "epic" ? 0.5f : 0f;
+            if (UnityEngine.Random.value < skinOdds) { var sk = ChestSkin(); if (sk != null) outL.Add($"{sk}|NEW SKIN · PAINT TAB|#FFC6D9"); }
+            int coinsWon = UnityEngine.Random.Range(20, 41) * (tier == "legendary" ? 4 : tier == "epic" ? 3 : tier == "rare" ? 2 : 1); prof.coins += coinsWon; outL.Add($"+{coinsWon} coins|COINS|#FFE07A");
             SaveProfile(); return outL;
         }
 
@@ -184,6 +199,8 @@ namespace CozyTrack
         }
 
         // ---------- final de carrera ----------
+        //   cofres: ganar una carrera o quedar entre los 2 primeros en Survival → common · superar un nivel → rare (cada 3 niveles, epic)
+        //   desafío diario → rare (cada 7 días seguidos, legendary)
         void Finish()
         {
             if (mode == "online") { OnlineFinish(); return; }
@@ -192,48 +209,79 @@ namespace CozyTrack
             var order = act.Concat(cars.Where(c => c.isOut).OrderByDescending(c => c.outAt)).ToList();
             int place = order.IndexOf(player) + 1;
             bool beat = rival == null || order.IndexOf(player) < order.IndexOf(rival);
-            string msg, big = place + "º"; List<string> chest = null; string chestKind = null;
+            string chestKind = null; var v = new ResultView { big = place + $"<size={Mathf.RoundToInt(24 * K)}>{Ordinal(place)}</size>" };
+            prof.coins += player.coins; OfferDouble(player.coins);
+            foreach (var (c, k) in order.Select((c, k) => (c, k)))
+                v.rows.Add(((k + 1).ToString(), c.isPlayer ? NetName + " (you)" : c.name, c.isOut ? "out lap " + c.outLap : c.done >= 0 ? Fmt(c.done) : "—", c.isPlayer));
+            v.stats.Add((player.coins.ToString(), "COINS")); v.stats.Add((perfects.ToString(), "PERFECT CURVES")); v.stats.Add((crashes.ToString(), "OFF THE TRACK"));
             if (mode == "time")
             {
-                float t = player.done; big = Fmt(t);
+                float t = player.done; v.big = Fmt(t); v.rows.Clear();
                 bool had = PlayerPrefs.HasKey(GhostKey); float best = ghostData != null ? ghostTime : 1e9f;
-                if (!had || t < best)
-                {
-                    PlayerPrefs.SetString(GhostKey, JsonUtility.ToJson(new GhostSave { t = t, car = choice, s = rec.ToArray() }));
-                    msg = had ? $"¡Nuevo récord! Mejoras en {best - t:0.00} s. Tu fantasma se ha actualizado." : "Primer récord guardado: la próxima vez correrás contra tu fantasma.";
-                }
-                else msg = $"Récord: {Fmt(best)}. Te has quedado a {t - best:0.00} s.";
+                bool isRec = !had || t < best;
+                if (isRec) PlayerPrefs.SetString(GhostKey, JsonUtility.ToJson(new GhostSave { t = t, car = choice, s = rec.ToArray() }));
+                v.sub = isRec ? "NEW RECORD!" : "TIME TRIAL"; v.disc = isRec ? MintB : Paper;
+                v.rows.Add(("", "This run", Fmt(t), true));
+                if (had) { v.rows.Add(("", "Old best (ghost)", Fmt(best), false)); v.rows.Add(("", isRec ? "Improved by" : "Behind by", (isRec ? "−" : "+") + Mathf.Abs(best - t).ToString("0.00") + " s", false)); }
+                v.tip = isRec ? (had ? "Your ghost has been updated. Next time you race against this run." : "First record saved: next time you race against your ghost.") : $"Your record is {Fmt(best)}. Try a cleaner line!";
+                v.primary = isRec ? "BEAT IT AGAIN" : "TRY AGAIN"; v.back = "‹ LEVELS"; v.onBack = BackToPick; v.secondary = "DONE"; v.onSecondary = BackToPick;
+                SaveProfile(); ShowResultView(v); return;
             }
-            else if (player.isOut) msg = $"Te han eliminado en la vuelta {player.outLap}.";
-            else msg = place == 1 ? "¡Has ganado!" : $"Has quedado {place}º. ¡A por la victoria!";
-            prof.coins += player.coins; OfferDouble(player.coins);
-            if (mode == "daily")
+            if (mode == "elim")
+            {
+                v.sub = player.isOut ? $"OUT ON LAP {player.outLap}" : "LAST ONE STANDING!"; v.disc = place == 1 ? SunC : place == 2 ? Peach : Paper;
+                if (place <= 2) chestKind = "common";
+                v.primary = "GO AGAIN"; v.primaryBg = Coral;
+            }
+            else if (mode == "daily")
             {
                 var d = DailyDef();
                 bool ok = d.goal == 0 ? place == 1 : d.goal == 1 ? crashes == 0 : d.goal == 2 ? player.coins >= 10 : d.goal == 3 ? perfects >= 3 : place <= 2;
                 if (ok && prof.dailyLast != d.key)
                 {
                     int streak = StreakNow() + 1; prof.dailyLast = d.key; prof.dailyStreak = streak;
-                    chestKind = streak % 7 == 0 ? "oro" : "normal";
-                    msg = $"¡Desafío diario superado! Racha: {streak} {(streak == 1 ? "día" : "días")}.";
+                    chestKind = streak % 7 == 0 ? "legendary" : "rare";
+                    v.big = $"DAY {streak}"; v.sub = "STREAK!"; v.disc = SunC;
                 }
-                else if (prof.dailyLast == d.key) msg = "Ya habías superado el desafío de hoy. Vuelve mañana.";
-                else msg = $"Desafío no superado: {CozyData.DailyGoals[d.goal].ToLower()}. Puedes repetirlo hoy.";
+                else if (prof.dailyLast == d.key) { v.sub = "ALREADY DONE"; v.tip = "You already beat today's challenge. Come back tomorrow!"; v.disc = Paper; }
+                else { v.sub = "NOT YET"; v.tip = $"Challenge: {CozyData.DailyGoals[d.goal].ToLower()}. You can try again today."; v.disc = Paper; }
+                v.back = "‹ RACE"; v.onBack = BackToPick; v.primary = ok ? "GREAT!" : "TRY AGAIN"; if (ok) v.onPrimary = BackToPick;
             }
             else if (mode == "level")
             {
-                if (beat) { if (levelNum > prof.level) prof.level = levelNum; chestKind = "normal"; msg = $"¡Nivel {levelNum} superado!" + (levelNum < CozyData.LevelCount ? " Se desbloquea el siguiente." : ""); }
-                else msg = "¡Casi! Mejora el coche o prueba otra trazada.";
+                v.back = "‹ LEVELS"; v.onBack = BackToPick;
+                if (beat)
+                {
+                    if (levelNum > prof.level) prof.level = levelNum;
+                    chestKind = levelNum % 3 == 0 ? "epic" : "rare";
+                    v.sub = $"LEVEL {levelNum:00} CLEAR!"; v.disc = SunC;
+                    if (levelNum < CozyData.LevelCount) { int nx = levelNum + 1; v.primary = "NEXT LEVEL"; v.onPrimary = () => { pickLevel = nx; pickTime = false; OpenCarPick(); }; v.secondary = "REPLAY"; v.onSecondary = () => StartLevel(levelNum); }
+                }
+                else
+                {
+                    v.sub = "SO CLOSE!"; v.disc = CozyData.Hex("#D3D2DA");
+                    v.tip = "Win to clear the level. Upgrade your brakes, or let go a bit earlier before the big curves.";
+                    v.primary = "TRY AGAIN"; v.secondary = "UPGRADE"; v.onSecondary = () => { pickLevel = levelNum; pickTime = false; carTab = "up"; OpenCarPick(); };
+                }
             }
-            else if (mode != "time" && (place == 1 || (mode == "race" && beat))) chestKind = "normal";
-            if (chestKind != null) chest = new List<string> { AddChest(chestKind) ? $"Cofre {(chestKind == "oro" ? "de oro" : "normal")} a la ranura: ábrelo en el menú." : "Ranuras llenas: +25 monedas." };
+            else
+            {
+                v.sub = place == 1 ? "YOU WON!" : "NICE RACE!"; v.disc = place == 1 ? SunC : Paper;
+                if (place == 1) chestKind = "common";
+            }
+            if (chestKind != null)
+            {
+                bool slot = AddChest(chestKind); v.chestTier = chestKind;
+                v.chestTitle = TierName(chestKind) + " chest!"; v.chestSub = slot ? $"Added to your slots · opens in {ChestSeconds(chestKind) / 60} min" : "Slots full: +25 coins instead";
+            }
+            else if (v.tip == null && mode != "daily") v.tip = place == 1 ? "Keep winning to fill your chest slots." : "Win the race to earn a chest.";
+            v.photo = true; photoReady = false;
             SaveProfile();
-            var rows = new List<string>();
-            for (int k = 0; k < order.Count; k++) { var c = order[k]; rows.Add($"{k + 1}º {c.name}\t{(c.isOut ? "fuera (vuelta " + c.outLap + ")" : c.done >= 0 ? Fmt(c.done) : "—")}"); }
-            rows.Add($"Monedas\t{player.coins}"); rows.Add($"Curvas perfectas\t{perfects}"); rows.Add($"Salidas de pista\t{crashes}");
-            ShowResults(big, msg, rows, chest);
-            if (mode != "time") StartCoroutine(PodiumPhoto(order));
+            ShowResultView(v);
+            StartCoroutine(PodiumPhoto(order));
         }
+        void BackToPick() { mode = "race"; QuitToPick(); }
+        void QuitToPick() { if (circId.StartsWith("nivel")) BuildCircuit(CozyData.Circuit(PlayerPrefs.GetString("ctCirc", "jardin"))); MenuGrid(); ShowMenu(); OpenPick(pickMode == "elim" ? "elim" : "race"); }
         public static string Fmt(float t) => $"{Mathf.FloorToInt(t / 60)}:{(t % 60):00.0}";
 
         // ---------- garaje: estantería con toda la colección ----------
@@ -275,7 +323,7 @@ namespace CozyTrack
         {
             if (!Physics.Raycast(cam.ScreenPointToRay(screen), out var hit, 200)) return;
             var n = hit.collider.gameObject.name;
-            if (!Usable(n)) { Toast($"Te faltan {3 - Pieces(n)} piezas"); return; }
+            if (!Usable(n)) { Toast($"{3 - Pieces(n)} more pieces needed"); return; }
             choice = n; RefreshGarageUI(); RefreshCards();
         }
 
@@ -310,7 +358,7 @@ namespace CozyTrack
             photoCam.enabled = true;
             yield return null; yield return new WaitForEndOfFrame();
             photoCam.enabled = false; sun.transform.rotation = oldSun;
-            ShowPhoto(photoRT, string.Join("   ", top.Select((c, k) => $"{k + 1}º {c.name}")), $"Cozy Track · {circ.n} · {DateTime.Now:dd/MM/yyyy}");
+            ShowPhoto(photoRT, string.Join("   ", top.Select((c, k) => $"{k + 1}{Ordinal(k + 1).ToLower()} {c.name}")), $"Cozy Track · {circ.n} · {DateTime.Now:dd/MM/yyyy}");
         }
     }
 }

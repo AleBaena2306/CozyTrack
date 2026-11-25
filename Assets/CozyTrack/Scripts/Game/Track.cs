@@ -60,7 +60,7 @@ namespace CozyTrack
         public static Vector3 Right(float yaw) => new Vector3(Mathf.Cos(yaw), 0, -Mathf.Sin(yaw));
         public static Vector3 Fwd(float yaw) => new Vector3(Mathf.Sin(yaw), 0, Mathf.Cos(yaw));
 
-        static void Local(Piece p, float u, float o, out float lx, out float lz, out float dh)
+        public static void Local(Piece p, float u, float o, out float lx, out float lz, out float dh)
         {
             if (p.straight) { lx = o; lz = p.L * u; dh = 0; return; }
             float a = p.A * u, s = p.s, c = Mathf.Cos(a), sn = Mathf.Sin(a);

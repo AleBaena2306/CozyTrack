@@ -148,7 +148,7 @@ namespace CozyTrack
             look = l; PlayerPrefs.SetString("ctLook", l);
             Shader.SetGlobalFloat("_CozyToon", l == "normal" ? 0 : 1);
             foreach (var f in lib.edgeFeatures) if (f) f.SetActive(l == "edge");
-            if (l == "edge" && lib.edgeFeatures.Length == 0) Toast("Falta el efecto de bordes: COZY TRACK > Configurar proyecto");
+            if (l == "edge" && lib.edgeFeatures.Length == 0) Toast("Edge effect missing: COZY TRACK > Configurar proyecto");
             ApplyTod(todId);
             RefreshMenuSelections();
         }
@@ -201,12 +201,12 @@ namespace CozyTrack
                 if (g && !countGas) pressedAt = countT;
                 countGas = g;
                 int n = Mathf.CeilToInt(countT - 0.2f);
-                SetCount(n > 0 ? n.ToString() : "¡Ya!");
+                SetCount(n > 0 ? n.ToString() : "GO!");
                 if (countT <= 0)
                 {
                     state = "race"; SetCount("");
-                    if (countGas && pressedAt <= 0.6f) { player.turbo = 0.8f; Toast("¡Salida perfecta!"); }
-                    else if (countGas && pressedAt > 1.4f) { player.spin = 0.5f; Toast("Salida en falso"); }
+                    if (countGas && pressedAt <= 0.6f) { player.turbo = 0.8f; Toast("Perfect start!"); }
+                    else if (countGas && pressedAt > 1.4f) { player.spin = 0.5f; Toast("False start"); }
                 }
             }
             if (state == "race" || state == "end") RaceTick(dt);

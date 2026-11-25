@@ -44,42 +44,42 @@ namespace CozyTrack
     {
         public static readonly CarDef[] Cars =
         {
-            new CarDef("Dart", "Coche de fórmula", "Motor", "#ff7366", 5, 2, 3, 2),
-            new CarDef("Hopper", "Utilitario pequeño", "Calle", "#ffd64d", 3, 5, 2, 1),
-            new CarDef("Gecko", "Buggy", "Motor", "#73e0a6", 2, 4, 5, 2),
-            new CarDef("Rhino", "Todoterreno", "Trabajo", "#4080f2", 3, 1, 4, 5),
-            new CarDef("Cart", "Carrito de la compra", "Cotidiano", "#73bfff", 2, 4, 3, 2),
-            new CarDef("EScooter", "Patinete eléctrico", "Cotidiano", "#73e0a6", 3, 5, 2, 1),
-            new CarDef("Skate", "Patín de cuatro ruedas gigante", "Cotidiano", "#ff8ccc", 3, 4, 4, 1),
-            new CarDef("Skateboard", "Monopatín", "Cotidiano", "#ff9e40", 4, 4, 3, 1),
-            new CarDef("Bike", "Bicicleta", "Cotidiano", "#ff7366", 4, 3, 2, 1),
-            new CarDef("Trike", "Triciclo", "Cotidiano", "#ffd64d", 2, 4, 4, 1),
-            new CarDef("Stroller", "Carrito de bebé", "Cotidiano", "#b38cf2", 2, 3, 4, 2),
-            new CarDef("Wheelbarrow", "Carretilla", "Cotidiano", "#66bf59", 1, 3, 4, 3),
-            new CarDef("Bathtub", "Bañera con ruedas", "Cotidiano", "#aab6cc", 3, 2, 3, 4),
-            new CarDef("Taxi", "Taxi", "Calle", "#ffd64d", 3, 3, 3, 3),
-            new CarDef("Bus", "Autobús", "Calle", "#ff7366", 2, 1, 3, 5),
-            new CarDef("IceCream", "Furgoneta de helados", "Calle", "#ff8ccc", 2, 2, 3, 4),
-            new CarDef("FireTruck", "Camión de bomberos", "Calle", "#ff7366", 3, 2, 3, 5),
-            new CarDef("Ambulance", "Ambulancia", "Calle", "#aab6cc", 3, 3, 3, 4),
-            new CarDef("Camper", "Furgoneta camper", "Calle", "#73e0a6", 2, 2, 3, 4),
-            new CarDef("GolfCart", "Carrito de golf", "Calle", "#aab6cc", 2, 4, 4, 2),
-            new CarDef("Tractor", "Tractor", "Trabajo", "#66bf59", 1, 2, 5, 5),
-            new CarDef("Digger", "Excavadora", "Trabajo", "#ffd64d", 1, 2, 4, 5),
-            new CarDef("Forklift", "Carretilla elevadora", "Trabajo", "#ff9e40", 1, 4, 4, 4),
-            new CarDef("Mower", "Cortacésped con asiento", "Trabajo", "#ff7366", 2, 3, 4, 3),
-            new CarDef("Moto", "Moto de carreras", "Motor", "#734dbf", 5, 4, 2, 2),
-            new CarDef("Vespino", "Moto scooter clásica", "Motor", "#73bfff", 3, 4, 3, 2),
-            new CarDef("Quad", "Quad", "Motor", "#ff9e40", 3, 4, 4, 2),
-            new CarDef("Monster", "Monstruo de ruedas gigantes", "Motor", "#b38cf2", 3, 3, 3, 5),
-            new CarDef("Rocket", "Coche cohete", "Motor", "#1f1f40", 5, 3, 2, 3),
-            new CarDef("Bumper", "Coche de choque", "Motor", "#73bfff", 2, 4, 3, 4),
-            new CarDef("Sled", "Trineo", "Nieve", "#ff7366", 4, 3, 1, 2),
-            new CarDef("Snowmobile", "Moto de nieve", "Nieve", "#73bfff", 4, 4, 3, 3),
-            new CarDef("Hover", "Aerodeslizador", "Agua", "#ff9e40", 4, 3, 1, 2),
-            new CarDef("Train", "Locomotora de juguete", "Raíles", "#4080f2", 3, 2, 4, 5),
-            new CarDef("Tram", "Tranvía", "Raíles", "#ffd64d", 3, 2, 4, 5),
-            new CarDef("HotDog", "Coche salchicha", "Cotidiano", "#ffd64d", 3, 3, 3, 3),
+            new CarDef("Dart", "Formula car", "Racing", "#ff7366", 5, 2, 3, 2),
+            new CarDef("Hopper", "Little hatchback", "Street", "#ffd64d", 3, 5, 2, 1),
+            new CarDef("Gecko", "Buggy", "Racing", "#73e0a6", 2, 4, 5, 2),
+            new CarDef("Rhino", "Off-roader", "Work", "#4080f2", 3, 1, 4, 5),
+            new CarDef("Cart", "Shopping cart", "Everyday", "#73bfff", 2, 4, 3, 2),
+            new CarDef("EScooter", "E-scooter", "Everyday", "#73e0a6", 3, 5, 2, 1),
+            new CarDef("Skate", "Giant roller skate", "Everyday", "#ff8ccc", 3, 4, 4, 1),
+            new CarDef("Skateboard", "Skateboard", "Everyday", "#ff9e40", 4, 4, 3, 1),
+            new CarDef("Bike", "Bike", "Everyday", "#ff7366", 4, 3, 2, 1),
+            new CarDef("Trike", "Trike", "Everyday", "#ffd64d", 2, 4, 4, 1),
+            new CarDef("Stroller", "Stroller", "Everyday", "#b38cf2", 2, 3, 4, 2),
+            new CarDef("Wheelbarrow", "Wheelbarrow", "Everyday", "#66bf59", 1, 3, 4, 3),
+            new CarDef("Bathtub", "Bathtub on wheels", "Everyday", "#aab6cc", 3, 2, 3, 4),
+            new CarDef("Taxi", "Taxi", "Street", "#ffd64d", 3, 3, 3, 3),
+            new CarDef("Bus", "Bus", "Street", "#ff7366", 2, 1, 3, 5),
+            new CarDef("IceCream", "Ice cream van", "Street", "#ff8ccc", 2, 2, 3, 4),
+            new CarDef("FireTruck", "Fire truck", "Street", "#ff7366", 3, 2, 3, 5),
+            new CarDef("Ambulance", "Ambulance", "Street", "#aab6cc", 3, 3, 3, 4),
+            new CarDef("Camper", "Camper van", "Street", "#73e0a6", 2, 2, 3, 4),
+            new CarDef("GolfCart", "Golf cart", "Street", "#aab6cc", 2, 4, 4, 2),
+            new CarDef("Tractor", "Tractor", "Work", "#66bf59", 1, 2, 5, 5),
+            new CarDef("Digger", "Digger", "Work", "#ffd64d", 1, 2, 4, 5),
+            new CarDef("Forklift", "Forklift", "Work", "#ff9e40", 1, 4, 4, 4),
+            new CarDef("Mower", "Ride-on mower", "Work", "#ff7366", 2, 3, 4, 3),
+            new CarDef("Moto", "Racing bike", "Racing", "#734dbf", 5, 4, 2, 2),
+            new CarDef("Vespino", "Classic scooter", "Racing", "#73bfff", 3, 4, 3, 2),
+            new CarDef("Quad", "Quad", "Racing", "#ff9e40", 3, 4, 4, 2),
+            new CarDef("Monster", "Monster truck", "Racing", "#b38cf2", 3, 3, 3, 5),
+            new CarDef("Rocket", "Rocket car", "Racing", "#1f1f40", 5, 3, 2, 3),
+            new CarDef("Bumper", "Bumper car", "Racing", "#73bfff", 2, 4, 3, 4),
+            new CarDef("Sled", "Sled", "Snow", "#ff7366", 4, 3, 1, 2),
+            new CarDef("Snowmobile", "Snowmobile", "Snow", "#73bfff", 4, 4, 3, 3),
+            new CarDef("Hover", "Hovercraft", "Water", "#ff9e40", 4, 3, 1, 2),
+            new CarDef("Train", "Toy train", "Rails", "#4080f2", 3, 2, 4, 5),
+            new CarDef("Tram", "Tram", "Rails", "#ffd64d", 3, 2, 4, 5),
+            new CarDef("HotDog", "Hot dog car", "Everyday", "#ffd64d", 3, 3, 3, 3),
         };
         static Dictionary<string, CarDef> carMap;
         public static CarDef Car(string n)
@@ -87,18 +87,18 @@ namespace CozyTrack
             if (carMap == null) { carMap = new Dictionary<string, CarDef>(); foreach (var c in Cars) carMap[c.name] = c; }
             return carMap.TryGetValue(n, out var d) ? d : Cars[0];
         }
-        public static readonly string[] StatNames = { "Velocidad", "Aceleración", "Agarre", "Peso" };
+        public static readonly string[] StatNames = { "Speed", "Acceleration", "Grip", "Weight" };
         public static readonly string[] StartCars = { "Dart", "Hopper", "Gecko", "Rhino" };
 
         public static readonly Dictionary<string, SurfDef> Surfs = new Dictionary<string, SurfDef>
         {
-            { "asfalto", new SurfDef("asfalto", "Asfalto", 1f, 1f, 1f, 1f) },
-            { "turbo", new SurfDef("turbo", "Moqueta turbo", 1f, 1f, 1.35f, 1f, "#ffb04d") },
-            { "hielo", new SurfDef("hielo", "Hielo", 0.72f, 0.6f, 1f, 0.35f, "#e6f7ff") },
-            { "arena", new SurfDef("arena", "Arena", 0.95f, 3.5f, 1f, 1.5f, "#e8c98f") },
-            { "barro", new SurfDef("barro", "Barro", 0.85f, 2.6f, 1f, 1.3f, "#7a5232") },
-            { "agua", new SurfDef("agua", "Charco", 0.8f, 2.0f, 1f, 0.8f, "#9fd8ff") },
-            { "jabon", new SurfDef("jabon", "Jabón", 0.68f, 0.5f, 1f, 0.3f, "#ffffff") },
+            { "asfalto", new SurfDef("asfalto", "Asphalt", 1f, 1f, 1f, 1f) },
+            { "turbo", new SurfDef("turbo", "Turbo carpet", 1f, 1f, 1.35f, 1f, "#ffb04d") },
+            { "hielo", new SurfDef("hielo", "Ice", 0.72f, 0.6f, 1f, 0.35f, "#e6f7ff") },
+            { "arena", new SurfDef("arena", "Sand", 0.95f, 3.5f, 1f, 1.5f, "#e8c98f") },
+            { "barro", new SurfDef("barro", "Mud", 0.85f, 2.6f, 1f, 1.3f, "#7a5232") },
+            { "agua", new SurfDef("agua", "Puddle", 0.8f, 2.0f, 1f, 0.8f, "#9fd8ff") },
+            { "jabon", new SurfDef("jabon", "Soap", 0.68f, 0.5f, 1f, 0.3f, "#ffffff") },
         };
 
         static readonly string[] CH = { "C45R", "C45L", "C45L", "C45R" }, CHm = { "C45L", "C45R", "C45R", "C45L" };
@@ -111,20 +111,20 @@ namespace CozyTrack
 
         public static readonly CircuitDef[] Circuits =
         {
-            new CircuitDef { id = "jardin", n = "Jardín", room = "jardin", desc = "El clásico: chicanes, moqueta turbo, hielo, arena, barro y charco.",
+            new CircuitDef { id = "jardin", n = "Garden", room = "jardin", desc = "The classic: chicanes, turbo carpet, ice, sand, mud and a puddle.",
                 layout = Cat("SF", "S8", "C90L", CH, "C90L", "S8", "S8", "C90L", CH, "C90L"),
                 surf = new[] { "asfalto","turbo","asfalto","hielo","hielo","hielo","hielo","asfalto","arena","barro","asfalto","agua","agua","agua","agua","asfalto" },
                 boxes = new[] { new[]{1,0}, new[]{1,3}, new[]{8,1}, new[]{8,2}, new[]{9,0}, new[]{9,3} },
                 coins = new[] { new[]{2,1}, new[]{2,2}, new[]{10,3}, new[]{10,0}, new[]{15,1}, new[]{7,2} } },
-            new CircuitDef { id = "salon", n = "Salón", room = "salon", desc = "Sobre la alfombra, junto al sofá. El robot aspirador cruza la pista.",
+            new CircuitDef { id = "salon", n = "Living room", room = "salon", desc = "On the rug, by the sofa. The robot vacuum crosses the track.",
                 layout = Cat("SF", "C90L", CH, "C90L", "S8", "C90L", CHm, "C90L"),
                 surf = new[] { "asfalto","asfalto","asfalto","turbo","turbo","asfalto","asfalto","arena","asfalto","asfalto","barro","barro","asfalto","asfalto" },
                 obst = new[] { new ObstDef("roomba", 7, 0.5f, 7f) } },
-            new CircuitDef { id = "cocina", n = "Cocina", room = "cocina", desc = "Un ocho con cruce a nivel: mira a los lados al pasar por el centro. El gato también cruza.",
+            new CircuitDef { id = "cocina", n = "Kitchen", room = "cocina", desc = "A figure 8 with a level crossing: look both ways in the middle. The cat crosses too.",
                 layout = new[] { "S5.3","X5.4","S5.3","C90L","C90L","C90L","S5.3","X5.4","S5.3","C90R","C90R","C90R" },
                 surf = new[] { "asfalto","asfalto","asfalto","asfalto","agua","asfalto","turbo","asfalto","asfalto","hielo","hielo","asfalto" },
                 obst = new[] { new ObstDef("cat", 4, 0.5f, 9f) } },
-            new CircuitDef { id = "bano", n = "Baño", room = "bano", desc = "Rizo por el techo: la pista gira y vas boca abajo. Ojo con el jabón y el patito.",
+            new CircuitDef { id = "bano", n = "Bathroom", room = "bano", desc = "A loop over the ceiling: the track twists and you race upside down. Mind the soap and the duck.",
                 layout = new[] { "SF","S8","S8","C90L","C90L","Ti8","Tr8","To8","C90L","C90L" },
                 surf = new[] { "asfalto","asfalto","jabon","asfalto","agua","asfalto","turbo","asfalto","jabon","asfalto" },
                 obst = new[] { new ObstDef("duck", 2, 0.5f, 8f) } },
@@ -134,13 +134,13 @@ namespace CozyTrack
         // ---------- niveles (tools/progression.py): 7 niveles clave; los intermedios usan el trazado del clave anterior ----------
         public static readonly LevelKey[] LevelKeys =
         {
-            new LevelKey(1, "Sala de juegos", "Primera vuelta", "Rhino", 0.866f, 1.0f, 0, new[] { "S8", "S8", "C90L8", "S4", "C90L8", "S8", "S8", "C90L8", "S4", "C90L8" }),
-            new LevelKey(5, "Sala de juegos", "Zigzag", "Gecko", 0.888f, 1.0f, 1, new[] { "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8" }),
-            new LevelKey(10, "Sala de juegos", "La alfombra", "Dart", 0.914f, 1.0f, 2, new[] { "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8" }),
-            new LevelKey(15, "Jardín", "Entre macetas", "Rhino", 0.925f, 1.0f, 2, new[] { "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8" }),
-            new LevelKey(20, "Jardín", "El seto", "Hopper", 0.915f, 1.0f, 3, new[] { "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8" }),
-            new LevelKey(25, "Nieve", "Horquillas", "Rhino", 0.887f, 0.85f, 4, new[] { "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5", "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5" }),
-            new LevelKey(30, "Nieve", "La gran helada", "Gecko", 0.89f, 0.85f, 5, new[] { "S8", "S8", "S8", "S4", "C90L3", "C90L3", "C90R5", "C90L5", "C45L5", "C45R5", "S8", "S8", "S8", "S8", "S8", "S4", "C90L3", "C90L3", "C90R5", "C90L5", "C45L5", "C45R5", "S8", "S8" }),
+            new LevelKey(1, "Playroom", "First lap", "Rhino", 0.866f, 1.0f, 0, new[] { "S8", "S8", "C90L8", "S4", "C90L8", "S8", "S8", "C90L8", "S4", "C90L8" }),
+            new LevelKey(5, "Playroom", "Zigzag", "Gecko", 0.888f, 1.0f, 1, new[] { "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8" }),
+            new LevelKey(10, "Playroom", "The rug", "Dart", 0.914f, 1.0f, 2, new[] { "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8" }),
+            new LevelKey(15, "Garden", "Flower pots", "Rhino", 0.925f, 1.0f, 2, new[] { "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8" }),
+            new LevelKey(20, "Garden", "The hedge", "Hopper", 0.915f, 1.0f, 3, new[] { "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8" }),
+            new LevelKey(25, "Snow", "Hairpins", "Rhino", 0.887f, 0.85f, 4, new[] { "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5", "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5" }),
+            new LevelKey(30, "Snow", "The big freeze", "Gecko", 0.89f, 0.85f, 5, new[] { "S8", "S8", "S8", "S4", "C90L3", "C90L3", "C90R5", "C90L5", "C45L5", "C45R5", "S8", "S8", "S8", "S8", "S8", "S4", "C90L3", "C90L3", "C90R5", "C90L5", "C45L5", "C45R5", "S8", "S8" }),
         };
         public const int LevelCount = 30;
         public static CircuitDef Level(int n, out LevelKey key, out float skill)
@@ -151,16 +151,16 @@ namespace CozyTrack
             if (next != null && n > key.level) skill = Mathf.Lerp(key.skill, next.skill, (n - key.level) / (float)(next.level - key.level));
             var lap = new List<string>(key.lap);
             lap[0] = "SF";
-            string room = key.world == "Jardín" ? "jardin" : key.world == "Nieve" ? "nieve" : "salon";
+            string room = key.world == "Garden" ? "jardin" : key.world == "Snow" ? "nieve" : "salon";
             var surf = new string[lap.Count];
             for (int i = 0; i < surf.Length; i++) surf[i] = key.grip < 1f ? "hielo" : "asfalto";
             if (surf.Length > 2) surf[1] = "turbo";
-            return new CircuitDef { id = "nivel" + n, n = $"Nivel {n} · {key.name}", room = room, desc = key.world, layout = lap.ToArray(), surf = surf, grip = 1f,
+            return new CircuitDef { id = "nivel" + n, n = $"Level {n} · {key.name}", room = room, desc = key.world, layout = lap.ToArray(), surf = surf, grip = 1f,
                 obst = room == "salon" && n >= 8 ? new[] { new ObstDef("roomba", Mathf.Min(3, lap.Count - 1), 0.5f, 7f) } : new ObstDef[0] };
         }
 
         // ---------- mejoras (herramienta de balanceo): % totales con las 5 mejoras, reparto decreciente ----------
-        public static readonly string[] UpgradeNames = { "Velocidad", "Aceleración", "Frenos" };
+        public static readonly string[] UpgradeNames = { "Speed", "Accel", "Brakes" };
         public static readonly float[] UpgradeTotal = { 20f, 33f, 40f };
         public static readonly float[] UpgradeShape = { 0.30f, 0.25f, 0.20f, 0.15f, 0.10f };
         public static readonly int[] UpgradeCost = { 60, 110, 180, 280, 420 };
@@ -169,10 +169,10 @@ namespace CozyTrack
         // ---------- objetos (mecánicas de Mario Kart con nombre y aspecto propios) ----------
         public static readonly Dictionary<string, string[]> Items = new Dictionary<string, string[]>
         {
-            { "turbo", new[]{"»","Turbo"} }, { "turbo3", new[]{"»»»","Triple turbo"} }, { "shield", new[]{"◯","Escudo"} },
-            { "marble", new[]{"●","Canica"} }, { "homing", new[]{"✸","Peonza"} }, { "comet", new[]{"★","Cometa"} },
-            { "oil", new[]{"◐","Aceite"} }, { "fakebox", new[]{"?!","Caja trampa"} }, { "blackout", new[]{"ϟ","Apagón"} },
-            { "autopilot", new[]{"➤","Piloto auto"} }, { "super", new[]{"✦","Supercarga"} }, { "bubbles", new[]{"∘∘","Pompas"} }, { "magnet", new[]{"∪","Imán"} },
+            { "turbo", new[]{"»","Turbo"} }, { "turbo3", new[]{"»»»","Triple turbo"} }, { "shield", new[]{"◯","Shield"} },
+            { "marble", new[]{"●","Marble"} }, { "homing", new[]{"✸","Spinning top"} }, { "comet", new[]{"★","Comet"} },
+            { "oil", new[]{"◐","Oil"} }, { "fakebox", new[]{"?!","Trick box"} }, { "blackout", new[]{"ϟ","Blackout"} },
+            { "autopilot", new[]{"➤","Autopilot"} }, { "super", new[]{"✦","Supercharge"} }, { "bubbles", new[]{"∘∘","Bubbles"} }, { "magnet", new[]{"∪","Magnet"} },
         };
         public static readonly (string, int)[][] ItemOdds =
         {
@@ -183,20 +183,20 @@ namespace CozyTrack
         };
 
         public static readonly string[] StickerIds = { "estrella", "corazon", "rayo", "flor", "sonrisa", "huella", "arcoiris", "planeta", "llama", "siete" };
-        public static readonly string[] StickerNames = { "Estrella", "Corazón", "Rayo", "Flor", "Sonrisa", "Huella", "Arcoíris", "Planeta", "Llama", "Siete" };
+        public static readonly string[] StickerNames = { "Star", "Heart", "Bolt", "Flower", "Smile", "Paw", "Rainbow", "Planet", "Flame", "Seven" };
 
-        public static readonly string[] DailyGoals = { "Gana la carrera", "Termina sin salirte de la pista", "Recoge 10 monedas", "Haz 3 curvas perfectas", "Queda entre los 2 primeros" };
+        public static readonly string[] DailyGoals = { "Win the race", "Finish without leaving the track", "Collect 10 coins", "Make 3 perfect curves", "Finish in the top 2" };
 
         static Color H(string h) { ColorUtility.TryParseHtmlString(h, out var c); return c; }
         public static readonly TodDef[] Tods =
         {
-            new TodDef { id = "manana", n = "Mañana", bg = H("#bfe6d0"), fog = H("#bfe6d0"), sky = H("#fffaf0"), gnd = H("#7fb08f"), sun = H("#fff4dd"), sunI = 1.0f, sunDir = new Vector3(50, -25, 0), ground = H("#a8d8b9"), air = "polen" },
-            new TodDef { id = "atardecer", n = "Atardecer", bg = H("#f7b49a"), fog = H("#f4a88e"), sky = H("#ffd9b8"), gnd = H("#8a6a8a"), sun = H("#ffab6b"), sunI = 1.15f, sunDir = new Vector3(22, -50, 0), ground = H("#b9cf9a"), air = "hojas" },
-            new TodDef { id = "noche", n = "Noche", bg = H("#1b2142"), fog = H("#1b2142"), sky = H("#8fa0e6"), gnd = H("#2a3050"), sun = H("#9db4ff"), sunI = 0.35f, sunDir = new Vector3(55, 140, 0), ground = H("#33475a"), air = "luciernagas", lamps = true },
+            new TodDef { id = "manana", n = "Morning", bg = H("#bfe6d0"), fog = H("#bfe6d0"), sky = H("#fffaf0"), gnd = H("#7fb08f"), sun = H("#fff4dd"), sunI = 1.0f, sunDir = new Vector3(50, -25, 0), ground = H("#a8d8b9"), air = "polen" },
+            new TodDef { id = "atardecer", n = "Sunset", bg = H("#f7b49a"), fog = H("#f4a88e"), sky = H("#ffd9b8"), gnd = H("#8a6a8a"), sun = H("#ffab6b"), sunI = 1.15f, sunDir = new Vector3(22, -50, 0), ground = H("#b9cf9a"), air = "hojas" },
+            new TodDef { id = "noche", n = "Night", bg = H("#1b2142"), fog = H("#1b2142"), sky = H("#8fa0e6"), gnd = H("#2a3050"), sun = H("#9db4ff"), sunI = 0.35f, sunDir = new Vector3(55, 140, 0), ground = H("#33475a"), air = "luciernagas", lamps = true },
         };
         public static TodDef Tod(string id) { foreach (var t in Tods) if (t.id == id) return t; return Tods[1]; }
 
-        public static readonly Color Ink = H("#2d2a3e"), Cream = H("#fff8ec"), Coral = H("#ff7366"), Sun = H("#ffd64d"), Sky = H("#73bfff"), Mint = H("#a8d8b9"), Grape = H("#734dbf");
+        public static readonly Color Ink = H("#2B2340"), Cream = H("#FFF4E0"), Coral = H("#FF6B4A"), Sun = H("#FFCF3D"), Sky = H("#73bfff"), Mint = H("#a8d8b9"), Grape = H("#734dbf");
         public static Color Hex(string h) => H(h);
     }
 }

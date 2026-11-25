@@ -116,9 +116,9 @@ namespace CozyTrack
                 for (int k = 0; k < others.Count; k++) { var c = MakeCar(others[k], lanes[k], false); c.k = 0.8f + k * 0.03f; c.kStraight = 0.88f + k * 0.02f; c.react = 0.25f; cars.Add(c); }
                 rival = mode == "level" ? cars[1] : cars[1 + Random.Range(0, 3)];
                 rival.k = mode == "level" ? levelSkill : 0.9f; rival.kStraight = rival.k + 0.02f; rival.react = 0.15f;
-                chip = mode == "elim" ? "Eliminación: el último de cada vuelta, fuera" : "";   // el rival a batir es interno: el jugador no lo ve
+                chip = mode == "elim" ? "Last car each lap is out" : "";   // el rival a batir es interno: el jugador no lo ve
             }
-            else chip = LoadGhost() ? "Fantasma: " + Fmt(ghostTime) : "Sin récord: márcalo tú";
+            else chip = LoadGhost() ? "" : "No record yet: set one!";
             perfects = 0; crashes = 0; countGas = false; pressedAt = 99;
             rec.Clear(); recT = 0; elimOut = 0; elimLaps = 0;
             SetRivalChip(chip);
@@ -143,7 +143,7 @@ namespace CozyTrack
                 {
                     elimLaps = L; var last = act.OrderBy(Prog).First();
                     Sparks(last, Color.white, 16); last.isOut = true; last.outAt = ++elimOut; last.outLap = L;
-                    Toast(last.isPlayer ? "¡Eliminado!" : last.name + " eliminado");
+                    Toast(last.isPlayer ? "You're out!" : last.name.ToUpper() + " IS OUT!");
                     if (last.isPlayer) { shake = 0.4f; Finish(); return; }
                 }
             }
@@ -156,7 +156,7 @@ namespace CozyTrack
                     if (b.m.activeSelf && b.i == c.i && Mathf.Abs(b.u - c.u) * Track.PieceLen(b.i, c.o) < 0.8f && Mathf.Abs(b.o - c.o) < 0.7f)
                     {
                         b.m.SetActive(false); b.t = 3;
-                        if (c.item == null) { c.item = RollItem(c); c.uses = c.item == "turbo3" ? 3 : 0; if (c.isPlayer) Toast("Tienes: " + CozyData.Items[c.item][1]); }
+                        if (c.item == null) { c.item = RollItem(c); c.uses = c.item == "turbo3" ? 3 : 0; if (c.isPlayer) Toast("Got: " + CozyData.Items[c.item][1]); }
                     }
                 var pc = Track.World(c.i, c.u, c.o).pos;
                 if (c.isPlayer)
@@ -256,7 +256,7 @@ namespace CozyTrack
             // la fuerza centrífuga empuja hacia fuera de la curva (a la derecha en una curva a la izquierda)
             c.flyPos = w.pos; c.flyVel = f * c.v * 0.7f + right * p.s * 5 + Vector3.up * 4; c.flyRot = 0;
             c.v = 0; c.turbo = 0; c.slipPeak = 0;
-            if (c.isPlayer) { shake = 0.5f; Toast("¡Fuera de pista!"); crashes++; }
+            if (c.isPlayer) { shake = 0.5f; Toast("Off the track!"); crashes++; }
         }
 
         void Step(RaceCar c, float dt)
@@ -302,7 +302,7 @@ namespace CozyTrack
             if (c.slip > 0.03f && Random.value < 0.4f + c.slip) Puff(c);
             c.slipPeak = Mathf.Max(c.slipPeak, c.slip);
             if (c.slip >= 1) Crash(c);
-            else if (c.isPlayer && c.slip == 0 && c.slipPeak >= 0.4f) { c.slipPeak = 0; c.coins += 2; Toast("¡Derrape salvado! +2"); }
+            else if (c.isPlayer && c.slip == 0 && c.slipPeak >= 0.4f) { c.slipPeak = 0; c.coins += 2; Toast("Saved the slide! +2"); }
             else if (c.slip == 0) c.slipPeak = 0;
         }
 
@@ -329,7 +329,7 @@ namespace CozyTrack
             if (nowCurve && c.slip > 0.05f) c.cleanCurve = false;
             if (!nowCurve && wasCurve)
             {
-                if (c.cleanCurve && c.slipPeak < 0.05f) { c.turbo = Mathf.Max(c.turbo, 0.6f); Toast("¡Curva perfecta!"); perfects++; }
+                if (c.cleanCurve && c.slipPeak < 0.05f) { c.turbo = Mathf.Max(c.turbo, 0.6f); Toast("Perfect curve!"); perfects++; }
                 c.cleanCurve = false;
             }
         }
@@ -381,7 +381,7 @@ namespace CozyTrack
                     if (Vector2.Distance(new Vector2(pa.x, pa.z), new Vector2(pb.x, pb.z)) < 1.15f)
                     {
                         var light = mA <= mB ? A : B; HitCar(light, light == A ? B : A, "spin"); light.v *= 2.5f; A.cool = B.cool = 0.8f;
-                        if (A.isPlayer || B.isPlayer) { shake = 0.4f; Toast(light.isPlayer ? "¡Choque en el cruce!" : "¡Lo has embestido en el cruce!"); }
+                        if (A.isPlayer || B.isPlayer) { shake = 0.4f; Toast(light.isPlayer ? "Crash at the crossing!" : "You rammed them at the crossing!"); }
                     }
                     continue;
                 }
@@ -400,7 +400,7 @@ namespace CozyTrack
                     lt.v *= 1 - 0.45f * mH / (mL + mH);
                 }
                 A.cool = B.cool = 0.5f;
-                foreach (var c in new[] { A, B }) if (c.isPlayer) Toast(c == lt && mL < mH ? "¡Choque! " + (c == A ? B : A).name + " pesa más" : "¡Choque!");
+                foreach (var c in new[] { A, B }) if (c.isPlayer) Toast(c == lt && mL < mH ? "Bump! " + (c == A ? B : A).name + " is heavier" : "Bump!");
             }
         }
 
@@ -410,7 +410,7 @@ namespace CozyTrack
         bool ProtectedHit(RaceCar c)
         {
             if (c.superT > 0 || c.autoT > 0 || c.turbo > 0) return true;
-            if (c.shield > 0) { c.shield = 0; if (c.isPlayer) Toast("El escudo te ha salvado"); return true; }
+            if (c.shield > 0) { c.shield = 0; if (c.isPlayer) Toast("Your shield saved you"); return true; }
             return false;
         }
         void HitCar(RaceCar c, RaceCar from, string how)
@@ -418,8 +418,8 @@ namespace CozyTrack
             if (c.crash > 0 || ProtectedHit(c)) return;
             if (how == "slip") { c.slip = Mathf.Min(0.95f, c.slip + 0.75f); c.v *= 0.7f; } else { c.v *= 0.15f; c.spin = 0.8f; }
             Sparks(c, CozyData.Hex("#ffd64d"), 10);
-            if (c.isPlayer) { Toast(how == "slip" ? "¡Resbalón!" : "¡Te han dado!"); shake = 0.35f; }
-            else if (from != null && from.isPlayer) Toast("¡Tocado!");
+            if (c.isPlayer) { Toast(how == "slip" ? "Slipped!" : "You got hit!"); shake = 0.35f; }
+            else if (from != null && from.isPlayer) Toast("Hit!");
         }
         void Fire(RaceCar c, string type)
         {
@@ -452,11 +452,11 @@ namespace CozyTrack
             if (it == "blackout")
             {
                 // corte de corriente en los carriles de los que van delante
-                foreach (var o in cars) if (o != c && !o.isOut && Prog(o) > Prog(c) && !(o.shield > 0 || o.superT > 0)) { o.blackT = 2.5f; if (o.isPlayer) { Flash(CozyData.Hex("#20203a")); Toast("¡Apagón en tu carril!"); } }
+                foreach (var o in cars) if (o != c && !o.isOut && Prog(o) > Prog(c) && !(o.shield > 0 || o.superT > 0)) { o.blackT = 2.5f; if (o.isPlayer) { Flash(CozyData.Hex("#20203a")); Toast("Blackout in your lane!"); } }
                 if (c.isPlayer) Flash(Color.white);
             }
-            if (it == "bubbles") foreach (var o in cars) if (o != c && !o.isOut && Prog(o) > Prog(c)) { o.bubbleT = 3.5f; if (o.isPlayer) Toast("¡Pompas!"); }
-            if (c.isPlayer && !autoTest) Toast(it == "blackout" ? "¡Apagón!" : CozyData.Items[it][1] + "!");
+            if (it == "bubbles") foreach (var o in cars) if (o != c && !o.isOut && Prog(o) > Prog(c)) { o.bubbleT = 3.5f; if (o.isPlayer) Toast("Bubbles!"); }
+            if (c.isPlayer && !autoTest) Toast(it == "blackout" ? "Blackout!" : CozyData.Items[it][1] + "!");
         }
         string RollItem(RaceCar c)
         {

@@ -284,7 +284,7 @@ namespace CozyTrack
             obstacles.Clear();
             foreach (var d in def.obst ?? new ObstDef[0]) obstacles.Add(new Obstacle { d = d, m = ObstMesh(d.type), t = d.period * 0.6f });
         }
-        static readonly Dictionary<string, string> ObstName = new Dictionary<string, string> { { "roomba", "robot aspirador" }, { "cat", "gato" }, { "duck", "patito" } };
+        static readonly Dictionary<string, string> ObstName = new Dictionary<string, string> { { "roomba", "robot vacuum" }, { "cat", "cat" }, { "duck", "duck" } };
         void UpdateObstacles(float dt)
         {
             foreach (var ob in obstacles)
@@ -304,7 +304,7 @@ namespace CozyTrack
                     if (Vector2.Distance(new Vector2(p.pos.x, p.pos.z), new Vector2(ob.m.transform.position.x, ob.m.transform.position.z)) < 0.85f && Mathf.Abs(p.pos.y - w.pos.y) < 1)
                     {
                         c.obCool = raceT + 1.5f; HitCar(c, null, "spin");
-                        if (c.isPlayer) Toast("¡Cuidado con el " + ObstName[ob.d.type] + "!");
+                        if (c.isPlayer) Toast("Watch out for the " + ObstName[ob.d.type] + "!");
                     }
                 }
             }
