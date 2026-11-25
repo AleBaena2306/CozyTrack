@@ -25,6 +25,7 @@ on:
     paths:
       - "Assets/CozyTrack/Scripts/**"
       - "Assets/CozyTrack/Data/**"
+      - ".github/workflows/bots.yml"
 
 concurrency:
   group: bots
