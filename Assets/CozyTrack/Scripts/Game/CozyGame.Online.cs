@@ -49,8 +49,8 @@ namespace CozyTrack
             BackButton(s, () => { CloseNet(); ShowMenu(); });
             TB(s, "ONLINE", 38, Ink, true, TextAnchor.MiddleRight).rectTransform.Let(r => TopBox(r, 120, 16, 12, 40));
             Cap(s, "1 VS 1 · SURPRISE TRACK", 11, null, TextAnchor.MiddleRight).rectTransform.Let(r => TopBox(r, 120, 16, 52, 16));
-            Band(s, 330, 150, -7);
-            ShowroomImage(s, 340, 230, 140);
+            Band(s, 356, 124, -6);
+            ShowroomImage(s, 360, 230, 128);
             // ficha del corredor con su liga
             var card = Sticker(s, Cream, out var f, 18, 3, 4, -1, "Ficha"); TopBox(card, 18, 18, 92, 156);
             onShield = Icn(f.transform, null, 12, 30, 64, 72);
@@ -62,17 +62,17 @@ namespace CozyTrack
             var br = R("Barra", f.transform); TopBox(br, 92, 14, 92, 14); onBar = Bar(br, SunC, 0); Fill((RectTransform)onBar.transform.parent.parent);
             onStatus = Cap(f.transform, "", 11, null, TextAnchor.MiddleLeft); TopBox(onStatus.rectTransform, 92, 12, 112, 16);
             // camino de ligas
-            onRoad = R("Ligas", s); TopBox((RectTransform)onRoad, 18, 18, 262, 56);
+            onRoad = R("Ligas", s); TopBox((RectTransform)onRoad, 18, 18, 256, 56);
             var rh = onRoad.gameObject.AddComponent<HorizontalLayoutGroup>(); rh.childControlWidth = rh.childControlHeight = true; rh.childForceExpandWidth = rh.childForceExpandHeight = true; rh.childAlignment = TextAnchor.LowerCenter;
             // buscar carrera
-            var find = StickerButton(s, SunC, FindRace, out var ff, 20, 3.5f, 6, -1.5f, "Buscar"); TopBox((RectTransform)find.transform, 20, 20, 540, 104);
+            var find = StickerButton(s, SunC, FindRace, out var ff, 20, 3.5f, 6, -1.5f, "Buscar"); TopBox((RectTransform)find.transform, 20, 20, 566, 96);
             var chk = Checker(ff.transform); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(42 * K, 0); ckr.anchoredPosition = Vector2.zero;
             TB(ff.transform, "FIND A RACE", 38, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 58, 12, 10, 26));
             Cap(ff.transform, "WIN: +TROPHIES · COINS · CHEST", 12, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 60, 64, 10, 12));
-            var lb = StickerButton(s, MintB, OpenBoard, out var lf, 18, 3.5f, 5, 1.2f, "Ranking"); HalfBox((RectTransform)lb.transform, true, 672, 84);
+            var lb = StickerButton(s, MintB, OpenBoard, out var lf, 18, 3.5f, 5, 1.2f, "Ranking"); HalfBox((RectTransform)lb.transform, true, 684, 80);
             TB(lf.transform, "LEADERBOARD", 20, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 14, 6, 36));
             Cap(lf.transform, "TOP 100 WIN CHESTS", 10, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 50, 6, 14));
-            var acc = StickerButton(s, Purple, OpenAccount, out var af, 18, 3.5f, 5, -1, "Cuenta"); HalfBox((RectTransform)acc.transform, false, 672, 84);
+            var acc = StickerButton(s, Purple, OpenAccount, out var af, 18, 3.5f, 5, -1, "Cuenta"); HalfBox((RectTransform)acc.transform, false, 684, 80);
             onAccount = TB(af.transform, "", 20, Cream, true, TextAnchor.MiddleLeft); Inset(onAccount.rectTransform, 14, 14, 6, 36);
             Cap(af.transform, "WITH A GROWN-UP", 10, Cream, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 50, 6, 14));
             TB(s, "No chat · names are made up for you · racers with similar trophies first", 11, Ink, false).rectTransform.Let(r => BotBox(r, 20, 20, 18, 20));
@@ -91,8 +91,8 @@ namespace CozyTrack
             for (int i = 0; i < CozyData.Circuits.Length; i++) { Sticker(chips, CozyData.Hex(cbg[i % 4]), out var chf, 10, 2.5f, 0, 0, "Pista"); Cap(chf.transform, CozyData.Circuits[i].n.ToUpper(), 10).rectTransform.Let(r => Inset(r, 2, 0, 2, 0)); }
             Band(w, 250, 230, -7);
             var me = Sticker(w, Cream, out var mf, 16, 3, 4, -4, "Yo"); TopAt(me, 16, 286, 142, 120);
-            var slot = Img(mf.transform, new Color(0.17f, 0.14f, 0.25f, 0.08f), null, "Coche"); Radius(slot, 12); TopBox(slot.rectTransform, 10, 10, 10, 60);
-            Cap(slot.transform, "your car", 11);
+            var slot = Img(mf.transform, SkyB, null, "Coche"); Radius(slot, 12); TopBox(slot.rectTransform, 8, 8, 8, 64);
+            var sri = R("Coche", slot.transform).gameObject.AddComponent<RawImage>(); sri.texture = showRT; sri.raycastTarget = false; Fill(sri.rectTransform);
             searchMe = TB(mf.transform, "", 16, Ink); TopBox(searchMe.rectTransform, 4, 4, 74, 20);
             searchMeTr = Cap(mf.transform, "", 12); TopBox(searchMeTr.rectTransform, 4, 4, 96, 16);
             var vs = TB(w, "VS", 44, Cream); TopCenter(vs.rectTransform, 320, 80, 54); vs.gameObject.AddComponent<Outline>().effectColor = Ink; Tilt(vs.transform, -7);

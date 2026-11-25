@@ -521,7 +521,7 @@ namespace CozyTrack
             if (name != "hud") { bubbles.SetActive(false); SetCount(""); }
             if (name != "results" && photoPop) photoPop.SetActive(false);
             if (name == "album" || name == "levels" || name == "taller") { state = "menu"; }
-            if (showCam) showCam.enabled = name == "menu" || name == "car" || name == "online";
+            if (showCam) showCam.enabled = name == "menu" || name == "car" || name == "online" || name == "searching";
             if (name == "hud" && pauseBtn) pauseBtn.SetActive(mode != "online");
         }
         void ShowMenu()
