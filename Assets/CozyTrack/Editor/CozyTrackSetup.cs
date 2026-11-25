@@ -26,7 +26,7 @@ namespace CozyTrack.EditorTools
             {
                 if (EditorApplication.isPlayingOrWillChangePlaymode) return;
                 var lib = AssetDatabase.LoadAssetAtPath<CozyLibrary>(LibPath);
-                if (lib == null || lib.models.Length == 0 || !File.Exists(ScenePath)) Run(false);
+                if (lib == null || lib.models.Length == 0 || lib.skinPatterns == null || lib.skinPatterns.Length == 0 || !File.Exists(ScenePath)) Run(false);
             };
         }
 
@@ -51,6 +51,8 @@ namespace CozyTrack.EditorTools
                 if (go) models.Add(go);
             }
             lib.models = models.OrderBy(m => m.name).ToArray();
+            lib.skinPatterns = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/CozyTrack/Art/Textures/Skins" })
+                .Select(g => AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(g))).Where(t => t).OrderBy(t => t.name).ToArray();
             lib.toon = Shader.Find("CozyTrack/Toon"); lib.toonTransparent = Shader.Find("CozyTrack/Toon Transparent"); lib.unlit = Shader.Find("CozyTrack/Unlit");
 
             // 2. efecto de bordes en cada renderer de URP del proyecto

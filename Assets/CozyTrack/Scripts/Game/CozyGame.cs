@@ -90,13 +90,13 @@ namespace CozyTrack
             m = Mat(c, t, false, false, null, outline ? 1 : 0, rim ? 1 : 0); m.name = s.name;
             toonCache[key] = m; return m;
         }
-        public GameObject Spawn(string name, Transform parent, bool outline = false, bool rim = false)
+        public GameObject Spawn(string name, Transform parent, bool outline = false, bool rim = false, Mesh wheel = null)
         {
             var src = lib.Get(name);
             GameObject g;
             if (src == null) { Debug.LogWarning("[CozyTrack] Falta el modelo " + name); g = new GameObject(name); g.transform.SetParent(parent, false); return g; }
             g = Instantiate(src, parent); g.name = name; g.transform.localPosition = Vector3.zero; g.transform.localRotation = Quaternion.identity;
-            if (name.StartsWith("Car_")) FixWheels(g);
+            if (name.StartsWith("Car_")) FixWheels(g, wheel);
             foreach (var r in g.GetComponentsInChildren<Renderer>())
             {
                 var ms = r.sharedMaterials;
@@ -107,7 +107,7 @@ namespace CozyTrack
         }
         // Las ruedas del FBX llegan en ejes de Blender (los empties no se convierten al exportar). Se recolocan colgando
         // del coche, con el eje a lo ancho (derecha del coche) y el mismo diámetro y grosor que traían.
-        static void FixWheels(GameObject car)
+        static void FixWheels(GameObject car, Mesh swap = null)
         {
             var root = car.transform; var keep = (root.position, root.rotation, root.localScale);
             root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
@@ -115,10 +115,12 @@ namespace CozyTrack
             {
                 if (!t.name.StartsWith("Wheel_")) continue;
                 var mf = t.GetComponent<MeshFilter>(); var r = t.GetComponent<Renderer>(); if (!mf || !mf.sharedMesh || !r) continue;
-                var ms = mf.sharedMesh.bounds.size; var wb = r.bounds.size;
-                int ax = ms.x <= ms.y && ms.x <= ms.z ? 0 : ms.y <= ms.z ? 1 : 2;       // eje del disco en la malla
+                var wb = r.bounds.size;
                 float D = Mathf.Max(wb.x, Mathf.Max(wb.y, wb.z)), W = Mathf.Min(wb.x, Mathf.Min(wb.y, wb.z));
                 var center = r.bounds.center;
+                if (swap) mf.sharedMesh = swap;   // skin de ruedas: otro diseño con el mismo diámetro y grosor
+                var ms = mf.sharedMesh.bounds.size;
+                int ax = ms.x <= ms.y && ms.x <= ms.z ? 0 : ms.y <= ms.z ? 1 : 2;       // eje del disco en la malla
                 t.SetParent(root, true);
                 var axisLocal = ax == 0 ? Vector3.right : ax == 1 ? Vector3.up : Vector3.forward;
                 t.localRotation = Quaternion.FromToRotation(axisLocal, Vector3.right);

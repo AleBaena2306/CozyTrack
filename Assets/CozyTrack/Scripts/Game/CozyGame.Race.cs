@@ -23,8 +23,8 @@ namespace CozyTrack
             var def = CozyData.Car(name);
             var up = isPlayer ? Upgrades(name) : new int[3];
             c.SetPhysics(def.st, up[0], up[1], up[2]);
-            c.g = Spawn("Car_" + name, null, true, true);
-            ApplySticker(c.g, name);
+            if (isPlayer) c.g = SpawnCar(name, null, true);   // con su skin
+            else { c.g = Spawn("Car_" + name, null, true, true); ApplySticker(c.g, name); }
             SetupWheels(c.g, out c.wheels, out c.wheelAxis, out c.wheelR);
             c.renderers = c.g.GetComponentsInChildren<Renderer>();
             c.origMats = c.renderers.Select(r => r.sharedMaterials).ToArray();

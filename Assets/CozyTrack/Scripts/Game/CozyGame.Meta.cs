@@ -17,6 +17,8 @@ namespace CozyTrack
         public List<string> upCar = new List<string>(); public List<int> upVals = new List<int>();   // 3 valores por coche
         public List<ChestSlot> chests = new List<ChestSlot>();
         public string dailyLast = ""; public int dailyStreak;
+        public List<string> skinCar = new List<string>(), skinVal = new List<string>();   // skin por vehículo: pintura|detalles|ruedas|llantas
+        public List<string> ownedSkins = new List<string>();                              // estampados y ruedas desbloqueados («p:…», «w:…»)
     }
 
     public partial class CozyGame
@@ -99,6 +101,7 @@ namespace CozyTrack
                 if (sp.Count > 0) { var s = sp[UnityEngine.Random.Range(0, sp.Count)]; prof.stickers.Add(s); outL.Add("Pegatina: " + CozyData.StickerNames[Array.IndexOf(CozyData.StickerIds, s)]); }
                 else { prof.coins += 15; outL.Add("15 monedas (pegatina repetida)"); }
             }
+            if (kind == "oro" && UnityEngine.Random.value < 0.5f) { var sk = ChestSkin(); if (sk != null) outL.Add("New: " + sk + "!"); }
             int coinsWon = UnityEngine.Random.Range(20, 41) + (kind == "oro" ? 40 : 0); prof.coins += coinsWon; outL.Add(coinsWon + " monedas");
             SaveProfile(); return outL;
         }
@@ -291,7 +294,7 @@ namespace CozyTrack
                 Prim(PrimitiveType.Cube, Color.white, new Vector3(X[k], H[k] / 2 - 0.2f, 0), new Vector3(2.5f, H[k], 2.3f), podiumRoot, 0, Mat(CozyData.Hex(C[k]), null, false, false, null, 1));
                 var holder = new GameObject(top[k].name).transform; holder.SetParent(podiumRoot, false);
                 holder.localPosition = new Vector3(X[k], H[k] - 0.2f, 0); holder.localRotation = Quaternion.Euler(0, 180 + (k == 0 ? -20 : k == 1 ? -40 : 6), 0);
-                var m = Spawn("Car_" + top[k].name, holder, true, true); ApplySticker(m, top[k].name);
+                var m = SpawnCar(top[k].name, holder, top[k].isPlayer);
             }
             string[] cc = { "#ff7366", "#ffd64d", "#73bfff", "#73e0a6", "#b38cf2", "#ff8ccc" };
             for (int k = 0; k < 70; k++)

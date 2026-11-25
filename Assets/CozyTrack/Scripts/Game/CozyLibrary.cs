@@ -10,6 +10,7 @@ namespace CozyTrack
     {
         public GameObject[] models = new GameObject[0];
         public Shader toon, toonTransparent, unlit;
+        public Texture2D[] skinPatterns = new Texture2D[0];   // estampados de pintura (Art/Textures/Skins)
         public ScriptableRendererFeature[] edgeFeatures = new ScriptableRendererFeature[0];
 
         Dictionary<string, GameObject> map;

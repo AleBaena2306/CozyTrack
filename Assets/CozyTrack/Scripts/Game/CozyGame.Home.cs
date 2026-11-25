@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -144,7 +145,8 @@ namespace CozyTrack
         }
 
         // ---------- elegir vehículo y personalizarlo (como la selección antes de correr en Crash Team Racing) ----------
-        Text carPickTitle, carCoins; Transform carStickers, carUps;
+        Text carPickTitle, carCoins; Transform carStickers, carUps, carBody; ScrollRect carScroll; string carTab = "up";
+        readonly Dictionary<string, Image> carTabBtns = new Dictionary<string, Image>();
         void BuildCarPick()
         {
             var s = MakeScreen("car", false); var T0 = s.transform;
@@ -166,12 +168,12 @@ namespace CozyTrack
             ArrowButton(T0, new Vector2(0.5f, 0), new Vector2(380, 900), true, () => { CycleCar(1); RefreshCarPick(); });
             // personalización: pegatina y mejoras
             var panel = Card(T0, Cream, "Personalizacion", out var pf, 10); var pr = panel; pr.anchorMin = new Vector2(0, 0); pr.anchorMax = new Vector2(1, 0); pr.pivot = new Vector2(0.5f, 0); pr.offsetMin = new Vector2(28, 300); pr.offsetMax = new Vector2(-28, 850);
-            var v = VList(pf.transform, 10, new RectOffset(24, 24, 18, 18)); Fill(v);
-            LayoutText(v, "Pegatina", 32, Ink, 44);
-            var sg = R("Pegatinas", v); var g = sg.gameObject.AddComponent<GridLayoutGroup>(); g.cellSize = new Vector2(84, 84); g.spacing = new Vector2(8, 8); g.childAlignment = TextAnchor.MiddleCenter;
-            sg.gameObject.AddComponent<LayoutElement>().preferredHeight = 180; carStickers = sg;
-            LayoutText(v, "Mejoras", 32, Ink, 44);
-            carUps = VList(v, 6);
+            // pestañas: Upgrades · Stickers · Paint (como en el diseño B); el contenido va en un scroll
+            var tabs = Row(pf.transform, 80, 10); var tr = tabs; tr.anchorMin = new Vector2(0, 1); tr.anchorMax = new Vector2(1, 1); tr.pivot = new Vector2(0.5f, 1); tr.offsetMin = new Vector2(24, -98); tr.offsetMax = new Vector2(-24, -18);
+            foreach (var (id, label) in new[] { ("up", "Upgrades"), ("st", "Stickers"), ("sk", "Paint") })
+            { var tid = id; carTabBtns[id] = Btn(tabs, label, Cream, Ink, () => { carTab = tid; RefreshCarPick(); }, 80, 32).GetComponent<Image>(); }
+            var holder = R("Contenido", pf.transform); Fill(holder, 0, 0, 0, 104);
+            var (sr, body) = Scroll(holder, 10); carScroll = sr; carBody = body;
             var go = CardButton(T0, SunC, "Correr", GoRace, out var gf, 16); var gr = (RectTransform)go.transform; gr.anchorMin = new Vector2(0, 0); gr.anchorMax = new Vector2(1, 0); gr.pivot = new Vector2(0.5f, 0); gr.offsetMin = new Vector2(60, 80); gr.offsetMax = new Vector2(-60, 260);
             var gt = Outlined(T(gf.transform, "¡A CORRER!", 84, Color.white), 6); Fill(gt.rectTransform, 10, 0, 10, 0); gt.font = fontBlack;
         }
@@ -185,8 +187,15 @@ namespace CozyTrack
             if (!carPickTitle) return;
             carPickTitle.text = pickLevel > 0 ? $"Nivel {pickLevel}" : (pickMode == "elim" ? "Survival · " : pickTime ? "Contrarreloj · " : "Race · ") + CozyData.Circuit(pickCirc).n;
             carCoins.text = $"{prof.coins} monedas";
-            foreach (Transform t in carStickers) Destroy(t.gameObject);
-            foreach (Transform t in carUps) Destroy(t.gameObject);
+            foreach (Transform t in carBody) Destroy(t.gameObject);
+            foreach (var kv in carTabBtns) { bool on = kv.Key == carTab; kv.Value.color = on ? Ink : Cream; kv.Value.GetComponentInChildren<Text>().color = on ? Cream : Ink; }
+            if (carTab == "sk") { BuildPaintTab(carBody); RefreshHome(); return; }
+            if (carTab == "st")
+            {
+                var sg = R("Pegatinas", carBody); var g = sg.gameObject.AddComponent<GridLayoutGroup>(); g.cellSize = new Vector2(84, 84); g.spacing = new Vector2(8, 8); g.childAlignment = TextAnchor.UpperCenter;
+                sg.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize; carStickers = sg;
+            }
+            else carUps = VList(carBody, 6);
             string cur = StickerOf(choice);
             void AddSticker(string id)
             {
@@ -197,7 +206,7 @@ namespace CozyTrack
                 if (id != null && owned) { var ri = R("Img", img.transform).gameObject.AddComponent<RawImage>(); ri.texture = CozyTex.Get("sticker_" + id); Fill(ri.rectTransform, 6, 6, 6, 6); ri.raycastTarget = false; }
                 else { var t = T(img.transform, owned ? "—" : "?", 36, owned ? (cur == id ? Cream : Ink) : Muted); Fill(t.rectTransform); }
             }
-            AddSticker(null); foreach (var id in CozyData.StickerIds) AddSticker(id);
+            if (carTab == "st") { AddSticker(null); foreach (var id in CozyData.StickerIds) AddSticker(id); RefreshHome(); return; }
             var up = Upgrades(choice);
             for (int k = 0; k < 3; k++)
             {
@@ -287,7 +296,7 @@ namespace CozyTrack
         {
             BuildShowroom();
             if (showCar) Destroy(showCar);
-            showCar = Spawn("Car_" + choice, showRoot, true, true); ApplySticker(showCar, choice);
+            showCar = SpawnCar(choice, showRoot, true);
             var rs = showCar.GetComponentsInChildren<Renderer>(); if (rs.Length == 0) return;
             var b = rs[0].bounds; foreach (var r in rs) b.Encapsulate(r.bounds);
             float sc = Mathf.Min(2.5f / Mathf.Max(b.size.x, b.size.z), 1.5f / Mathf.Max(0.01f, b.size.y));
