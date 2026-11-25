@@ -9,7 +9,7 @@ using UnityEngine;
 namespace CozyTrack
 {
     // ============================================================================================
-    // Bots de prueba (solo se activan con el argumento -cozybots; el juego normal no los usa nunca).
+    // Bots de prueba (solo se activan con el argumento -cozybots: el juego normal no los usa nunca).
     //
     // GitHub Actions compila el juego real para Linux y lo lanza sin pantalla:
     //   CozyTrack -batchmode -nographics -cozybots -botPlayers 12 -botHours 10 -botOut informe
