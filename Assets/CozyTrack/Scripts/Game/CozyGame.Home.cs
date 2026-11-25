@@ -13,7 +13,8 @@ namespace CozyTrack
     //   ajustes y álbum (vehículos y pegatinas).
     public partial class CozyGame
     {
-        static readonly Vector3 ShowroomPos = new Vector3(-400, 0, 0);
+        static readonly Vector3 ShowroomPos = new Vector3(-400, 0, 0); const int ShowLayer = 31;
+        static void SetLayer(Transform t, int l) { t.gameObject.layer = l; foreach (Transform c in t) SetLayer(c, l); }
         Transform showRoot; GameObject showCar; Camera showCam; RenderTexture showRT;
         GameObject settingsPop;
 
@@ -544,13 +545,15 @@ namespace CozyTrack
             showCam = new GameObject("Camara escaparate").AddComponent<Camera>();
             showCam.targetTexture = showRT; showCam.clearFlags = CameraClearFlags.SolidColor; showCam.backgroundColor = new Color(Blue.r, Blue.g, Blue.b, 0);
             showCam.fieldOfView = 30; showCam.nearClipPlane = 0.3f; showCam.farClipPlane = 30;
-            showCam.transform.position = ShowroomPos + new Vector3(0, 2.6f, -10.5f); showCam.transform.LookAt(ShowroomPos + new Vector3(0, 0.1f, 0));
+            showCam.fieldOfView = 24; showCam.cullingMask = 1 << ShowLayer;
+            showCam.transform.position = ShowroomPos + new Vector3(0, 2.4f, -9.5f); showCam.transform.LookAt(ShowroomPos + new Vector3(0, 0.25f, 0));
+            SetLayer(showRoot, ShowLayer); if (cam) cam.cullingMask &= ~(1 << ShowLayer);
         }
         void UpdateShowroom()
         {
             BuildShowroom();
             if (showCar) Destroy(showCar);
-            showCar = SpawnCar(choice, showRoot, true);
+            showCar = SpawnCar(choice, showRoot, true); SetLayer(showCar.transform, ShowLayer);
             var rs = showCar.GetComponentsInChildren<Renderer>(); if (rs.Length == 0) return;
             var b = rs[0].bounds; foreach (var r in rs) b.Encapsulate(r.bounds);
             float sc = Mathf.Min(2.5f / Mathf.Max(b.size.x, b.size.z), 1.5f / Mathf.Max(0.01f, b.size.y));

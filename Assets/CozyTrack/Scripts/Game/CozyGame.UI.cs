@@ -14,7 +14,7 @@ namespace CozyTrack
     {
         Canvas canvas; RectTransform canvasRect, col; Font font, fontBlack, fontBig;
         readonly Dictionary<string, GameObject> screens = new Dictionary<string, GameObject>();
-        ScrollRect menuScroll;
+        ScrollRect menuScroll; GameObject uiBg;
         Text posText, rivalText, lapText, coinText, timeText, curveLbl, itemName, itemHint, countText, countSub, toastText;
         Image fillImg, itemBg, flashImg, itemIcon, toastBg, curveBg, countDisc; RectTransform fillRect, safeRect, itemRect, speedLayer, toastRect, countRoot, hintRoot, rivalRoot;
         GameObject bubbles, adOverlay, rewardPop, pauseBtn, pausePop, bestChip, deltaRoot, timeRoot; Text bestText, deltaText; Image deltaBg;
@@ -109,7 +109,8 @@ namespace CozyTrack
             var sc = cg.GetComponent<CanvasScaler>(); sc.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; sc.referenceResolution = new Vector2(1080, 1920); sc.matchWidthOrHeight = 1;
             canvasRect = (RectTransform)cg.transform;
             if (FindFirstObjectByType<EventSystem>() == null) new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
-            col = R("Columna", cg.transform); col.anchorMin = new Vector2(0.5f, 0); col.anchorMax = new Vector2(0.5f, 1); col.sizeDelta = new Vector2(1080, 0);
+            uiBg = KraftBg(cg.transform).gameObject;   // cartón a pantalla completa detrás de la columna (pantallas de menú)
+            col = R("Columna", cg.transform); col.gameObject.AddComponent<RectMask2D>(); col.anchorMin = new Vector2(0.5f, 0); col.anchorMax = new Vector2(0.5f, 1); col.sizeDelta = new Vector2(1080, 0);
 
             // capas de efectos (debajo de todo lo demás)
             speedLayer = R("Lineas de velocidad", col); Fill(speedLayer);
@@ -513,6 +514,7 @@ namespace CozyTrack
         void ShowScreen(string name)
         {
             foreach (var kv in screens) kv.Value.SetActive(kv.Key == name);
+            if (uiBg) uiBg.SetActive(name != "hud" && name != "garage");
             if (name == "album") RefreshAlbum();
             if (name == "levels") RefreshLevels();
             if (name == "taller") RefreshTaller();

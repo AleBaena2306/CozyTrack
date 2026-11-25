@@ -329,6 +329,22 @@ namespace CozyTrack
                         case "find": FindRace(); break;
                         case "board": OpenBoard(); break;
                         case "account": OpenAccount(); break;
+                        case "pick": OpenPick(p.Length > 1 ? p[1] : "race"); break;
+                        case "carpick": OpenCarPick(); break;
+                        case "tab": carTab = p[1]; RefreshCarPick(); break;
+                        case "settings": OpenSettings(); break;
+                        case "pause": OpenPause(); break;
+                        case "resume": ClosePause(); break;
+                        case "slide": pickSnap.JumpTo(int.Parse(p[1])); break;
+                        case "chest": AddChest(p[1]); RefreshHome(); break;
+                        case "loot": ShowChestReward(p[1], OpenChest(p[1])); break;
+                        case "coins": prof.coins += int.Parse(p[1]); SaveProfile(); RefreshHome(); break;
+                        case "finish": if (player != null && state == "race") player.done = raceT; break;
+                        case "unlock": allUnlocked = p.Length < 2 || p[1] != "off"; RefreshHome(); break;
+                        case "close": rewardPop.SetActive(false); settingsPop.SetActive(false); photoPop.SetActive(false); ClosePause(); break;
+                        case "photo": photoPop.SetActive(true); break;
+                        case "albumtab": albumTab = p[1]; RefreshAlbum(); break;
+                        case "boardtab": boardMode = p[1]; RefreshBoard(); break;
                         case "scroll": menuScroll.verticalNormalizedPosition = float.Parse(p[1], System.Globalization.CultureInfo.InvariantCulture); break;
                     }
                 }
