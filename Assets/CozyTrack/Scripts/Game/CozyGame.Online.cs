@@ -70,11 +70,11 @@ namespace CozyTrack
             TB(ff.transform, "FIND A RACE", 38, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 58, 12, 10, 26));
             Cap(ff.transform, "WIN: +TROPHIES · COINS · CHEST", 12, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 60, 64, 10, 12));
             var lb = StickerButton(s, MintB, OpenBoard, out var lf, 18, 3.5f, 5, 1.2f, "Ranking"); HalfBox((RectTransform)lb.transform, true, 672, 84);
-            TB(lf.transform, "LEADERBOARD", 20, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 36, 6, 14));
-            Cap(lf.transform, "TOP 100 WIN CHESTS", 10, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 16, 6, 50));
+            TB(lf.transform, "LEADERBOARD", 20, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 14, 6, 36));
+            Cap(lf.transform, "TOP 100 WIN CHESTS", 10, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 50, 6, 14));
             var acc = StickerButton(s, Purple, OpenAccount, out var af, 18, 3.5f, 5, -1, "Cuenta"); HalfBox((RectTransform)acc.transform, false, 672, 84);
-            onAccount = TB(af.transform, "", 20, Cream, true, TextAnchor.MiddleLeft); Inset(onAccount.rectTransform, 14, 36, 6, 14);
-            Cap(af.transform, "WITH A GROWN-UP", 10, Cream, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 16, 6, 50));
+            onAccount = TB(af.transform, "", 20, Cream, true, TextAnchor.MiddleLeft); Inset(onAccount.rectTransform, 14, 14, 6, 36);
+            Cap(af.transform, "WITH A GROWN-UP", 10, Cream, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 50, 6, 14));
             TB(s, "No chat · names are made up for you · racers with similar trophies first", 11, Ink, false).rectTransform.Let(r => BotBox(r, 20, 20, 18, 20));
 
             // buscando rival: tú contra el hueco del rival

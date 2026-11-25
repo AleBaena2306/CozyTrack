@@ -34,7 +34,7 @@ namespace CozyTrack
         {
             var b = CardButton(p, c, title, on, out var f, 12); b.gameObject.AddComponent<LayoutElement>().preferredHeight = 190;
             var t = TB(f.transform, title, 22, Ink, true, TextAnchor.MiddleLeft); TopBox(t.rectTransform, 16, 16, 10, 30);
-            var s = TB(f.transform, sub, 12, Ink, false, TextAnchor.UpperLeft); Inset(s.rectTransform, 16, 8, 16, 44);
+            var s = TB(f.transform, sub, 12, Ink, false, TextAnchor.UpperLeft); Inset(s.rectTransform, 16, 44, 16, 8);
         }
         // la hora del día la pone el circuito
         public static string TodFor(string circuitId)
@@ -84,11 +84,11 @@ namespace CozyTrack
             raceNo = TB(nf.transform, "01", 24, Ink); Fill(raceNo.rectTransform);
             // SURVIVAL y ONLINE
             var surv = StickerButton(T0, Coral, () => OpenPick("elim"), out var sf, 18, 3.5f, 5, 1.5f, "Survival"); HalfBox((RectTransform)surv.transform, true, 744, 76);
-            TB(sf.transform, "SURVIVAL", 25, Cream, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 30, 6, 10));
-            Cap(sf.transform, "LAST ONE OUT", 11, Cream, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 12, 6, 44));
+            TB(sf.transform, "SURVIVAL", 25, Cream, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 10, 6, 30));
+            Cap(sf.transform, "LAST ONE OUT", 11, Cream, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 46, 6, 10));
             var onl = StickerButton(T0, Purple, OpenOnline, out var of, 18, 3.5f, 5, -1, "Online"); HalfBox((RectTransform)onl.transform, false, 744, 76);
-            TB(of.transform, "ONLINE", 25, Cream, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 30, 6, 10));
-            onlineSub = Cap(of.transform, "1 VS 1", 11, Cream, TextAnchor.MiddleLeft); Inset(onlineSub.rectTransform, 14, 12, 6, 44);
+            TB(of.transform, "ONLINE", 25, Cream, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 14, 10, 6, 30));
+            onlineSub = Cap(of.transform, "1 VS 1", 11, Cream, TextAnchor.MiddleLeft); Inset(onlineSub.rectTransform, 14, 46, 6, 10);
             var badge = Sticker(onl.transform, SunC, out var bf, 8, 2.5f, 0, 10, "Trofeos"); var bdr = badge; bdr.anchorMin = bdr.anchorMax = new Vector2(1, 1); bdr.sizeDelta = new Vector2(62 * K, 22 * K); bdr.anchoredPosition = new Vector2(-12 * K, 2 * K);
             onlineBadge = Cap(bf.transform, "0", 11); Fill(onlineBadge.rectTransform);
             BuildPick(); BuildCarPick();
@@ -168,9 +168,9 @@ namespace CozyTrack
             // desafío diario
             var daily = StickerButton(s, SunC, () => { pickDaily = true; StartDaily(); }, out var df, 20, 3.5f, 5, 1, "Diario"); TopBox((RectTransform)daily.transform, 18, 18, 650, 92); dailyGo = daily.gameObject;
             Icn(df.transform, B("gift"), 10, 16, 54, 54);
-            dailyTitle = TB(df.transform, "Daily challenge", 21, Ink, true, TextAnchor.MiddleLeft); Inset(dailyTitle.rectTransform, 74, 50, 10, 8);
-            dailyGoalText = TB(df.transform, "", 12, Ink, false, TextAnchor.MiddleLeft); Inset(dailyGoalText.rectTransform, 74, 26, 10, 34);
-            dailyStreakText = Cap(df.transform, "", 10, null, TextAnchor.MiddleLeft); Inset(dailyStreakText.rectTransform, 74, 8, 10, 56);
+            dailyTitle = TB(df.transform, "Daily challenge", 21, Ink, true, TextAnchor.MiddleLeft); Inset(dailyTitle.rectTransform, 74, 8, 10, 50);
+            dailyGoalText = TB(df.transform, "", 12, Ink, false, TextAnchor.MiddleLeft); Inset(dailyGoalText.rectTransform, 74, 38, 10, 24);
+            dailyStreakText = Cap(df.transform, "", 10, null, TextAnchor.MiddleLeft); Inset(dailyStreakText.rectTransform, 74, 62, 10, 8);
             // contrarreloj contra tu fantasma (en el nivel del centro)
             var tt = StickerButton(s, Cream, () => { if (!PickOpen(pickIndex)) { Toast("Beat the level before to race your ghost"); return; } pickTime = true; SetPickTarget(pickIndex); OpenCarPick(); }, out var tf, 16, 3, 3, -1, "Contrarreloj");
             TopBox((RectTransform)tt.transform, 18, 18, 762, 56); timeGo = tt.gameObject;
@@ -420,7 +420,7 @@ namespace CozyTrack
         {
             settingsPop = R("Ajustes", col).gameObject; Fill((RectTransform)settingsPop.transform);
             settingsPop.AddComponent<Image>().color = new Color(0.17f, 0.14f, 0.25f, 0.35f);
-            var card = Sticker(settingsPop.transform, Cream, out var f, 22, 3, 5, -1, "Panel"); TopBox(card, 24, 24, 110, 560);
+            var card = Sticker(settingsPop.transform, Cream, out var f, 22, 3, 5, -1, "Panel"); TopBox(card, 24, 24, 130, 470);
             Tape(card, 50, -60, -8, -10); Tape(card, 50, 70, 6, -10);
             TB(f.transform, "SETTINGS", 34, Ink).rectTransform.Let(r => TopBox(r, 10, 10, 18, 40));
             Cap(f.transform, "LOOK", 11, null, TextAnchor.MiddleLeft).rectTransform.Let(r => TopBox(r, 18, 18, 70, 16));
@@ -438,7 +438,7 @@ namespace CozyTrack
             var bh = btns.gameObject.AddComponent<HorizontalLayoutGroup>(); bh.spacing = 10 * K; bh.childControlWidth = bh.childControlHeight = true; bh.childForceExpandWidth = bh.childForceExpandHeight = true;
             StickerButton(btns, Lilac, () => { settingsPop.SetActive(false); OpenAccount(); }, out var a1, 12, 3, 0, 0, "Cuenta"); Cap(a1.transform, "ACCOUNT", 12);
             StickerButton(btns, MintB, () => { settingsPop.SetActive(false); ShowScreen("album"); }, out var a2, 12, 3, 0, 0, "Album"); Cap(a2.transform, "ALBUM", 12);
-            var done = StickerButton(f.transform, SunC, () => settingsPop.SetActive(false), out var df, 18, 3.5f, 5, 0, "Listo"); TopBox((RectTransform)done.transform, 18, 18, 470, 64);
+            var done = StickerButton(f.transform, SunC, () => settingsPop.SetActive(false), out var df, 18, 3.5f, 5, 0, "Listo"); TopBox((RectTransform)done.transform, 18, 18, 394, 60);
             TB(df.transform, "DONE", 26, Ink);
             settingsPop.SetActive(false);
         }
@@ -446,8 +446,8 @@ namespace CozyTrack
         {
             var row = StickerButton(p, Cream, on, out var rf, 10, 0, 0, 0, "Opcion"); TopBox((RectTransform)row.transform, 18, 18, top, 50);
             row.transform.Find("Borde").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            TB(rf.transform, title, 15, Ink, false, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 0, 22, 70, 2));
-            TB(rf.transform, sub, 11, Ink, false, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 0, 2, 70, 28));
+            TB(rf.transform, title, 15, Ink, false, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 0, 2, 70, 24));
+            TB(rf.transform, sub, 11, Ink, false, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 0, 28, 70, 2));
             var s = Sticker(rf.transform, MintB, out sw, 17, 3, 0, 0, "Interruptor"); s.anchorMin = s.anchorMax = new Vector2(1, 0.5f); s.sizeDelta = new Vector2(62 * K, 34 * K); s.anchoredPosition = new Vector2(-31 * K, 0);
             var kn = Sticker(sw.transform, Cream, out _, 11, 2.5f, 0, 0, "Bola"); kn.anchorMin = kn.anchorMax = new Vector2(0, 0.5f); kn.sizeDelta = new Vector2(22 * K, 22 * K); knob = kn;
         }
@@ -589,7 +589,7 @@ namespace CozyTrack
         {
             Canvas.ForceUpdateCanvases(); target = -1;
             if (scroll) { scroll.velocity = Vector2.zero; scroll.content.anchoredPosition = new Vector2(-i * step, scroll.content.anchoredPosition.y); }
-            last = i;
+            last = i; onIndex?.Invoke(i);
         }
         void Update()
         {

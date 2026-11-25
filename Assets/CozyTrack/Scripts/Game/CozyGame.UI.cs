@@ -238,7 +238,7 @@ namespace CozyTrack
             TB(sf.transform, "RESTART", 22, Ink);
             var tg = StickerButton(f.transform, MintB, () => { assistOn = !assistOn; RefreshPause(); }, out pauseAssist, 14, 3, 0, 0, "Linea"); TopBox((RectTransform)tg.transform, 20, 20, 258, 58);
             Cap(pauseAssist.transform, "BRAKE LINE", 10).rectTransform.Let(r => Inset(r, 0, 6, 0, 30));
-            pauseAssistTxt = TB(pauseAssist.transform, "ON", 18, Ink); Inset(pauseAssistTxt.rectTransform, 0, 4, 0, 22);
+            pauseAssistTxt = TB(pauseAssist.transform, "ON", 18, Ink); Inset(pauseAssistTxt.rectTransform, 0, 24, 0, 4);
             var q = StickerButton(f.transform, Cream, () => { ClosePause(); QuitRace(); }, out var qf, 10, 0, 0, 0, "Salir"); TopBox((RectTransform)q.transform, 60, 60, 336, 40);
             qf.color = new Color(0, 0, 0, 0); q.transform.Find("Borde").GetComponent<Image>().color = new Color(0, 0, 0, 0);
             TB(qf.transform, "<b>QUIT TO HOME</b>", 13, Ink, false);
@@ -296,8 +296,8 @@ namespace CozyTrack
                 var rf = Img(rb.transform, c, null, "Color"); rf.sprite = null; Inset(rf.rectTransform, 3, 0, 3, 3);
             }
             var disc = Sticker(ros, SunC, out resDisc, 65, 3.5f, 5, 0, "Disco"); TopCenter(disc, 0, 130, 130);
-            resBig = TB(resDisc.transform, "", 50, Ink); Inset(resBig.rectTransform, 6, 30, 6, 14);
-            resSub = Cap(resDisc.transform, "", 11); Inset(resSub.rectTransform, 8, 18, 8, 90);
+            resBig = TB(resDisc.transform, "", 50, Ink); Inset(resBig.rectTransform, 6, 12, 6, 36);
+            resSub = Cap(resDisc.transform, "", 11); Inset(resSub.rectTransform, 8, 90, 8, 18);
             // filas de puestos
             resRows = VList(s, 6 * K); TopBox(resRows, 22, 22, 270, 190);
             // ×2 monedas con vídeo (sobre el recuadro de monedas)
@@ -312,7 +312,7 @@ namespace CozyTrack
             Tape(resCard, 34, 0, -5);
             resCardChest = Icn(resCardBg.transform, null, 8, 2, 72, 72);
             resCardTitle = TB(resCardBg.transform, "", 21, Ink, true, TextAnchor.MiddleLeft); Inset(resCardTitle.rectTransform, 88, 12, 10, 40);
-            resCardSub = TB(resCardBg.transform, "", 12, Ink, false, TextAnchor.UpperLeft); Inset(resCardSub.rectTransform, 88, 6, 10, 44);
+            resCardSub = TB(resCardBg.transform, "", 12, Ink, false, TextAnchor.UpperLeft); Inset(resCardSub.rectTransform, 88, 44, 10, 6);
             resTip = TB(resCardBg.transform, "", 14, Ink, false, TextAnchor.MiddleLeft); Inset(resTip.rectTransform, 14, 6, 14, 6);
             // botones
             var bar = R("Botones", s); BotBox(bar, 20, 20, 60, 84);
@@ -424,8 +424,8 @@ namespace CozyTrack
                 var p = loot[k].Split('|');
                 var c = p.Length > 2 ? CozyData.Hex(p[2]) : Cream;
                 var tile = Sticker(rewardGrid, c, out var tf, 16, 3, 4, k % 2 == 0 ? -2 : 1.5f, "Premio");
-                TB(tf.transform, p[0], 17, Ink).rectTransform.Let(r => Inset(r, 8, 30, 8, 14));
-                Cap(tf.transform, p.Length > 1 ? p[1] : "", 10).rectTransform.Let(r => Inset(r, 8, 10, 8, 62));
+                TB(tf.transform, p[0], 17, Ink).rectTransform.Let(r => Inset(r, 8, 14, 8, 34));
+                Cap(tf.transform, p.Length > 1 ? p[1] : "", 10).rectTransform.Let(r => Inset(r, 8, 66, 8, 10));
             }
             rewardPop.SetActive(true); RefreshHome();
         }
@@ -515,6 +515,7 @@ namespace CozyTrack
         {
             foreach (var kv in screens) kv.Value.SetActive(kv.Key == name);
             if (uiBg) uiBg.SetActive(name != "hud" && name != "garage");
+            if (settingsPop) settingsPop.SetActive(false);
             if (name == "album") RefreshAlbum();
             if (name == "levels") RefreshLevels();
             if (name == "taller") RefreshTaller();

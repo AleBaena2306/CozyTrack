@@ -135,7 +135,7 @@ namespace CozyTrack
         void BuildPaintTab(Transform body)
         {
             var cur = SkinOf(choice);
-            LayoutText(body, "Paint", 32, Ink, 44);
+            SkinHead(body, "PAINT");
             var g1 = Grid(body, new Vector2(84, 84));
             foreach (var p in Skins.Paints)
             {
@@ -147,9 +147,9 @@ namespace CozyTrack
                 else { var im = inner.gameObject.AddComponent<Image>(); im.color = p.id == "" ? new Color(0.9f, 0.88f, 0.83f) : p.color; im.raycastTarget = false; if (p.id == "") { var t = T(inner, "—", 30, Muted); Fill(t.rectTransform); } }
                 if (!own) PriceTag(cell.transform, p.price);
             }
-            LayoutText(body, "Details", 32, Ink, 44);
+            SkinHead(body, "DETAILS");
             ColorRow(body, cur[1], id => PickSkin(1, id, 0, ""));
-            LayoutText(body, "Wheels", 32, Ink, 44);
+            SkinHead(body, "WHEELS");
             var g2 = Grid(body, new Vector2(190, 84));
             foreach (var w in Skins.Wheels)
             {
@@ -159,9 +159,10 @@ namespace CozyTrack
                 var t = T(cell.transform, w.name, 28, sel ? Cream : Ink); Fill(t.rectTransform, 6, own ? 4 : 30, 6, 4);
                 if (!own) PriceTag(cell.transform, w.price);
             }
-            LayoutText(body, "Rims", 32, Ink, 44);
+            SkinHead(body, "RIMS");
             ColorRow(body, cur[3], id => PickSkin(3, id, 0, ""));
         }
+        void SkinHead(Transform p, string t) { var c = Cap(p, t, 11, null, TextAnchor.MiddleLeft); c.gameObject.AddComponent<LayoutElement>().preferredHeight = 20 * K; }
         RectTransform Grid(Transform p, Vector2 cell)
         {
             var r = R("Rejilla", p); var g = r.gameObject.AddComponent<GridLayoutGroup>(); g.cellSize = cell; g.spacing = new Vector2(8, 8); g.childAlignment = TextAnchor.UpperCenter;
