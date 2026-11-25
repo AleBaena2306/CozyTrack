@@ -125,7 +125,7 @@ namespace CozyTrack
             foreach (var co in coins) { co.taken = false; co.m.SetActive(true); }
             foreach (var b in boxes) { b.t = 0; b.m.SetActive(mode != "online"); }   // online: sin objetos
             raceT = 0; countT = 3.2f; state = "count";
-            camPos = Track.World(0, 0, 0).pos + new Vector3(0, 10, -7);
+            camPos = Track.World(0, 0, 0).pos + new Vector3(0, 10, -7); camFocus = Track.World(0, 0, 0).pos; camHeading = Track.World(0, 0, 0).h * Mathf.Rad2Deg;
             ShowScreen("hud");
         }
 

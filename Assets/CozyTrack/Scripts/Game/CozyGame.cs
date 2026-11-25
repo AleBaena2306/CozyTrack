@@ -21,7 +21,7 @@ namespace CozyTrack
         CircuitDef circ;
         int laps = 3, perfects, crashes, levelNum; float raceT, countT, shake, menuT, levelSkill = 0.9f;
         bool countGas, assistOn = true, holding, autoTest; float pressedAt = 99;
-        Vector3 camPos = new Vector3(0, 8, -8), camLook;
+        Vector3 camPos = new Vector3(0, 8, -8), camLook, camFocus; float camHeading;
 
         void Awake()
         {
@@ -231,11 +231,19 @@ namespace CozyTrack
             }
             if (player != null && state != "menu")
             {
+                // La cámara sigue al coche tal y como se ve (también cuando sale volando en un accidente), sin quedarse atrás:
+                // solo se suaviza el giro, no la distancia, y mira poco por delante para que el coche quede en el centro.
                 var w = Track.World(player.i, player.u, player.o);
-                var f = new Vector3(Mathf.Sin(w.h), 0, Mathf.Cos(w.h));
-                var want = new Vector3(w.pos.x, 10.5f, w.pos.z) - f * 7;
-                camPos = Vector3.Lerp(camPos, want, 1 - Mathf.Exp(-dt * 3));
-                camLook = Vector3.Lerp(camLook, new Vector3(w.pos.x, 0, w.pos.z) + f * 10, 1 - Mathf.Exp(-dt * 4));
+                var focus = player.g ? player.g.transform.position : w.pos;
+                if (player.crash > 0) focus.y = Mathf.Min(focus.y, w.pos.y + 1.5f);
+                camHeading = Mathf.LerpAngle(camHeading, w.h * Mathf.Rad2Deg, 1 - Mathf.Exp(-dt * (player.crash > 0 ? 1.5f : 4)));
+                float hr = camHeading * Mathf.Deg2Rad;
+                var f = new Vector3(Mathf.Sin(hr), 0, Mathf.Cos(hr));
+                camFocus = Vector3.Lerp(camFocus, focus, 1 - Mathf.Exp(-dt * 14));
+                if ((camFocus - focus).sqrMagnitude > 64) camFocus = focus;   // salida o recolocación: sin barrido
+                var want = new Vector3(camFocus.x, camFocus.y * 0.6f + 10.5f, camFocus.z) - f * 7.5f;
+                camPos = want;
+                camLook = new Vector3(camFocus.x, camFocus.y * 0.6f, camFocus.z) + f * 3.5f;
                 cam.fieldOfView += ((42 + 9 * Mathf.Min(1.3f, player.v / player.vtop)) - cam.fieldOfView) * Mathf.Min(1, dt * 3);
                 UpdateBrakeLine();
                 if (state != "end") UpdateHUD();
