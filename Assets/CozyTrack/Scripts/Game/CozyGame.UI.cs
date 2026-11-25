@@ -146,7 +146,7 @@ namespace CozyTrack
                 t = T(im.transform, "", fs, Ink); Fill(t.rectTransform, 12, 4, 12, 4); return r;
             }
             Chip("Posicion", new Vector2(0, 1), new Vector2(28, -28), new Vector2(230, 140), out posText, 96);
-            Chip("Rival", new Vector2(0, 1), new Vector2(28, -184), new Vector2(560, 70), out rivalText, 34);
+            Chip("Rival", new Vector2(0, 1), new Vector2(28, -560), new Vector2(560, 70), out rivalText, 34);   // bajo el objeto
             Chip("Vuelta", new Vector2(1, 1), new Vector2(-28, -28), new Vector2(300, 70), out lapText);
             Chip("Monedas", new Vector2(1, 1), new Vector2(-28, -112), new Vector2(300, 70), out coinText);
             Chip("Tiempo", new Vector2(1, 1), new Vector2(-28, -196), new Vector2(300, 70), out timeText);
@@ -157,7 +157,7 @@ namespace CozyTrack
             var bar = Img(meter.transform, new Color(0.9f, 0.88f, 0.83f), null, "Barra"); var br = bar.rectTransform; br.anchorMin = new Vector2(0, 0); br.anchorMax = new Vector2(1, 0); br.pivot = new Vector2(0.5f, 0); br.offsetMin = new Vector2(22, 22); br.offsetMax = new Vector2(-22, 52);
             fillImg = Img(bar.transform, CozyData.Sky, null, "Relleno"); fillRect = fillImg.rectTransform; fillRect.anchorMin = Vector2.zero; fillRect.anchorMax = new Vector2(0, 1); fillRect.pivot = new Vector2(0, 0.5f); fillRect.offsetMin = fillRect.offsetMax = Vector2.zero;
             var safe = Img(bar.transform, Ink, null, "Limite"); safe.sprite = null; safeRect = safe.rectTransform; safeRect.anchorMin = new Vector2(0, -0.15f); safeRect.anchorMax = new Vector2(0, 1.15f); safeRect.sizeDelta = new Vector2(8, 0);
-            itemBg = Img(s.transform, Cream, null, "Objeto"); itemRect = itemBg.rectTransform; itemRect.anchorMin = itemRect.anchorMax = new Vector2(1, 0); itemRect.pivot = new Vector2(1, 0); itemRect.anchoredPosition = new Vector2(-28, 40); itemRect.sizeDelta = new Vector2(210, 210);
+            itemBg = Img(s.transform, Cream, null, "Objeto"); itemRect = itemBg.rectTransform; itemRect.anchorMin = itemRect.anchorMax = new Vector2(0, 1); itemRect.pivot = new Vector2(0, 1); itemRect.anchoredPosition = new Vector2(88, -280); itemRect.sizeDelta = new Vector2(250, 240);   // arriba a la izquierda, bajo el puesto (diseño B)
             itemIc = T(itemBg.transform, "·", 70, Ink); Fill(itemIc.rectTransform, 0, 70, 0, 20);
             itemTxt = T(itemBg.transform, "Sin objeto", 30, Ink); Fill(itemTxt.rectTransform, 8, 20, 8, 130);
         }
