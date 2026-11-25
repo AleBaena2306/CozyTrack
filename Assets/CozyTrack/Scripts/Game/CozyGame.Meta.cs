@@ -206,7 +206,7 @@ namespace CozyTrack
             }
             else if (player.isOut) msg = $"Te han eliminado en la vuelta {player.outLap}.";
             else msg = place == 1 ? "¡Has ganado!" : $"Has quedado {place}º. ¡A por la victoria!";
-            prof.coins += player.coins;
+            prof.coins += player.coins; OfferDouble(player.coins);
             if (mode == "daily")
             {
                 var d = DailyDef();

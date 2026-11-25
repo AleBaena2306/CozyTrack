@@ -172,6 +172,11 @@ namespace CozyTrack
             var tbl = Row(card.transform, 420, 0);
             resLeft = T(tbl, "", 36, Ink, TextAnchor.UpperLeft, FontStyle.Normal); resLeft.resizeTextForBestFit = false;
             resRight = T(tbl, "", 36, Ink, TextAnchor.UpperRight, FontStyle.Normal); resRight.resizeTextForBestFit = false;
+            // ×2 monedas viendo un vídeo (anuncio con recompensa), justo debajo de la tabla donde salen las monedas
+            x2Btn = CardButton(card.transform, CozyData.Hex("#2F7DD1"), "x2 monedas", DoubleCoins, out var xf, 10);
+            x2Btn.gameObject.AddComponent<LayoutElement>().preferredHeight = 130;
+            IconImg(xf.transform, Icon("video"), Cream, new Vector2(0, 0.5f), new Vector2(40, 0), new Vector2(84, 84));
+            x2Txt = Outlined(T(xf.transform, "", 46, Cream), 3); Fill(x2Txt.rectTransform, 140, 6, 30, 6); x2Txt.font = fontBlack;
             var cb = Img(c, SunC, null, "Cofre"); chestBoxGo = cb.gameObject; cb.gameObject.AddComponent<LayoutElement>().preferredHeight = 120;
             chestBox = T(cb.transform, "", 36, Ink); Fill(chestBox.rectTransform, 20, 10, 20, 10);
             var pb = Img(c, Cream, null, "Foto"); photoBox = pb.gameObject; pb.gameObject.AddComponent<LayoutElement>().preferredHeight = 820;
@@ -382,8 +387,19 @@ namespace CozyTrack
         void ShowAdOverlay(bool on) => adOverlay.SetActive(on);
         void ShowChestReward(List<string> lines) { rewardText.text = "<b>Cofre</b>\n" + string.Join("\n", lines); rewardPop.SetActive(true); RefreshMenuSelections(); RefreshCards(); }
 
+        Button x2Btn; Text x2Txt; int x2Pending, x2Coins;
+        // monedas que se pueden doblar en la próxima pantalla de resultados
+        void OfferDouble(int coins) => x2Pending = coins;
+        void DoubleCoins()
+        {
+            if (x2Coins <= 0) return;
+            int c = x2Coins; x2Coins = 0; x2Btn.gameObject.SetActive(false);
+            StartCoroutine(FakeAd(() => { prof.coins += c; SaveProfile(); Toast($"+{c} coins!"); RefreshHome(); }));
+        }
         void ShowResults(string big, string msg, List<string> rows, List<string> chest)
         {
+            x2Coins = x2Pending; x2Pending = 0;
+            if (x2Btn) { x2Btn.gameObject.SetActive(x2Coins > 0); x2Txt.text = $"×2 coins: {x2Coins * 2}"; }
             ShowScreen("results");
             resBig.text = big; resMsg.text = msg;
             resLeft.text = string.Join("\n", rows.Select(r => r.Split('\t')[0]));

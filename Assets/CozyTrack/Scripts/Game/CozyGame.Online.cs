@@ -250,6 +250,7 @@ namespace CozyTrack
                 $"League\t{Leagues.Name(m.trophies)}",
                 $"Coins\t+{(m.rewards != null ? m.rewards.coins : 0) + (player != null ? player.coins : 0)}",
             };
+            OfferDouble((m.rewards != null ? m.rewards.coins : 0) + (player != null ? player.coins : 0));
             ShowResults(win ? "1st" : "2nd", msg, rows, chest.Count > 0 ? chest : null);
             CloseNet();
         }
