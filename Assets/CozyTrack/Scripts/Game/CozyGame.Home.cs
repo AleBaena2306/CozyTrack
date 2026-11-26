@@ -77,7 +77,7 @@ namespace CozyTrack
             // RACE: pegatina amarilla con bandera a cuadros y el número del siguiente nivel
             var race = StickerButton(T0, SunC, () => OpenPick("race"), out var rf, 20, 3.5f, 6, -1.5f, "Race"); TopBox((RectTransform)race.transform, 20, 20, 624, 100);
             var chk = Checker(rf.transform); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(42 * K, 0); ckr.anchoredPosition = Vector2.zero;
-            var ckl = Img(rf.transform, Ink, null, "Linea"); ckl.sprite = null; var cklr = ckl.rectTransform; cklr.anchorMin = new Vector2(0, 0); cklr.anchorMax = new Vector2(0, 1); cklr.pivot = new Vector2(0, 0.5f); cklr.sizeDelta = new Vector2(3.5f * K, 0); cklr.anchoredPosition = new Vector2(42 * K, 0);
+            var ckl = Img(rf.transform, Ink, null, "Linea"); Soft(ckl); var cklr = ckl.rectTransform; cklr.anchorMin = new Vector2(0, 0); cklr.anchorMax = new Vector2(0, 1); cklr.pivot = new Vector2(0, 0.5f); cklr.sizeDelta = new Vector2(3.5f * K, 0); cklr.anchoredPosition = new Vector2(42 * K, 0);
             TB(rf.transform, "RACE", 48, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 62, 8, 80, 26));
             Cap(rf.transform, "LEVELS · DAILY", 12, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 64, 62, 80, 10));
             var no = Sticker(rf.transform, Cream, out var nf, 29, 3, 0, 0, "Numero"); no.anchorMin = no.anchorMax = new Vector2(1, 0.5f); no.sizeDelta = new Vector2(58 * K, 58 * K); no.anchoredPosition = new Vector2(-45 * K, 0);
@@ -505,7 +505,7 @@ namespace CozyTrack
                         TB(cf.transform, cd.name, 11, own ? Ink : Muted, false).rectTransform.Let(r => TopBox(r, 3, 3, 50, 16));
                         Cap(cf.transform, own ? "OWNED" : $"{p}/3 " + new string('●', p) + new string('○', 3 - p), 9, own ? Ink : Muted).rectTransform.Let(r => TopBox(r, 3, 3, 66, 14));
                     }
-                    var plank = Img(albumBody, CozyData.Hex("#9A6A3E"), null, "Tabla"); plank.sprite = null; plank.gameObject.AddComponent<LayoutElement>().preferredHeight = 8 * K;
+                    var plank = Img(albumBody, CozyData.Hex("#9A6A3E"), null, "Tabla"); Soft(plank); plank.gameObject.AddComponent<LayoutElement>().preferredHeight = 8 * K;
                     plank.gameObject.AddComponent<Shadow>().effectColor = Ink;
                 }
             }

@@ -246,13 +246,24 @@ namespace CozyTrack
         }
 
         // ---------- piezas de interfaz ----------
-        static Sprite round, circle;
+        // Las formas dejan 1,5 px transparentes alrededor: así el borde lo suaviza la textura y no queda dentado
+        // cuando la pieza está girada (la geometría de la UI no tiene antialiasing).
+        static Sprite round, circle, soft;
         public static Sprite Round()
         {
             if (round) return round;
+            const float half = 30.5f, rad = 20.5f;
             var g = new Raster(64, 64);
-            g.Shape(0, 0, 64, 64, (x, y) => { float qx = Mathf.Abs(x - 32) - 32 + 22, qy = Mathf.Abs(y - 32) - 32 + 22; return Mathf.Sqrt(Mathf.Max(qx, 0) * Mathf.Max(qx, 0) + Mathf.Max(qy, 0) * Mathf.Max(qy, 0)) + Mathf.Min(Mathf.Max(qx, qy), 0) - 22; }, Color.white);
+            g.Shape(0, 0, 64, 64, (x, y) => { float qx = Mathf.Abs(x - 32) - half + rad, qy = Mathf.Abs(y - 32) - half + rad; return Mathf.Sqrt(Mathf.Max(qx, 0) * Mathf.Max(qx, 0) + Mathf.Max(qy, 0) * Mathf.Max(qy, 0)) + Mathf.Min(Mathf.Max(qx, qy), 0) - rad; }, Color.white);
             return round = g.ToSprite(24);
+        }
+        // rectángulo de esquinas rectas con el borde suavizado (franjas, cintas, líneas)
+        public static Sprite SoftRect()
+        {
+            if (soft) return soft;
+            var g = new Raster(16, 16);
+            g.Shape(0, 0, 16, 16, (x, y) => Mathf.Max(Mathf.Abs(x - 8), Mathf.Abs(y - 8)) - 6.5f, Color.white);
+            return soft = g.ToSprite(4);
         }
         public static Sprite CircleSprite()
         {

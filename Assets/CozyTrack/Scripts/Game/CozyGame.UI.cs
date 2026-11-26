@@ -125,7 +125,7 @@ namespace CozyTrack
 
             BuildHome(); BuildOnline(); BuildHud(); BuildResults(); BuildGarageUI(); BuildAlbum(); BuildLevels(); BuildTaller(); BuildSettings(); BuildPause();
 
-            flashImg = Img(col, new Color(1, 1, 1, 0), null, "Destello"); Fill(flashImg.rectTransform); flashImg.sprite = null; flashImg.raycastTarget = false;
+            flashImg = Img(col, new Color(1, 1, 1, 0), null, "Destello"); Fill(flashImg.rectTransform); Soft(flashImg); flashImg.raycastTarget = false;
             // aviso: pegatina que aparece encima del coche
             var tr = Sticker(col, Cream, out toastBg, 14, 3, 4, -4, "Aviso"); toastRect = tr; TopCenter(tr, 236, 250, 46);
             toastText = TB(toastBg.transform, "", 24, Ink); Inset(toastText.rectTransform, 12, 0, 12, 0);
@@ -187,7 +187,7 @@ namespace CozyTrack
             curveLbl = TB(curveBg.transform, "", 11, Ink, false); Inset(curveLbl.rectTransform, 4, 0, 4, 0);
             var barRoot = R("Barra", spf.transform); TopBox(barRoot, 12, 12, 40, 20);
             fillImg = Bar(barRoot, SunC, 0, 10, 3); fillRect = fillImg.rectTransform; Fill((RectTransform)fillImg.transform.parent.parent);
-            var safe = Img(barRoot, Ink, null, "Limite"); safe.sprite = null; safeRect = safe.rectTransform; safe.raycastTarget = false;
+            var safe = Img(barRoot, Ink, null, "Limite"); Soft(safe); safeRect = safe.rectTransform; safe.raycastTarget = false;
             safeRect.anchorMin = new Vector2(0.7f, -0.45f); safeRect.anchorMax = new Vector2(0.7f, 1.45f); safeRect.sizeDelta = new Vector2(6 * K, 0); safeRect.anchoredPosition = Vector2.zero;
             var sl = Cap(safe.transform, "SAFE", 8); var slr = sl.rectTransform; slr.anchorMin = slr.anchorMax = new Vector2(0.5f, 0); slr.sizeDelta = new Vector2(40 * K, 10 * K); slr.anchoredPosition = new Vector2(0, -2 * K);
         }
@@ -291,8 +291,8 @@ namespace CozyTrack
             var ros = R("Escarapela", s); TopCenter(ros, 76, 150, 170);
             foreach (var (x, c, rot) in new[] { (-28f, Coral, 14f), (28f, Blue, -14f) })
             {
-                var rb = Img(ros, Ink, null, "Cinta"); rb.sprite = null; var rr = rb.rectTransform; rr.anchorMin = rr.anchorMax = new Vector2(0.5f, 1); rr.sizeDelta = new Vector2(32 * K, 70 * K); rr.anchoredPosition = new Vector2(x * K, -135 * K); Tilt(rb.transform, rot);
-                var rf = Img(rb.transform, c, null, "Color"); rf.sprite = null; Inset(rf.rectTransform, 3, 0, 3, 3);
+                var rb = Img(ros, Ink, null, "Cinta"); Soft(rb); var rr = rb.rectTransform; rr.anchorMin = rr.anchorMax = new Vector2(0.5f, 1); rr.sizeDelta = new Vector2(32 * K, 70 * K); rr.anchoredPosition = new Vector2(x * K, -135 * K); Tilt(rb.transform, rot);
+                var rf = Img(rb.transform, c, null, "Color"); Soft(rf); Inset(rf.rectTransform, 3, 0, 3, 3);
             }
             var disc = Sticker(ros, SunC, out resDisc, 65, 3.5f, 5, 0, "Disco"); TopCenter(disc, 0, 130, 130);
             resBig = TB(resDisc.transform, "", 50, Ink); Inset(resBig.rectTransform, 6, 12, 6, 36);
@@ -388,7 +388,7 @@ namespace CozyTrack
             BackButton(photoPop.transform, () => photoPop.SetActive(false));
             var pol = Sticker(photoPop.transform, Cream, out var pf, 3, 3, 6, -3, "Polaroid"); TopBox(pol, 30, 30, 110, 470);
             Tape(pol, 54, -100, -12, -10); Tape(pol, 54, 100, 10, -10);
-            var frame = Img(pf.transform, Ink, null, "Marco"); frame.sprite = null; TopBox(frame.rectTransform, 14, 14, 14, 380);
+            var frame = Img(pf.transform, Ink, null, "Marco"); Soft(frame); TopBox(frame.rectTransform, 14, 14, 14, 380);
             photoImg = R("Imagen", frame.transform).gameObject.AddComponent<RawImage>(); Inset(photoImg.rectTransform, 2.5f, 2.5f, 2.5f, 2.5f);
             photoLine1 = TB(pf.transform, "", 22, Ink); BotBox(photoLine1.rectTransform, 14, 14, 34, 30);
             photoLine2 = TB(pf.transform, "", 12, Ink, false); BotBox(photoLine2.rectTransform, 14, 14, 14, 20);
@@ -625,7 +625,7 @@ namespace CozyTrack
             int want = k <= 0.02f ? 0 : Mathf.RoundToInt(26 * Mathf.Min(1.5f, k));
             while (speedLines.Count < want)
             {
-                var im = Img(speedLayer, Color.white, null, "Linea"); im.sprite = null; im.raycastTarget = false;
+                var im = Img(speedLayer, Color.white, null, "Linea"); Soft(im); im.raycastTarget = false;
                 speedLines.Add((im.rectTransform, UnityEngine.Random.value * Mathf.PI * 2, 0.35f + UnityEngine.Random.value * 0.3f, 0.08f + UnityEngine.Random.value * 0.15f, 1.5f + UnityEngine.Random.value * 2));
             }
             while (speedLines.Count > want) { Destroy(speedLines[speedLines.Count - 1].r.gameObject); speedLines.RemoveAt(speedLines.Count - 1); }

@@ -41,14 +41,19 @@ namespace CozyTrack
             t.Apply();
             return kraftSprite = Sprite.Create(t, new Rect(0, 0, 9, 4), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect);
         }
-        // Cuadros de bandera (2×2 píxeles, sin suavizado)
+        // Cuadros de bandera: 16 px por casilla con filtrado, para que al girarlos no queden dientes de sierra
+        const int CheckerCell = 16;
         Sprite CheckerSprite()
         {
             if (checkerSprite) return checkerSprite;
-            var t = new Texture2D(2, 2, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Point };
-            t.SetPixel(0, 0, Ink); t.SetPixel(1, 1, Ink); t.SetPixel(1, 0, Cream); t.SetPixel(0, 1, Cream); t.Apply();
-            return checkerSprite = Sprite.Create(t, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect);
+            int n = CheckerCell * 2;
+            var t = new Texture2D(n, n, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, anisoLevel = 2 };
+            for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) t.SetPixel(x, y, ((x / CheckerCell) + (y / CheckerCell)) % 2 == 0 ? Ink : Cream);
+            t.Apply(true);
+            return checkerSprite = Sprite.Create(t, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect);
         }
+        // pieza recta con el borde suavizado (sustituye a las imágenes sin sprite, que salían dentadas al girarlas)
+        static void Soft(Image i) { i.sprite = CozyTex.SoftRect(); i.type = Image.Type.Sliced; i.pixelsPerUnitMultiplier = 1.6f; }
 
         // ---------- colocación en píxeles del diseño ----------
         // franja anclada arriba, con márgenes a izquierda y derecha
@@ -115,7 +120,7 @@ namespace CozyTrack
         // Cinta adhesiva semitransparente pegada arriba
         Image Tape(Transform p, float w = 34, float dx = 0, float rot = -6, float top = -9)
         {
-            var t = Img(p, new Color(1, 0.96f, 0.88f, 0.85f), null, "Cinta"); t.sprite = null; t.raycastTarget = false;
+            var t = Img(p, new Color(1, 0.96f, 0.88f, 0.85f), null, "Cinta"); Soft(t); t.raycastTarget = false;
             var r = t.rectTransform; r.anchorMin = r.anchorMax = new Vector2(0.5f, 1); r.pivot = new Vector2(0.5f, 0.5f);
             r.sizeDelta = new Vector2(w * K, 14 * K); r.anchoredPosition = new Vector2(dx * K, -(top + 7) * K); Tilt(t.transform, rot);
             var o = t.gameObject.AddComponent<Outline>(); o.effectColor = new Color(0.17f, 0.14f, 0.25f, 0.25f); o.effectDistance = new Vector2(2, -2);
@@ -147,7 +152,7 @@ namespace CozyTrack
         // Línea a cuadros (bandera de meta)
         Image Checker(Transform p, float cell = 11)
         {
-            var c = Img(p, Color.white, CheckerSprite(), "Cuadros"); c.type = Image.Type.Tiled; c.pixelsPerUnitMultiplier = 1f / (cell * K); c.raycastTarget = false; return c;
+            var c = Img(p, Color.white, CheckerSprite(), "Cuadros"); c.type = Image.Type.Tiled; c.pixelsPerUnitMultiplier = CheckerCell / (cell * K); c.raycastTarget = false; return c;
         }
         // Franja azul de carreras (de la propuesta C) con dos líneas crema y una línea a cuadros debajo, girada
         RectTransform Band(Transform p, float top, float h, float rot = -9, bool checker = true)
@@ -155,13 +160,13 @@ namespace CozyTrack
             var root = R("Franja", p); root.anchorMin = root.anchorMax = new Vector2(0.5f, 1); root.pivot = new Vector2(0.5f, 0.5f);
             root.sizeDelta = new Vector2(560 * K, (h + (checker ? 50 : 0)) * K); root.anchoredPosition = new Vector2(0, -(top + (h + (checker ? 50 : 0)) / 2) * K);
             Tilt(root, rot);
-            var bd = Img(root, Ink, null, "Borde"); bd.sprite = null; TopBox(bd.rectTransform, 0, 0, 0, h + 7); bd.raycastTarget = false;
-            var bl = Img(bd.transform, Blue, null, "Azul"); bl.sprite = null; Inset(bl.rectTransform, 0, 3.5f, 0, 3.5f); bl.raycastTarget = false;
-            var l1 = Img(bl.transform, Cream, null, "Linea"); l1.sprite = null; TopBox(l1.rectTransform, 0, 0, 13, 10); l1.raycastTarget = false;
-            var l2 = Img(bl.transform, Cream, null, "Linea"); l2.sprite = null; TopBox(l2.rectTransform, 0, 0, h - 33, 10); l2.raycastTarget = false;
+            var bd = Img(root, Ink, null, "Borde"); Soft(bd); TopBox(bd.rectTransform, 0, 0, 0, h + 7); bd.raycastTarget = false;
+            var bl = Img(bd.transform, Blue, null, "Azul"); Soft(bl); Inset(bl.rectTransform, 0, 3.5f, 0, 3.5f); bl.raycastTarget = false;
+            var l1 = Img(bl.transform, Cream, null, "Linea"); Soft(l1); TopBox(l1.rectTransform, 0, 0, 13, 10); l1.raycastTarget = false;
+            var l2 = Img(bl.transform, Cream, null, "Linea"); Soft(l2); TopBox(l2.rectTransform, 0, 0, h - 33, 10); l2.raycastTarget = false;
             if (checker)
             {
-                var cb = Img(root, Ink, null, "Borde cuadros"); cb.sprite = null; TopBox(cb.rectTransform, 0, 0, h + 20, 28); cb.raycastTarget = false;
+                var cb = Img(root, Ink, null, "Borde cuadros"); Soft(cb); TopBox(cb.rectTransform, 0, 0, h + 20, 28); cb.raycastTarget = false;
                 var ch = Checker(cb.transform); Inset(ch.rectTransform, 0, 3, 0, 3);
             }
             return root;
