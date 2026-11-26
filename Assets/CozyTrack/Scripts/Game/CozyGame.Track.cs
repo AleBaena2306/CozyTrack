@@ -322,7 +322,10 @@ namespace CozyTrack
             for (int k = 0; k < LineN - 1; k++) { int a = 2 * k; idx.AddRange(new[] { a, a + 1, a + 2, a + 1, a + 3, a + 2 }); }
             lineMesh.vertices = lineV; lineMesh.colors = lineC; lineMesh.SetTriangles(idx, 0); lineMesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2000);
             lineGo = new GameObject("Linea de frenada"); lineGo.AddComponent<MeshFilter>().sharedMesh = lineMesh;
+            // siempre por encima del asfalto: desplazamiento de profundidad (sin parpadeos ni huecos en cuestas
+            // o peraltes) y se pinta después del resto de transparentes (humo, chispas)
             var m = new Material(lib.unlit); m.SetColor("_BaseColor", new Color(1, 1, 1, 0.85f));
+            m.SetFloat("_OffsetF", -2); m.SetFloat("_OffsetU", -60); m.renderQueue = 3100;
             var r = lineGo.AddComponent<MeshRenderer>(); r.sharedMaterial = m; r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             lineGo.SetActive(false);
         }
@@ -347,7 +350,7 @@ namespace CozyTrack
                 var w = Track.World(si[k], su[k], player.o);
                 float cr = Mathf.Cos(w.roll);
                 var lat = new Vector3(Mathf.Cos(w.h) * cr, Mathf.Sin(w.roll), -Mathf.Sin(w.h) * cr) * (LineW / 2);
-                var c = w.pos + Vector3.up * 0.02f * cr;
+                var c = w.pos + Vector3.up * 0.05f * cr;
                 lineV[k * 2] = c - lat; lineV[k * 2 + 1] = c + lat;
                 float ratio = v / allow[k];
                 Color col = ratio <= 0.9f ? COk : ratio <= 1 ? Color.Lerp(COk, CWarn, (ratio - 0.9f) / 0.1f) : Color.Lerp(CWarn, CBad, Mathf.Min(1, (ratio - 1) / 0.08f));
