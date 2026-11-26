@@ -16,6 +16,7 @@ namespace CozyTrack
         public List<string> stickerCar = new List<string>(); public List<string> stickerId = new List<string>();
         public List<string> upCar = new List<string>(); public List<int> upVals = new List<int>();   // 3 valores por coche
         public List<ChestSlot> chests = new List<ChestSlot>();
+        public List<string> chestQueue = new List<string>();                              // cofres en espera (ranuras llenas)
         public string dailyLast = ""; public int dailyStreak;
         public List<string> skinCar = new List<string>(), skinVal = new List<string>();   // skin por vehículo: pintura|detalles|ruedas|llantas
         public List<string> ownedSkins = new List<string>();                              // estampados y ruedas desbloqueados («p:…», «w:…»)
@@ -33,6 +34,7 @@ namespace CozyTrack
             if (prof == null) prof = new Profile();
             while (prof.chests.Count < 4) prof.chests.Add(new ChestSlot());
             foreach (var c in prof.chests) c.kind = TierOf(c.kind ?? "");
+            if (prof.chestQueue == null) prof.chestQueue = new List<string>();
             allUnlocked = PlayerPrefs.GetInt("ctAllUnlocked", 1) == 1;
         }
         void SaveProfile() { PlayerPrefs.SetString("ctProfile", JsonUtility.ToJson(prof)); PlayerPrefs.Save(); }
@@ -61,17 +63,33 @@ namespace CozyTrack
         //   common: 2 piezas · rare: 3 piezas y quizá una pegatina · epic: 4 piezas, pegatina y quizá una skin · legendary: un vehículo entero, pegatina y skin
         static long Now => botClock > 0 ? botClock : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         static string TierOf(string kind) => kind == "oro" ? "legendary" : kind == "normal" ? "common" : kind;
-        bool AddChest(string kind)
+        // 0 = a una ranura, 1 = en cola (entra solo cuando se libere una ranura), 2 = cola llena: monedas
+        const int ChestQueueMax = 6;
+        int AddChest(string kind)
         {
             kind = TierOf(kind);
-            foreach (var s in prof.chests) if (s.kind == "") { s.kind = kind; s.opening = false; s.readyAt = 0; SaveProfile(); if (botCur != null) botCur.chestsEarned++; return true; }
+            if (botCur != null) botCur.chestsEarned++;
+            foreach (var s in prof.chests) if (s.kind == "") { s.kind = kind; s.opening = false; s.readyAt = 0; SaveProfile(); return 0; }
+            if (prof.chestQueue.Count < ChestQueueMax) { prof.chestQueue.Add(kind); SaveProfile(); return 1; }
             if (botCur != null) botCur.chestsLost++;
-            prof.coins += 25; SaveProfile(); return false;   // ranuras llenas: monedas
+            prof.coins += 25; SaveProfile(); return 2;
+        }
+        // pasa los cofres en cola (los mejores primero) a las ranuras libres
+        void FillChestSlots()
+        {
+            bool changed = false;
+            foreach (var s in prof.chests)
+            {
+                if (s.kind != "" || prof.chestQueue.Count == 0) continue;
+                var best = prof.chestQueue.OrderByDescending(k => ChestSeconds(k)).First();
+                prof.chestQueue.Remove(best); s.kind = best; s.opening = false; s.readyAt = 0; changed = true;
+            }
+            if (changed) SaveProfile();
         }
         void TapChest(int k)
         {
             var s = prof.chests[k]; if (s.kind == "") return;
-            if (s.opening && Now >= s.readyAt) { var tier = TierOf(s.kind); var loot = OpenChest(tier); s.kind = ""; s.opening = false; SaveProfile(); ShowChestReward(tier, loot); return; }
+            if (s.opening && Now >= s.readyAt) { var tier = TierOf(s.kind); var loot = OpenChest(tier); s.kind = ""; s.opening = false; FillChestSlots(); SaveProfile(); ShowChestReward(tier, loot); return; }
             if (!s.opening)
             {
                 if (prof.chests.Any(o => o.opening && Now < o.readyAt)) { Toast("Another chest is already opening"); return; }
@@ -272,8 +290,9 @@ namespace CozyTrack
             }
             if (chestKind != null)
             {
-                bool slot = AddChest(chestKind); v.chestTier = chestKind;
-                v.chestTitle = TierName(chestKind) + " chest!"; v.chestSub = slot ? $"Added to your slots · opens in {ChestSeconds(chestKind) / 60} min" : "Slots full: +25 coins instead";
+                int slot = AddChest(chestKind); v.chestTier = chestKind;
+                v.chestTitle = TierName(chestKind) + " chest!";
+                v.chestSub = slot == 0 ? $"Added to your slots · opens in {ChestSeconds(chestKind) / 60} min" : slot == 1 ? "Slots full: it waits in line for a free slot" : "Line full: +25 coins instead";
             }
             else if (v.tip == null && mode != "daily") v.tip = place == 1 ? "Keep winning to fill your chest slots." : "Win the race to earn a chest.";
             v.photo = true; photoReady = false;

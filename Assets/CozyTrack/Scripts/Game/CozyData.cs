@@ -134,9 +134,9 @@ namespace CozyTrack
         // ---------- niveles (tools/progression.py): 7 niveles clave; los intermedios usan el trazado del clave anterior ----------
         public static readonly LevelKey[] LevelKeys =
         {
-            new LevelKey(1, "Playroom", "First lap", "Rhino", 0.866f, 1.0f, 0, new[] { "S8", "S8", "C90L8", "S4", "C90L8", "S8", "S8", "C90L8", "S4", "C90L8" }),
-            new LevelKey(5, "Playroom", "Zigzag", "Gecko", 0.888f, 1.0f, 1, new[] { "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8" }),
-            new LevelKey(10, "Playroom", "The rug", "Dart", 0.914f, 1.0f, 2, new[] { "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8" }),
+            new LevelKey(1, "Playroom", "First lap", "Rhino", 0.85f, 1.0f, 0, new[] { "S8", "S8", "C90L8", "S4", "C90L8", "S8", "S8", "C90L8", "S4", "C90L8" }),
+            new LevelKey(5, "Playroom", "Zigzag", "Gecko", 0.865f, 1.0f, 1, new[] { "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C90L8" }),
+            new LevelKey(10, "Playroom", "The rug", "Dart", 0.885f, 1.0f, 2, new[] { "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8", "S8", "S8", "C90L8", "C45R8", "C45L8", "C45L8", "C45R8", "C90L8", "S8" }),
             new LevelKey(15, "Garden", "Flower pots", "Rhino", 0.925f, 1.0f, 2, new[] { "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "S4", "C90R8", "C90L5", "C90L5", "S8" }),
             new LevelKey(20, "Garden", "The hedge", "Hopper", 0.915f, 1.0f, 3, new[] { "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8", "S8", "S8", "S8", "C90L5", "C45R5", "C45L5", "C90L5", "C90R8", "C90L5", "S8" }),
             new LevelKey(25, "Snow", "Hairpins", "Rhino", 0.887f, 0.85f, 4, new[] { "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5", "S8", "S8", "S8", "C90L3", "C90L3", "S8", "S8", "C45R5", "C45L5" }),

@@ -324,14 +324,15 @@ namespace CozyTrack
         // curva perfecta: entrar entre el 72 % y el 100 % del límite y salir sin derrapar → miniturbo
         void PieceChanged(RaceCar c, bool wasCurve)
         {
+            // cada pieza curva cuenta por separado: en circuitos de curvas encadenadas (nieve) también hay curvas perfectas
             bool nowCurve = !Track.Pieces[c.i].straight;
-            if (nowCurve && !wasCurve) { float q = (c.v * c.v / Track.Radius(c.i, c.o)) / c.alat; c.entryQ = q; c.cleanCurve = q >= 0.72f && q <= 1.0f; }
-            if (nowCurve && c.slip > 0.05f) c.cleanCurve = false;
-            if (!nowCurve && wasCurve)
+            if (wasCurve)
             {
-                if (c.cleanCurve && c.slipPeak < 0.05f) { c.turbo = Mathf.Max(c.turbo, 0.6f); Toast("Perfect curve!"); perfects++; }
+                if (c.cleanCurve && c.slipPeak < 0.05f) { c.turbo = Mathf.Max(c.turbo, 0.6f); if (c.isPlayer) Toast("Perfect curve!"); if (c.isPlayer) perfects++; }
                 c.cleanCurve = false;
             }
+            if (nowCurve) { float q = (c.v * c.v / Track.Radius(c.i, c.o)) / c.alat; c.entryQ = q; c.cleanCurve = q >= 0.72f && q <= 1.0f; }
+            if (nowCurve && c.slip > 0.05f) c.cleanCurve = false;
         }
 
         bool AiThrottle(RaceCar c, float dt)

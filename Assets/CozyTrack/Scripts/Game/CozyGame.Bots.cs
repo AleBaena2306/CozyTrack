@@ -187,13 +187,13 @@ namespace CozyTrack
             if (botClock - bp.dayStart > 86400) { bp.dayStart = botClock; bp.adsToday = 0; }
             // abrir los cofres listos
             foreach (var s in prof.chests)
-                if (s.kind != "" && s.opening && Now >= s.readyAt) { OpenChest(TierOf(s.kind)); s.kind = ""; s.opening = false; bp.chestsOpened++; }
+                if (s.kind != "" && s.opening && Now >= s.readyAt) { OpenChest(TierOf(s.kind)); s.kind = ""; s.opening = false; bp.chestsOpened++; FillChestSlots(); }
             // anuncio para abrir uno ya (máx. 8 al día)
             var waiting = prof.chests.Where(s => s.kind != "" && !(s.opening && Now < s.readyAt)).ToList();
             if (waiting.Count > 0 && bp.adsToday < 8 && UnityEngine.Random.value < bp.p.adRate)
             {
                 var s = waiting.OrderByDescending(c => ChestSeconds(TierOf(c.kind))).First();
-                OpenChest(TierOf(s.kind)); s.kind = ""; s.opening = false; bp.chestsOpened++; bp.adsToday++; bp.adsWatched++;
+                OpenChest(TierOf(s.kind)); s.kind = ""; s.opening = false; bp.chestsOpened++; bp.adsToday++; bp.adsWatched++; FillChestSlots();
                 bp.simSec += 30; botClock += 30;
             }
             // empezar a abrir el mejor si no hay ninguno abriéndose
@@ -474,9 +474,9 @@ namespace CozyTrack
             {
                 var bs = botPlayers.Where(b => b.p == p).ToList(); if (bs.Count == 0) continue;
                 int lastLv(BotPlayer b) => b.clearedMin.Count == 0 ? 0 : b.clearedMin.Keys.Max();
-                float lost = bs.Sum(b => b.chestsLost) / Mathf.Max(1f, bs.Sum(b => b.chestsEarned + b.chestsLost));
+                float lost = bs.Sum(b => b.chestsLost) / Mathf.Max(1f, bs.Sum(b => b.chestsEarned));
                 sec.AppendLine($"| {p.name} | {F1(Avg(bs.Select(b => b.coinsEarned / Mathf.Max(1f, b.races))))} | {Mathf.RoundToInt(Avg(bs.Select(b => (float)b.coinsSpent)))} | {F1(Avg(bs.Select(b => b.upgradesAt.TryGetValue(lastLv(b), out var u) ? u : 0f)))} | {F1(Avg(bs.Select(b => b.carsAt.TryGetValue(lastLv(b), out var c) ? c : 4f)))} | {F1(Avg(bs.Select(b => (float)b.chestsEarned)))} | {Pc(lost)} | {F1(Avg(bs.Select(b => (float)b.chestsOpened)))} | {F1(Avg(bs.Select(b => (float)b.carSwitches)))} |");
-                if (lost > 0.25f) alerts.Add($"**Cofres desperdiciados:** «{p.name}» pierde el {Pc(lost)} de los cofres por tener las 4 ranuras llenas.");
+                if (lost > 0.25f) alerts.Add($"**Cofres desperdiciados:** «{p.name}» pierde el {Pc(lost)} de los cofres por tener las ranuras y la cola llenas.");
             }
             sec.AppendLine();
 

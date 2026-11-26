@@ -287,7 +287,7 @@ namespace CozyTrack
             state = "end";
             bool win = m.r == "win";
             int coins = (m.rewards != null ? m.rewards.coins : 0) + (player != null ? player.coins : 0);
-            string tier = m.rewards != null && !string.IsNullOrEmpty(m.rewards.chest) ? ChestKindFor(m.rewards.chest) : null; bool slot = true;
+            string tier = m.rewards != null && !string.IsNullOrEmpty(m.rewards.chest) ? ChestKindFor(m.rewards.chest) : null; int slot = 0;
             if (!netRewarded)
             {
                 netRewarded = true; prof.coins += coins;
@@ -305,7 +305,7 @@ namespace CozyTrack
             var me = (win ? "1" : "2", NetName + " (you)", m.you > 0 ? Fmt(m.you / 1000f) : "—", true); var them = (win ? "2" : "1", opp, m.them > 0 ? Fmt(m.them / 1000f) : "—", false);
             if (win) { v.rows.Add(me); v.rows.Add(them); } else { v.rows.Add(them); v.rows.Add(me); }
             v.stats.Add(("+" + coins, "COINS")); v.stats.Add(((m.delta >= 0 ? "+" : "") + m.delta, "TROPHIES")); v.stats.Add((Leagues.Name(m.trophies), "LEAGUE"));
-            if (tier != null) { v.chestTier = tier; v.chestTitle = TierName(tier) + " chest!"; v.chestSub = slot ? $"Added to your slots · opens in {ChestSeconds(tier) / 60} min" : "Slots full: +25 coins instead"; }
+            if (tier != null) { v.chestTier = tier; v.chestTitle = TierName(tier) + " chest!"; v.chestSub = slot == 0 ? $"Added to your slots · opens in {ChestSeconds(tier) / 60} min" : slot == 1 ? "Slots full: it waits in line for a free slot" : "Line full: +25 coins instead"; }
             else v.tip = win ? "Nice racing!" : "Lose: fewer trophies against stronger racers. Next one's yours!";
             OfferDouble(coins);
             ShowResultView(v);
