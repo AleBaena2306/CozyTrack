@@ -66,6 +66,9 @@ namespace CozyTrack
             for (int k = 0; k < 240; k++) air.Add(new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0f, 6f), UnityEngine.Random.Range(-20f, 20f)), Color.white, 0.15f, 1e9f, Vector3.zero, 0);
             for (int k = 0; k < air.list.Count; k++) air.list[k].t = UnityEngine.Random.value * 6.28f;   // fase
             BuildBrakeLine();
+            var skidMat = new Material(lib.unlit); skidMat.SetTexture("_BaseMap", CozyTex.Get("dot")); skidMat.SetFloat("_OffsetF", -1); skidMat.SetFloat("_OffsetU", -30); skidMat.renderQueue = 2990;
+            skidMat.SetTexture("_BaseMap", null);
+            skids = new SkidMarks(skidMat);
             Shader.SetGlobalFloat("_CozyOutlineWidth", 0.045f);
             Shader.SetGlobalColor("_CozyShadowTint", CozyData.Hex("#6f55b0"));
         }
@@ -217,7 +220,8 @@ namespace CozyTrack
             UpdateAir(dt);
             AnimateSurfaces(dt);
             UpdateObstacles(dt);
-            foreach (var c in cars) PlaceCar(c, dt);
+            foreach (var c in cars) { PlaceCar(c, dt); Skid(c); }
+            skids.Flush();
             foreach (var b in boxes) if (b.m) b.m.transform.Rotate(0, dt * 90, 0);
             foreach (var co in coins) if (co.m) co.m.transform.Rotate(0, dt * 180, 0);
             UpdateCamera(dt);

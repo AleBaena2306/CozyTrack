@@ -30,8 +30,10 @@ namespace CozyTrack
             c.origMats = c.renderers.Select(r => r.sharedMaterials).ToArray();
             return c;
         }
+        SkidMarks skids;
         void ClearCars()
         {
+            skids?.Clear();
             foreach (var c in cars) if (c.g) Destroy(c.g);
             cars.Clear(); player = null; rival = null;
         }
@@ -63,9 +65,15 @@ namespace CozyTrack
             if (c.isOut) { c.g.SetActive(false); return; }
             if (c.crash > 0)
             {
-                c.g.transform.position = c.flyPos; c.g.transform.rotation = Quaternion.Euler(c.flyRot * 17, c.flyRot * 57, c.flyRot * 11);
-                c.g.SetActive(c.crash > 0.15f || Mathf.FloorToInt(c.crash * 20) % 2 == 0); return;
+                // gira sobre su centro (no sobre los bajos) y nunca se mete bajo el suelo; tras la explosión, desaparece
+                var rot = Quaternion.Euler(c.flyRot * 17, c.flyRot * 57, c.flyRot * 11); var mid = Vector3.up * 0.25f;
+                c.g.transform.rotation = rot; c.g.transform.position = c.flyPos + mid - rot * mid;
+                c.g.SetActive(!c.exploded); return;
             }
+            if (c.exploded) c.exploded = false;
+            // tambaleo después de un choque (visual)
+            c.wobbleT += dt; c.wobble = Mathf.Max(0, c.wobble - dt * 2.2f);
+            float wob = Mathf.Sin(c.wobbleT * 38) * c.wobble;
             c.g.SetActive(true);
             var w = Track.World(c.i, c.u, c.o);
             float lat = Track.LaneO(c.lane) - c.o;
@@ -73,8 +81,8 @@ namespace CozyTrack
             c.pitch += ((-c.acc) * 0.006f - c.pitch) * Mathf.Min(1, dt * 8);
             // giro: rumbo + inclinación hacia el carril nuevo + cola que sale en el derrape + trompo
             float yaw = w.h + lat * 0.25f - s * c.slip * 0.9f + (c.spin > 0 ? c.spin * 12 : 0);
-            c.g.transform.position = w.pos;
-            c.g.transform.rotation = Quaternion.Euler(0, yaw * Mathf.Rad2Deg, 0) * Quaternion.Euler(c.pitch * Mathf.Rad2Deg, 0, (w.roll + s * lean * lean * 0.12f) * Mathf.Rad2Deg);
+            c.g.transform.position = w.pos + Vector3.up * (Mathf.Abs(wob) * 0.12f);
+            c.g.transform.rotation = Quaternion.Euler(0, (yaw + wob * 0.25f) * Mathf.Rad2Deg, 0) * Quaternion.Euler(c.pitch * Mathf.Rad2Deg, 0, (w.roll + s * lean * lean * 0.12f + wob * 0.35f) * Mathf.Rad2Deg);
             for (int k = 0; k < c.wheels.Length; k++) c.wheels[k].Rotate(c.wheelAxis[k], c.v * dt / c.wheelR[k] * Mathf.Rad2Deg, Space.Self);
             if (c.shield > 0)
             {
@@ -254,7 +262,7 @@ namespace CozyTrack
             c.slip = 0; c.crash = 1.2f;
             var f = new Vector3(Mathf.Sin(w.h), 0, Mathf.Cos(w.h)); var right = new Vector3(Mathf.Cos(w.h), 0, -Mathf.Sin(w.h));
             // la fuerza centrífuga empuja hacia fuera de la curva (a la derecha en una curva a la izquierda)
-            c.flyPos = w.pos; c.flyVel = f * c.v * 0.7f + right * p.s * 5 + Vector3.up * 4; c.flyRot = 0;
+            c.flyPos = w.pos; c.flyVel = f * c.v * 0.7f + right * p.s * 5 + Vector3.up * 4; c.flyRot = 0; c.exploded = false; c.skidOn = false;
             c.v = 0; c.turbo = 0; c.slipPeak = 0;
             if (c.isPlayer) { shake = 0.5f; Toast("Off the track!"); crashes++; }
         }
@@ -267,8 +275,11 @@ namespace CozyTrack
             if (c.isOut || (c.done >= 0 && !c.isPlayer && c.v < 0.1f)) return;
             if (c.crash > 0)
             {
-                c.crash -= dt; c.flyVel.y -= 14 * dt; c.flyPos += c.flyVel * dt; c.flyPos.y = Mathf.Max(-0.2f, c.flyPos.y); c.flyRot += dt * 9;
-                if (c.crash <= 0) { c.v = 0; c.spin = 0; }
+                c.crash -= dt; c.flyVel.y -= 14 * dt; c.flyPos += c.flyVel * dt; c.flyRot += dt * (c.flyPos.y > Floor + 0.02f ? 9 : 3);
+                // rebota en el suelo en vez de atravesarlo
+                if (c.flyPos.y < Floor) { c.flyPos.y = Floor; if (c.flyVel.y < 0) c.flyVel.y = -c.flyVel.y * 0.35f; c.flyVel.x *= 0.6f; c.flyVel.z *= 0.6f; }
+                if (!c.exploded && c.crash <= 0.6f) Explode(c);
+                if (c.crash <= 0) { c.v = 0; c.spin = 0; c.exploded = false; }
                 return;
             }
             bool gas = c.isPlayer ? (c.done < 0 && (botRun ? BotThrottle(c, dt) : Gas())) : AiThrottle(c, dt);
@@ -382,6 +393,7 @@ namespace CozyTrack
                     if (Vector2.Distance(new Vector2(pa.x, pa.z), new Vector2(pb.x, pb.z)) < 1.15f)
                     {
                         var light = mA <= mB ? A : B; HitCar(light, light == A ? B : A, "spin"); light.v *= 2.5f; A.cool = B.cool = 0.8f;
+                        BumpFx(A, B, mA, mB, pa, pb, 6);
                         if (A.isPlayer || B.isPlayer) { shake = 0.4f; Toast(light.isPlayer ? "Crash at the crossing!" : "You rammed them at the crossing!"); }
                     }
                     continue;
@@ -391,6 +403,7 @@ namespace CozyTrack
                 float dp = Prog(B) - Prog(A); var rear = dp > 0 ? A : B; var front = rear == A ? B : A;
                 float mR = rear == A ? mA : mB, mF = front == A ? mA : mB, vr = rear.v - front.v;
                 if (vr > 0) { float J = (1 + RaceCar.Restitution) * vr / (1 / mR + 1 / mF); rear.v = Mathf.Max(0, rear.v - J / mR); front.v += J / mF; }
+                BumpFx(A, B, mA, mB, pa, pb, Mathf.Max(vr, 1.5f));
                 // empujón lateral: si alguien cambiaba de carril, el más ligero vuelve al suyo y pierde velocidad
                 var lt = mA <= mB ? A : B; var hv = lt == A ? B : A; float mL = Mathf.Min(mA, mB), mH = Mathf.Max(mA, mB);
                 bool Changing(RaceCar c) => c.prevLane >= 0 && Mathf.Abs(Track.LaneO(c.lane) - c.o) > 0.05f;
@@ -469,6 +482,101 @@ namespace CozyTrack
         }
 
         // ---------- partículas: humo, polvo, salpicaduras, chispas ----------
+        const float Floor = -0.2f;   // altura del suelo bajo la pista
+
+        // ---------- choques: el efecto depende de quién pesa más ----------
+        void BumpFx(RaceCar A, RaceCar B, float mA, float mB, Vector3 pa, Vector3 pb, float force)
+        {
+            if (botRun) return;
+            var mid = (pa + pb) * 0.5f + Vector3.up * 0.35f;
+            float ratio = Mathf.Max(mA, mB) / Mathf.Max(0.01f, Mathf.Min(mA, mB));
+            float k = Mathf.Clamp(force / 6f, 0.5f, 1.5f);
+            Vector3 Rv(float s, float up) => new Vector3((Random.value - 0.5f) * s, up * (0.6f + Random.value * 0.8f), (Random.value - 0.5f) * s);
+            if (ratio < 1.12f)
+            {
+                // mismo peso: choque seco y simétrico, los dos se tambalean
+                for (int n = 0; n < 16 * k; n++) fx.Add(mid, Random.value < 0.5f ? SunC : Color.white, 0.12f, 0.45f, Rv(7, 3), 9);
+                fx.Add(mid, new Color(1, 1, 1, 0.9f), 0.5f, 0.18f, Vector3.zero, 0, true);
+                for (int n = 0; n < 3; n++) fx.Add(mid - Vector3.up * 0.25f, new Color(1, 1, 1, 0.7f), 0.35f, 0.6f, Rv(1.5f, 0.6f), 0, true);
+                A.wobble = B.wobble = 0.45f * k;
+                if (A.isPlayer || B.isPlayer) shake = Mathf.Max(shake, 0.28f * k);
+                return;
+            }
+            var light = mA < mB ? A : B; var heavy = light == A ? B : A;
+            var lp = (light == A ? pa : pb) + Vector3.up * 0.4f;
+            // el ligero sale despedido: chispas grandes, polvo y estrellitas de mareo
+            for (int n = 0; n < 22 * k; n++) fx.Add(lp, Random.value < 0.6f ? SunC : Coral, 0.15f, 0.55f, Rv(8, 4), 10);
+            for (int n = 0; n < 4; n++) fx.Add(lp - Vector3.up * 0.3f, new Color(0.95f, 0.9f, 0.8f, 0.8f), 0.45f, 0.8f, Rv(2, 0.8f), 0, true);
+            for (int n = 0; n < 6; n++)
+            {
+                float a = n / 6f * Mathf.PI * 2; var dir = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                fx.Add(lp + Vector3.up * 0.55f + dir * 0.3f, SunC, 0.14f, 0.9f, new Vector3(-dir.z, 0, dir.x) * 1.6f + Vector3.up * 0.3f, 0);
+            }
+            light.wobble = 0.8f * k; heavy.wobble = 0.12f;
+            // el pesado apenas lo nota: unas pocas chispas en su morro
+            var hp = (heavy == A ? pa : pb) + Vector3.up * 0.4f;
+            for (int n = 0; n < 5; n++) fx.Add(hp, Color.white, 0.09f, 0.3f, Rv(4, 2), 9);
+            if (light.isPlayer) { shake = Mathf.Max(shake, 0.45f * k); Flash(new Color(1, 0.55f, 0.35f)); }
+            else if (heavy.isPlayer) shake = Mathf.Max(shake, 0.12f);
+        }
+
+        // ---------- explosión al salirse (en vez de desaparecer) ----------
+        void Explode(RaceCar c)
+        {
+            c.exploded = true;
+            if (botRun) return;
+            var p = c.flyPos + Vector3.up * 0.3f;
+            Color paint = Coral;
+            if (c.renderers != null && c.renderers.Length > 0 && c.renderers[0] && c.renderers[0].sharedMaterial && c.renderers[0].sharedMaterial.HasProperty("_BaseColor")) paint = c.renderers[0].sharedMaterial.GetColor("_BaseColor");
+            Vector3 Rv(float s, float up) => new Vector3((Random.value - 0.5f) * s, up * (0.5f + Random.value), (Random.value - 0.5f) * s);
+            fx.Add(p, new Color(1, 0.97f, 0.8f, 1), 1.3f, 0.22f, Vector3.zero, 0, true);                                   // destello
+            for (int n = 0; n < 14; n++) fx.Add(p + Rv(0.4f, 0.2f), Color.Lerp(SunC, Coral, Random.value), 0.45f + Random.value * 0.3f, 0.45f + Random.value * 0.35f, Rv(4, 2.5f), 0, true);   // bola de fuego
+            for (int n = 0; n < 10; n++) fx.Add(p + Rv(0.5f, 0.3f), new Color(0.35f, 0.32f, 0.38f, 0.75f), 0.5f, 1.1f + Random.value * 0.6f, Rv(1.5f, 1.8f), -0.6f, true);   // humo
+            for (int n = 0; n < 18; n++) fx.Add(p, SunC, 0.1f, 0.6f, Rv(9, 6), 12);                                           // chispas
+            for (int n = 0; n < 12; n++) fx.Add(p, Color.Lerp(paint, Ink, Random.value * 0.3f), 0.16f, 1.0f, Rv(7, 7), 14); // trozos de chapa (y tornillos)
+            for (int n = 0; n < 6; n++) fx.Add(p, Ink, 0.08f, 1.0f, Rv(6, 6), 14);
+            // mancha de quemado en el suelo
+            var right = new Vector3(1, 0, 0); var gp = new Vector3(c.flyPos.x, Floor + 0.012f, c.flyPos.z);
+            skids.Add(gp - Vector3.forward * 0.45f, gp + Vector3.forward * 0.45f, right, 0.9f, new Color(0.1f, 0.08f, 0.12f, 0.55f), new Color(0.1f, 0.08f, 0.12f, 0.55f));
+            if (c.isPlayer) { shake = Mathf.Max(shake, 0.7f); Flash(new Color(1, 0.75f, 0.35f)); Toast("KABOOM!"); }
+            else if (player != null && Vector3.Distance(player.g ? player.g.transform.position : p, p) < 8) shake = Mathf.Max(shake, 0.25f);
+        }
+
+        // ---------- huellas de las ruedas traseras ----------
+        static readonly Color SkidBase = new Color(0.12f, 0.1f, 0.14f, 1);
+        void Skid(RaceCar c)
+        {
+            if (!c.g || c.isOut || c.crash > 0 || c.remote && c.v < 0.1f || c.wheels.Length < 2) { c.skidOn = false; return; }
+            if (c.v < 0.6f && c.slip <= 0) return;
+            // las dos ruedas más traseras
+            Transform r0 = null, r1 = null; float z0 = 1e9f, z1 = 1e9f;
+            foreach (var wh in c.wheels)
+            {
+                float z = c.g.transform.InverseTransformPoint(wh.position).z;
+                if (z < z0) { r1 = r0; z1 = z0; r0 = wh; z0 = z; } else if (z < z1) { r1 = wh; z1 = z; }
+            }
+            if (!r0 || !r1) return;
+            var sf = Track.Surf(c.i);
+            Color tint = SkidBase; float a = 0.09f;
+            switch (sf.id) { case "barro": tint = CozyData.Hex("#4a3020"); a = 0.4f; break; case "arena": tint = CozyData.Hex("#a07a48"); a = 0.3f; break; case "agua": tint = CozyData.Hex("#3a4a60"); a = 0.22f; break; case "hielo": tint = Color.white; a = 0.28f; break; case "jabon": tint = Color.white; a = 0.2f; break; }
+            a += Mathf.Clamp01(c.slip) * 0.55f + (c.spin > 0 ? 0.35f : 0) + (c.acc < -6 ? 0.12f : 0);
+            var col = tint; col.a = Mathf.Clamp01(a);
+            var right = c.g.transform.right; right.y = 0; right.Normalize();
+            for (int k = 0; k < 2; k++)
+            {
+                var wh = k == 0 ? r0 : r1; int idx = System.Array.IndexOf(c.wheels, wh);
+                float rad = idx >= 0 && idx < c.wheelR.Length ? c.wheelR[idx] : 0.08f;
+                var pt = wh.position - Vector3.up * (rad - 0.01f);
+                if (!c.skidOn) { c.skidPrev[k] = pt; c.skidCol[k] = col; continue; }
+                float d = Vector3.Distance(pt, c.skidPrev[k]);
+                if (d > 2.5f) { c.skidPrev[k] = pt; c.skidCol[k] = col; continue; }
+                if (d < 0.22f) continue;
+                skids.Add(c.skidPrev[k], pt, right, Mathf.Max(0.05f, rad * 0.9f), c.skidCol[k], col);
+                c.skidPrev[k] = pt; c.skidCol[k] = col;
+            }
+            c.skidOn = true;
+        }
+
         void Puff(RaceCar c) { var w = Track.World(c.i, c.u, c.o); var f = new Vector3(Mathf.Sin(w.h), 0, Mathf.Cos(w.h)); fx.Add(w.pos - f * 0.6f + new Vector3(Random.value - 0.5f, 0.15f, Random.value - 0.5f) * 0.5f, new Color(1, 1, 1, 0.8f), 0.36f, 0.6f, Vector3.up * 0.8f, 0, true); }
         void Sparks(RaceCar c, Color col, int n) { var w = Track.World(c.i, c.u, c.o); for (int k = 0; k < n; k++) fx.Add(w.pos + Vector3.up * 0.5f, col, 0.13f, 0.5f, new Vector3((Random.value - 0.5f) * 5, 2 + Random.value * 3, (Random.value - 0.5f) * 5), 9); }
         void SurfaceFx(RaceCar c, SurfDef sf)

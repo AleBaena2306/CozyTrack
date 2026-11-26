@@ -17,6 +17,8 @@ namespace CozyTrack
         public int coins, uses, outAt, outLap; public float done = -1;   // done < 0: no ha terminado
         public string item; public bool draft, gas, cleanCurve, mustBrake, isOut;
         public Vector3 flyPos, flyVel; public float flyRot;
+        public bool exploded; public float wobble, wobbleT;                                    // solo visual: explosión y tambaleo tras un choque
+        public Vector3[] skidPrev = new Vector3[2]; public Color[] skidCol = new Color[2]; public bool skidOn;   // huellas de las ruedas traseras
         public GameObject shieldFx, mark; public bool fxOn;
         public Renderer[] renderers; public Material[][] origMats;
         public bool remote; public float netP, netO, netV, netAt, shownP;   // rival online: lo mueve el servidor
