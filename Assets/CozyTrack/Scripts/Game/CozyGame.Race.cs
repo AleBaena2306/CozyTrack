@@ -33,7 +33,7 @@ namespace CozyTrack
         SkidMarks skids;
         void ClearCars()
         {
-            skids?.Clear();
+            skids?.Clear(); ClearDebris();
             foreach (var c in cars) if (c.g) Destroy(c.g);
             cars.Clear(); player = null; rival = null;
         }
@@ -525,22 +525,85 @@ namespace CozyTrack
         {
             c.exploded = true;
             if (botRun) return;
-            var p = c.flyPos + Vector3.up * 0.3f;
+            var p = c.flyPos + Vector3.up * 0.35f;
             Color paint = Coral;
             if (c.renderers != null && c.renderers.Length > 0 && c.renderers[0] && c.renderers[0].sharedMaterial && c.renderers[0].sharedMaterial.HasProperty("_BaseColor")) paint = c.renderers[0].sharedMaterial.GetColor("_BaseColor");
             Vector3 Rv(float s, float up) => new Vector3((Random.value - 0.5f) * s, up * (0.5f + Random.value), (Random.value - 0.5f) * s);
-            fx.Add(p, new Color(1, 0.97f, 0.8f, 1), 1.3f, 0.22f, Vector3.zero, 0, true);                                   // destello
-            for (int n = 0; n < 14; n++) fx.Add(p + Rv(0.4f, 0.2f), Color.Lerp(SunC, Coral, Random.value), 0.45f + Random.value * 0.3f, 0.45f + Random.value * 0.35f, Rv(4, 2.5f), 0, true);   // bola de fuego
-            for (int n = 0; n < 10; n++) fx.Add(p + Rv(0.5f, 0.3f), new Color(0.35f, 0.32f, 0.38f, 0.75f), 0.5f, 1.1f + Random.value * 0.6f, Rv(1.5f, 1.8f), -0.6f, true);   // humo
-            for (int n = 0; n < 18; n++) fx.Add(p, SunC, 0.1f, 0.6f, Rv(9, 6), 12);                                           // chispas
-            for (int n = 0; n < 12; n++) fx.Add(p, Color.Lerp(paint, Ink, Random.value * 0.3f), 0.16f, 1.0f, Rv(7, 7), 14); // trozos de chapa (y tornillos)
-            for (int n = 0; n < 6; n++) fx.Add(p, Ink, 0.08f, 1.0f, Rv(6, 6), 14);
-            // mancha de quemado en el suelo
-            var right = new Vector3(1, 0, 0); var gp = new Vector3(c.flyPos.x, Floor + 0.012f, c.flyPos.z);
-            skids.Add(gp - Vector3.forward * 0.45f, gp + Vector3.forward * 0.45f, right, 0.9f, new Color(0.1f, 0.08f, 0.12f, 0.55f), new Color(0.1f, 0.08f, 0.12f, 0.55f));
-            if (c.isPlayer) { shake = Mathf.Max(shake, 0.7f); Flash(new Color(1, 0.75f, 0.35f)); Toast("KABOOM!"); }
-            else if (player != null && Vector3.Distance(player.g ? player.g.transform.position : p, p) < 8) shake = Mathf.Max(shake, 0.25f);
+            Color Fire() => Random.value < 0.35f ? new Color(1, 0.97f, 0.75f) : Color.Lerp(SunC, Coral, Random.value);
+            // 1) doble destello blanco
+            fx.Add(p, new Color(1, 1, 0.92f, 1), 2.6f, 0.16f, Vector3.zero, 0, true);
+            fx.Add(p + Vector3.up * 0.3f, new Color(1, 0.9f, 0.6f, 0.9f), 1.8f, 0.32f, Vector3.zero, 0, true);
+            // 2) bola de fuego grande, con un núcleo amarillo y bordes naranjas
+            for (int n = 0; n < 34; n++) fx.Add(p + Rv(0.7f, 0.4f), Fire(), 0.6f + Random.value * 0.6f, 0.5f + Random.value * 0.5f, Rv(6, 3.5f), -0.5f, true);
+            // 3) onda expansiva a ras de suelo
+            var gp = new Vector3(c.flyPos.x, Floor + 0.08f, c.flyPos.z);
+            for (int n = 0; n < 36; n++) { float a = n / 36f * Mathf.PI * 2; var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)); fx.Add(gp + d * 0.3f, new Color(1, 0.95f, 0.8f, 0.85f), 0.45f, 0.45f, d * 11, 0, true); }
+            for (int n = 0; n < 18; n++) { float a = n / 18f * Mathf.PI * 2; var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)); fx.Add(gp + d * 0.5f, new Color(0.95f, 0.88f, 0.75f, 0.7f), 0.6f, 0.9f, d * 4, 0, true); }   // polvo
+            // 4) columna de humo que sube (seta)
+            for (int n = 0; n < 22; n++) fx.Add(p + Rv(0.6f, 0.3f), Color.Lerp(new Color(0.22f, 0.2f, 0.26f, 0.85f), new Color(0.45f, 0.42f, 0.48f, 0.7f), Random.value), 0.7f + Random.value * 0.5f, 1.6f + Random.value * 1.2f, Rv(2.2f, 2.6f), -1.2f, true);
+            // 5) chispas rápidas y ascuas que caen despacio
+            for (int n = 0; n < 45; n++) fx.Add(p, Random.value < 0.5f ? SunC : Color.white, 0.11f, 0.7f, Rv(14, 9), 14);
+            for (int n = 0; n < 24; n++) fx.Add(p + Rv(1, 0.5f), Color.Lerp(Coral, SunC, Random.value), 0.09f, 1.8f + Random.value, Rv(5, 5), 2.5f);
+            // 6) confeti de chapa del color del coche y tornillos
+            for (int n = 0; n < 24; n++) fx.Add(p, Color.Lerp(paint, Ink, Random.value * 0.3f), 0.2f, 1.3f, Rv(10, 9), 14);
+            for (int n = 0; n < 10; n++) fx.Add(p, Ink, 0.09f, 1.3f, Rv(8, 8), 14);
+            // 7) trozos de verdad: las ruedas salen volando y unos pedazos de carrocería
+            if (c.wheels != null) foreach (var wh in c.wheels)
+                {
+                    if (!wh) continue;
+                    var g = Instantiate(wh.gameObject, wh.position, wh.rotation); g.transform.localScale = wh.lossyScale; g.layer = 0;
+                    AddDebris(g.transform, Rv(9, 9) + Vector3.up * 3, Rv(900, 900), 2.6f);
+                }
+            for (int n = 0; n < 7; n++)
+            {
+                float s = 0.12f + Random.value * 0.14f;
+                var g = Prim(PrimitiveType.Cube, n % 3 == 0 ? Ink : paint, p + Rv(0.4f, 0.2f), new Vector3(s, s * 0.4f, s * 1.3f), null, Random.value * 360);
+                AddDebris(g.transform, Rv(11, 10) + Vector3.up * 3, Rv(1100, 1100), 2.4f);
+            }
+            // 8) mancha de quemado grande en el suelo
+            var right = new Vector3(1, 0, 0); var sp = new Vector3(c.flyPos.x, Floor + 0.012f, c.flyPos.z); var burn = new Color(0.08f, 0.06f, 0.1f, 0.65f);
+            skids.Add(sp - Vector3.forward * 0.8f, sp + Vector3.forward * 0.8f, right, 1.6f, burn, burn);
+            skids.Add(sp - right * 0.7f, sp + right * 0.7f, Vector3.forward, 1.2f, burn, burn);
+            if (c.isPlayer)
+            {
+                shake = Mathf.Max(shake, 1.1f); Flash(new Color(1, 0.8f, 0.4f)); Toast("KABOOM!");
+                if (mode != "online") StartCoroutine(HitStop());
+            }
+            else if (player != null && Vector3.Distance(player.g ? player.g.transform.position : p, p) < 10) shake = Mathf.Max(shake, 0.45f);
         }
+
+        // cámara lenta un instante para que la explosión luzca (no en online, que va sincronizado)
+        System.Collections.IEnumerator HitStop()
+        {
+            const float slow = 0.22f;
+            Time.timeScale = slow;
+            yield return new WaitForSecondsRealtime(0.32f);
+            if (Time.timeScale == 0) yield break;
+            for (float t = 0; t < 0.25f; t += Time.unscaledDeltaTime)
+            {
+                if (Time.timeScale == 0) yield break;   // si se pausa entre medias, la pausa manda
+                Time.timeScale = Mathf.Lerp(slow, 1, t / 0.25f); yield return null;
+            }
+            if (Time.timeScale != 0) Time.timeScale = 1;
+        }
+
+        // trozos con su propia física sencilla (rebotan en el suelo y encogen antes de desaparecer)
+        class Debris { public Transform t; public Vector3 v, w; public float life, life0; public Vector3 s0; }
+        readonly List<Debris> debris = new List<Debris>();
+        void AddDebris(Transform t, Vector3 v, Vector3 w, float life) { debris.Add(new Debris { t = t, v = v, w = w, life = life, life0 = life, s0 = t.localScale }); }
+        void UpdateDebris(float dt)
+        {
+            for (int k = debris.Count - 1; k >= 0; k--)
+            {
+                var d = debris[k];
+                if (!d.t) { debris.RemoveAt(k); continue; }
+                d.life -= dt; d.v.y -= 16 * dt; d.t.position += d.v * dt; d.t.Rotate(d.w * dt, Space.World);
+                if (d.t.position.y < Floor + 0.05f) { var q = d.t.position; q.y = Floor + 0.05f; d.t.position = q; d.v.y = Mathf.Abs(d.v.y) * 0.4f; d.v.x *= 0.7f; d.v.z *= 0.7f; d.w *= 0.6f; }
+                if (d.life < 0.4f) d.t.localScale = d.s0 * Mathf.Max(0, d.life / 0.4f);
+                if (d.life <= 0) { Destroy(d.t.gameObject); debris.RemoveAt(k); }
+            }
+        }
+        void ClearDebris() { foreach (var d in debris) if (d.t) Destroy(d.t.gameObject); debris.Clear(); }
 
         // ---------- huellas de las ruedas traseras ----------
         static readonly Color SkidBase = new Color(0.12f, 0.1f, 0.14f, 1);

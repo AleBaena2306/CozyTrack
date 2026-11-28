@@ -60,7 +60,7 @@ namespace CozyTrack
             ground.GetComponent<Renderer>().sharedMaterial = groundMat;
             trackRoot = new GameObject("Circuito").transform;
             var unlit = new Material(lib.unlit); unlit.SetTexture("_BaseMap", CozyTex.Get("dot"));
-            fx = new Sprites3D("Particulas", 400, unlit);
+            fx = new Sprites3D("Particulas", 1000, unlit);
             var airMat = new Material(lib.unlit); airMat.SetTexture("_BaseMap", CozyTex.Get("dot"));
             air = new Sprites3D("Aire", 240, airMat);
             for (int k = 0; k < 240; k++) air.Add(new Vector3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(0f, 6f), UnityEngine.Random.Range(-20f, 20f)), Color.white, 0.15f, 1e9f, Vector3.zero, 0);
@@ -216,7 +216,7 @@ namespace CozyTrack
                 }
             }
             if (state == "race" || state == "end") RaceTick(dt);
-            fx.Tick(dt, cam);
+            fx.Tick(dt, cam); UpdateDebris(dt);
             UpdateAir(dt);
             AnimateSurfaces(dt);
             UpdateObstacles(dt);
