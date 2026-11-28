@@ -52,6 +52,14 @@ namespace CozyTrack
             t.Apply(true);
             return checkerSprite = Sprite.Create(t, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect);
         }
+        // contenedor que recorta a la forma redondeada de una cara (para que bandas y cuadros no se salgan del borde)
+        Transform ClipTo(Image face)
+        {
+            var clip = Img(face.transform, Color.white, null, "Recorte"); Fill(clip.rectTransform);
+            clip.sprite = face.sprite; clip.type = face.type; clip.pixelsPerUnitMultiplier = face.pixelsPerUnitMultiplier; clip.raycastTarget = false;
+            clip.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            return clip.transform;
+        }
         // pieza recta con el borde suavizado (sustituye a las imágenes sin sprite, que salían dentadas al girarlas)
         static void Soft(Image i) { i.sprite = CozyTex.SoftRect(); i.type = Image.Type.Sliced; i.pixelsPerUnitMultiplier = 1.6f; }
 

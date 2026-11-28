@@ -137,9 +137,18 @@ namespace CozyTrack
             adOverlay.SetActive(false);
         }
 
+        // La columna respeta la zona segura del móvil (cámara frontal, muesca, barra de gestos) y, en móvil, deja
+        // además un pequeño margen arriba para que nada quede pegado al borde.
         void LateUpdate()
         {
-            if (col) col.sizeDelta = new Vector2(Mathf.Min(1080, canvasRect.rect.width), 0);
+            if (!col) return;
+            float scale = canvas ? Mathf.Max(0.01f, canvas.scaleFactor) : 1;
+            var sa = Screen.safeArea;
+            float top = Mathf.Max(0, Screen.height - sa.yMax) / scale, bottom = Mathf.Max(0, sa.yMin) / scale;
+            if (Application.isMobilePlatform) top += 18;
+            col.pivot = new Vector2(0.5f, 0.5f);
+            col.sizeDelta = new Vector2(Mathf.Min(1080, canvasRect.rect.width), -(top + bottom));
+            col.anchoredPosition = new Vector2(0, (bottom - top) * 0.5f);
         }
 
         // ---------- HUD (diseño «In the race · HUD») ----------
@@ -348,7 +357,7 @@ namespace CozyTrack
                 Cap(tf.transform, lab, 9).rectTransform.Let(r => Inset(r, 4, 38, 4, 4));
             }
             resStats.gameObject.SetActive(v.stats.Count > 0);
-            resX2.SetActive(x2Coins > 0 && v.stats.Count > 0);
+            resX2.SetActive(x2Coins > 0 && v.stats.Count > 0); resX2.transform.SetAsLastSibling();   // por encima del recuadro de monedas
             bool chest = !string.IsNullOrEmpty(v.chestTier), tip = !string.IsNullOrEmpty(v.tip);
             resCard.gameObject.SetActive(chest || tip);
             resCardChest.gameObject.SetActive(chest); resCardTitle.gameObject.SetActive(chest); resCardSub.gameObject.SetActive(chest); resTip.gameObject.SetActive(!chest && tip);

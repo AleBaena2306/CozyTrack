@@ -76,8 +76,8 @@ namespace CozyTrack
             }
             // RACE: pegatina amarilla con bandera a cuadros y el número del siguiente nivel
             var race = StickerButton(T0, SunC, () => OpenPick("race"), out var rf, 20, 3.5f, 6, -1.5f, "Race"); TopBox((RectTransform)race.transform, 20, 20, 624, 100);
-            var chk = Checker(rf.transform); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(42 * K, 0); ckr.anchoredPosition = Vector2.zero;
-            var ckl = Img(rf.transform, Ink, null, "Linea"); Soft(ckl); var cklr = ckl.rectTransform; cklr.anchorMin = new Vector2(0, 0); cklr.anchorMax = new Vector2(0, 1); cklr.pivot = new Vector2(0, 0.5f); cklr.sizeDelta = new Vector2(3.5f * K, 0); cklr.anchoredPosition = new Vector2(42 * K, 0);
+            var chk = Checker(ClipTo(rf)); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(42 * K, 0); ckr.anchoredPosition = Vector2.zero;
+            var ckl = Img(chk.transform.parent, Ink, null, "Linea"); Soft(ckl); var cklr = ckl.rectTransform; cklr.anchorMin = new Vector2(0, 0); cklr.anchorMax = new Vector2(0, 1); cklr.pivot = new Vector2(0, 0.5f); cklr.sizeDelta = new Vector2(3.5f * K, 0); cklr.anchoredPosition = new Vector2(42 * K, 0);
             TB(rf.transform, "RACE", 48, Ink, true, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 62, 8, 80, 26));
             Cap(rf.transform, "LEVELS · DAILY", 12, null, TextAnchor.MiddleLeft).rectTransform.Let(r => Inset(r, 64, 62, 80, 10));
             var no = Sticker(rf.transform, Cream, out var nf, 29, 3, 0, 0, "Numero"); no.anchorMin = no.anchorMax = new Vector2(1, 0.5f); no.sizeDelta = new Vector2(58 * K, 58 * K); no.anchoredPosition = new Vector2(-45 * K, 0);
@@ -347,7 +347,7 @@ namespace CozyTrack
             body.GetComponent<VerticalLayoutGroup>().padding = new RectOffset(Mathf.RoundToInt(14 * K), Mathf.RoundToInt(14 * K), 6, 20);
             // ¡A correr!
             var go = StickerButton(s, SunC, GoRace, out var gf, 20, 3.5f, 6, -1.2f, "Correr"); BotBox((RectTransform)go.transform, 20, 20, 24, 84);
-            var chk = Checker(gf.transform, 7); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(40 * K, 0); ckr.anchoredPosition = Vector2.zero;
+            var chk = Checker(ClipTo(gf), 7); var ckr = chk.rectTransform; ckr.anchorMin = Vector2.zero; ckr.anchorMax = new Vector2(0, 1); ckr.pivot = new Vector2(0, 0.5f); ckr.sizeDelta = new Vector2(40 * K, 0); ckr.anchoredPosition = Vector2.zero;
             TB(gf.transform, "RACE!", 40, Ink).rectTransform.Let(r => Inset(r, 40, 0, 0, 0));
         }
         void OpenCarPick()
