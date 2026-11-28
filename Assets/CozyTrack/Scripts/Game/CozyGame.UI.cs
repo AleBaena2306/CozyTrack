@@ -145,7 +145,7 @@ namespace CozyTrack
             float scale = canvas ? Mathf.Max(0.01f, canvas.scaleFactor) : 1;
             var sa = Screen.safeArea;
             float top = Mathf.Max(0, Screen.height - sa.yMax) / scale, bottom = Mathf.Max(0, sa.yMin) / scale;
-            if (Application.isMobilePlatform) top += 18;
+            if (Application.isMobilePlatform) top = Mathf.Max(top, 40) + 40;   // la cámara frontal no siempre se declara como zona insegura
             col.pivot = new Vector2(0.5f, 0.5f);
             col.sizeDelta = new Vector2(Mathf.Min(1080, canvasRect.rect.width), -(top + bottom));
             col.anchoredPosition = new Vector2(0, (bottom - top) * 0.5f);

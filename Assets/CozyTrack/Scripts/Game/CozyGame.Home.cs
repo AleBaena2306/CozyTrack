@@ -531,7 +531,8 @@ namespace CozyTrack
         // ================= ESCAPARATE 3D (se ve dentro de la franja azul) =================
         RawImage ShowroomImage(Transform p, float top, float w, float h)
         {
-            if (!showRT) { showRT = new RenderTexture(1024, 640, 24) { name = "Escaparate", antiAliasing = 2 }; }
+            // sin MSAA en la textura: en algunos móviles (Vulkan) una textura multimuestreo no se resuelve y el coche no se ve
+            if (!showRT) { showRT = new RenderTexture(1024, 640, 24, RenderTextureFormat.ARGB32) { name = "Escaparate", antiAliasing = 1 }; showRT.Create(); }
             var ri = R("Coche", p).gameObject.AddComponent<RawImage>(); ri.texture = showRT; ri.raycastTarget = false; TopCenter(ri.rectTransform, top, w, h);
             return ri;
         }
@@ -543,6 +544,7 @@ namespace CozyTrack
             Prim(PrimitiveType.Cylinder, Color.white, new Vector3(0, -0.06f, 0), new Vector3(5.2f, 0.04f, 5.2f), showRoot, 0, Mat(CozyData.Hex("#ffd64d")));
             Prim(PrimitiveType.Cylinder, Color.white, new Vector3(0, -0.03f, 0), new Vector3(4.6f, 0.04f, 4.6f), showRoot, 0, Mat(CozyData.Hex("#fff8ec")));
             showCam = new GameObject("Camara escaparate").AddComponent<Camera>();
+            showCam.allowMSAA = false; showCam.allowHDR = false;
             showCam.targetTexture = showRT; showCam.clearFlags = CameraClearFlags.SolidColor; showCam.backgroundColor = new Color(Blue.r, Blue.g, Blue.b, 0);
             showCam.fieldOfView = 30; showCam.nearClipPlane = 0.3f; showCam.farClipPlane = 30;
             showCam.fieldOfView = 24; showCam.cullingMask = 1 << ShowLayer;
